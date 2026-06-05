@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPluSoft HelpDesk — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+:root{
+  --bg:#f0f2f5;--bg2:#ffffff;--bg3:#f8f9fb;--bg4:#eef0f3;
+  --sidebar:#1a2035;--sidebar2:#242d45;--sidebar3:#2e3a52;
+  --border:#e2e5ea;--border2:#d0d5dd;
+  --text:#1a1f2e;--text2:#5a6478;--text3:#9aa3b5;
+  --accent:#3b5bdb;--accent2:#4c6ef5;--accent-light:#eef2ff;
+  --green:#2f9e44;--green-bg:#ebfbee;--green-border:#b2f2bb;
+  --red:#e03131;--red-bg:#fff5f5;--red-border:#ffc9c9;
+  --amber:#e67700;--amber-bg:#fff9db;--amber-border:#ffec99;
+  --blue:#1971c2;--blue-bg:#e7f5ff;--blue-border:#a5d8ff;
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+  --r:8px;--r2:12px;--shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+  --shadow2:0 4px 12px rgba(0,0,0,0.1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex}
+
+/* ── LOGIN ── */
+.login-overlay{position:fixed;inset:0;background:var(--sidebar);display:flex;align-items:center;justify-content:center;z-index:999}
+.login-card{background:var(--bg2);border-radius:16px;padding:2.5rem;width:380px;box-shadow:var(--shadow2)}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:2rem}
+.login-logo .logo-box{width:40px;height:40px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px}
+.login-logo span{font-size:1.1rem;font-weight:700;color:var(--text)}
+.login-card h2{font-size:1.3rem;font-weight:700;margin-bottom:.3rem}
+.login-card p{color:var(--text2);font-size:13px;margin-bottom:1.5rem}
+.login-card label{font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:5px}
+.login-card input{width:100%;padding:10px 13px;border:1.5px solid var(--border2);border-radius:var(--r);font-family:var(--font);font-size:14px;color:var(--text);outline:none;transition:border .2s;margin-bottom:1rem;background:var(--bg3)}
+.login-card input:focus{border-color:var(--accent)}
+.login-btn{width:100%;padding:11px;background:var(--accent);border:none;color:#fff;font-family:var(--font);font-size:14px;font-weight:600;border-radius:var(--r);cursor:pointer;transition:background .2s}
+.login-btn:hover{background:var(--accent2)}
+.login-err{color:var(--red);font-size:12px;margin-top:.5rem;display:none;text-align:center}
+
+/* ── SIDEBAR ── */
+.sidebar{width:240px;background:var(--sidebar);min-height:100vh;display:flex;flex-direction:column;flex-shrink:0;position:fixed;left:0;top:0;bottom:0;z-index:50}
+.sidebar-logo{padding:1.5rem 1.2rem 1rem;border-bottom:1px solid rgba(255,255,255,0.06)}
+.logo-mark{display:flex;align-items:center;gap:10px}
+.logo-box2{width:36px;height:36px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;flex-shrink:0}
+.logo-text{font-size:.95rem;font-weight:700;color:#fff;letter-spacing:-.01em}
+.logo-sub{font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px}
+.sidebar-nav{padding:1rem 0;flex:1}
+.nav-section{padding:0 .8rem;margin-bottom:.3rem}
+.nav-section-label{font-size:10px;font-weight:600;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:.09em;padding:.5rem .5rem .3rem}
+.nav-item{display:flex;align-items:center;gap:10px;padding:.6rem .8rem;border-radius:var(--r);cursor:pointer;transition:all .2s;color:rgba(255,255,255,0.55);font-size:13.5px;font-weight:500;margin-bottom:2px}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.9)}
+.nav-item.active{background:var(--accent);color:#fff}
+.nav-item .ni{font-size:15px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;min-width:18px;text-align:center}
+.sidebar-bottom{padding:1rem;border-top:1px solid rgba(255,255,255,0.06)}
+.user-info{display:flex;align-items:center;gap:9px;padding:.6rem .5rem;border-radius:var(--r)}
+.user-avatar{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0}
+.user-name{font-size:12.5px;font-weight:600;color:rgba(255,255,255,0.85)}
+.user-role{font-size:10px;color:rgba(255,255,255,0.35)}
+.logout-link{display:flex;align-items:center;gap:8px;padding:.5rem .5rem;color:rgba(255,255,255,0.35);font-size:12px;cursor:pointer;border-radius:var(--r);transition:all .2s;margin-top:4px}
+.logout-link:hover{color:rgba(240,79,79,.8);background:rgba(240,79,79,.08)}
+
+/* ── MAIN ── */
+.main{margin-left:240px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:.8rem 1.8rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;box-shadow:var(--shadow)}
+.topbar-left h1{font-size:1.1rem;font-weight:700;color:var(--text)}
+.topbar-left p{font-size:12px;color:var(--text2);margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.live-pill{background:var(--green-bg);border:1px solid var(--green-border);color:var(--green);padding:4px 11px;border-radius:20px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:5px}
+.ldot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+#clock{font-family:var(--mono);font-size:12px;color:var(--text3);background:var(--bg3);padding:4px 10px;border-radius:var(--r);border:1px solid var(--border)}
+
+.content{padding:1.5rem 1.8rem;flex:1}
+
+/* ── PAGES ── */
+.page{display:none;animation:fadeIn .25s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:1.5rem}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.2rem 1.3rem;box-shadow:var(--shadow);display:flex;align-items:flex-start;justify-content:space-between}
+.stat-info .stat-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.stat-info .stat-value{font-size:2rem;font-weight:700;font-family:var(--mono);letter-spacing:-.02em;line-height:1}
+.stat-info .stat-sub{font-size:11px;color:var(--text3);margin-top:4px}
+.stat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.si-blue{background:var(--blue-bg)}.si-amber{background:var(--amber-bg)}.si-green{background:var(--green-bg)}.si-red{background:var(--red-bg)}
+.sv-blue{color:var(--blue)}.sv-amber{color:var(--amber)}.sv-green{color:var(--green)}.sv-red{color:var(--red)}
+
+/* ── DATE TABS ── */
+.date-nav{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1rem 1.2rem;margin-bottom:1.2rem;box-shadow:var(--shadow)}
+.date-nav-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem}
+input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:pointer}
+.date-nav-title{font-size:13px;font-weight:600;color:var(--text)}
+.date-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.dtab{padding:5px 14px;border-radius:20px;border:1.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-size:12px;font-family:var(--font);font-weight:500;transition:all .2s;display:flex;align-items:center;gap:5px}
+.dtab.active{border-color:var(--accent);color:var(--accent);background:var(--accent-light);font-weight:600}
+.dtab:hover:not(.active){border-color:var(--border2);background:var(--bg3);color:var(--text)}
+.dtab .dc{background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;min-width:16px;text-align:center}
+.dtab.active .dc{background:var(--accent);color:#fff}
+
+/* ── FILTER ROW ── */
+.filter-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
+.filter-left{display:flex;gap:6px}
+.fb{padding:5px 13px;border-radius:6px;border:1.5px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;font-size:12px;font-family:var(--font);font-weight:500;transition:all .2s}
+.fb.active{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.filter-right{font-size:12px;color:var(--text3);font-family:var(--mono)}
+
+/* ── TICKET TABLE ── */
+.tickets-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--shadow);overflow:hidden}
+.tc-header{display:grid;grid-template-columns:130px 1fr 90px 90px 100px 110px;gap:10px;padding:.7rem 1.1rem;background:var(--bg3);border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em}
+.trow{display:grid;grid-template-columns:130px 1fr 90px 90px 100px 110px;gap:10px;padding:.9rem 1.1rem;border-bottom:1px solid var(--border);align-items:center;transition:background .15s;cursor:pointer}
+.trow:last-child{border-bottom:none}
+.trow:hover{background:var(--bg3)}
+.trow.critical-row{border-left:3px solid var(--red)}
+.trow.high-row{border-left:3px solid var(--amber)}
+.trow.after-hours{background:color-mix(in srgb,var(--amber-bg) 40%,white)}
+.tid{font-family:var(--mono);font-size:10.5px;color:var(--text3);font-weight:500}
+.tinfo .ttitle{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tinfo .tmeta{font-size:11px;color:var(--text2);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.ah-tag{background:var(--amber-bg);border:1px solid var(--amber-border);color:var(--amber);font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px}
+
+.badge{padding:3px 8px;border-radius:5px;font-size:10.5px;font-weight:600;display:inline-flex;align-items:center;gap:3px}
+.bc{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.bh{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+.bm{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)}
+.bl{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.bo{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+.br{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.bov{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+
+.timer{font-family:var(--mono);font-size:11px;font-weight:500;white-space:nowrap}
+.tok{color:var(--green)}.twarn{color:var(--amber)}.tover{color:var(--red)}
+
+.rbtn{padding:6px 12px;background:var(--accent);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:11.5px;font-weight:600;font-family:var(--font);transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:4px}
+.rbtn:hover{background:var(--accent2);transform:translateY(-1px)}
+.rdone{font-size:11px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:3px}
+
+.empty-state{text-align:center;padding:3rem;color:var(--text3)}
+.empty-state .ei{font-size:2.5rem;margin-bottom:.8rem;opacity:.4}
+.empty-state h3{font-size:.95rem;color:var(--text2);margin-bottom:4px}
+.empty-state p{font-size:12px}
+
+/* ── DETAIL PANEL ── */
+.detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:100;display:none;backdrop-filter:blur(2px)}
+.detail-panel{position:fixed;right:0;top:0;bottom:0;width:440px;background:var(--bg2);border-left:1px solid var(--border);z-index:101;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease;box-shadow:-4px 0 20px rgba(0,0,0,.1)}
+.detail-panel.open{transform:translateX(0)}
+.dp-head{padding:1.2rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg3)}
+.dp-head h3{font-size:.9rem;font-weight:700;font-family:var(--mono);color:var(--accent)}
+.dp-close{background:var(--bg4);border:1.5px solid var(--border2);color:var(--text2);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.dp-close:hover{color:var(--red);border-color:var(--red-border)}
+.dp-body{padding:1.3rem;flex:1;overflow-y:auto}
+.dp-section{margin-bottom:1.2rem}
+.dp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.2rem}
+.dp-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);font-weight:600;margin-bottom:3px}
+.dp-val{font-size:13px;color:var(--text);font-weight:500}
+.dp-desc{background:var(--bg3);padding:12px;border-radius:var(--r);font-size:12.5px;line-height:1.65;color:var(--text);border:1px solid var(--border)}
+.dp-tl{margin-top:1rem}
+.tli{display:flex;gap:10px;padding:8px 0 8px 14px;border-left:2px solid var(--border2);margin-left:5px;position:relative}
+.tli::before{content:'';position:absolute;left:-5px;top:14px;width:8px;height:8px;border-radius:50%;background:var(--accent);border:2px solid var(--bg2)}
+.tlt{font-family:var(--mono);font-size:10px;color:var(--text3);white-space:nowrap;min-width:70px;padding-top:2px}
+.tltx{font-size:11.5px;color:var(--text2);line-height:1.5}
+.resolve-box{margin:0 1.3rem 1.3rem;background:var(--green-bg);border:1.5px solid var(--green-border);border-radius:var(--r2);padding:1.2rem;text-align:center}
+.resolve-box h4{font-size:.9rem;font-weight:700;color:var(--green);margin-bottom:.3rem}
+.resolve-box p{font-size:12px;color:var(--text2);margin-bottom:1rem;line-height:1.5}
+.big-rbtn{width:100%;padding:12px;background:var(--green);border:none;color:#fff;font-family:var(--font);font-size:13.5px;font-weight:700;border-radius:var(--r);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px}
+.big-rbtn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+
+/* ── RESOLVE MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r2);max-width:560px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow2);animation:mup .25s ease}
+@keyframes mup{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+.mhead{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.3rem;border-bottom:1px solid var(--border);background:var(--bg3)}
+.mhead h2{font-size:.95rem;font-weight:700}
+.mclose{background:var(--bg4);border:1.5px solid var(--border2);color:var(--text2);width:27px;height:27px;border-radius:6px;cursor:pointer;font-size:13px}
+.mclose:hover{color:var(--red)}
+.mbody{padding:1.2rem}
+.email-preview{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:1rem;font-family:var(--mono);font-size:11.5px;line-height:1.85;white-space:pre-wrap;word-break:break-word;border-left:3px solid var(--green);max-height:320px;overflow-y:auto}
+.mfoot{padding:.9rem 1.3rem;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.btn-cancel{padding:8px 16px;border:1.5px solid var(--border2);background:transparent;color:var(--text2);border-radius:var(--r);cursor:pointer;font-family:var(--font);font-size:13px;font-weight:500}
+.btn-cancel:hover{background:var(--bg3)}
+.btn-confirm{padding:8px 20px;background:var(--green);border:none;color:#fff;border-radius:var(--r);cursor:pointer;font-family:var(--font);font-size:13px;font-weight:700}
+.btn-confirm:hover{filter:brightness(1.08)}
+
+/* ── SETUP PAGE ── */
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+.setup-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.4rem;box-shadow:var(--shadow)}
+.setup-card h3{font-size:13px;font-weight:700;color:var(--text);margin-bottom:1rem;display:flex;align-items:center;gap:7px;padding-bottom:.7rem;border-bottom:1px solid var(--border)}
+.setup-card.full{grid-column:1/-1}
+.cfg{display:flex;flex-direction:column;gap:5px;margin-bottom:.9rem}
+.cfg label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em}
+.cfg input{background:var(--bg3);border:1.5px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:12px;padding:9px 12px;border-radius:var(--r);outline:none;transition:border .2s}
+.cfg input:focus{border-color:var(--accent)}
+.cfg input::placeholder{color:var(--text3)}
+.save-btn{padding:9px 22px;background:var(--accent);border:none;color:#fff;border-radius:var(--r);cursor:pointer;font-family:var(--font);font-size:13px;font-weight:600;transition:background .2s}
+.save-btn:hover{background:var(--accent2)}
+.cfg-ok{font-size:12px;color:var(--green);margin-top:.5rem;display:none;font-weight:500}
+.step-list{counter-reset:steps}
+.step-item{display:flex;gap:10px;margin-bottom:.7rem;font-size:12.5px;color:var(--text2);line-height:1.6}
+.step-num{width:22px;height:22px;background:var(--accent-light);color:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--mono);font-size:11px;color:var(--accent);border:1px solid var(--border2)}
+.code-box{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:1rem;font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--text2);max-height:240px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;margin-bottom:.8rem}
+.copy-btn{padding:7px 16px;background:transparent;border:1.5px solid var(--border2);color:var(--text2);border-radius:var(--r);cursor:pointer;font-family:var(--font);font-size:12px;font-weight:500}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── TOAST ── */
+#tc{position:fixed;bottom:20px;right:20px;z-index:500;display:flex;flex-direction:column;gap:7px}
+.toast{background:var(--bg2);border:1.5px solid var(--border2);padding:10px 14px;border-radius:var(--r);font-size:13px;min-width:240px;box-shadow:var(--shadow2);animation:tin .3s ease;display:flex;align-items:center;gap:9px;font-family:var(--font)}
+@keyframes tin{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
+.toast.s{border-color:var(--green-border);background:var(--green-bg)}
+.toast.s::before{content:'✓';color:var(--green);font-weight:700}
+.toast.e{border-color:var(--red-border);background:var(--red-bg)}
+.toast.e::before{content:'✕';color:var(--red);font-weight:700}
+.toast.w{border-color:var(--amber-border);background:var(--amber-bg)}
+.toast.w::before{content:'⚠';color:var(--amber)}
+.toast.i::before{content:'✉';color:var(--blue)}
+
+@media(max-width:900px){
+  .sidebar{width:60px}
+  .logo-text,.logo-sub,.nav-section-label,.nav-item span,.user-name,.user-role,.logout-link span{display:none}
+  .main{margin-left:60px}
+  .nav-item{justify-content:center;padding:.7rem}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .detail-panel{width:100%}
+  .setup-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="logo-box">CP</div>
+      <span>CPluSoft HelpDesk</span>
+    </div>
+    <h2>Admin Login</h2>
+    <p>Enter your credentials to access the admin panel</p>
+    <label>Password</label>
+    <input type="password" id="pw-input" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Login to Dashboard</button>
+    <div class="login-err" id="pw-err">Incorrect password. Please try again.</div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-box2">CP</div>
+      <div>
+        <div class="logo-text">CPluSoft</div>
+        <div class="logo-sub">HelpDesk Admin</div>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-label">Main</div>
+      <div class="nav-item active" onclick="showPage('dashboard',event.currentTarget)">
+        <span class="ni">📊</span><span>Dashboard</span>
+        <span class="nav-badge" id="open-badge" style="display:none">0</span>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">System</div>
+      <div class="nav-item" onclick="showPage('setup',event.currentTarget)">
+        <span class="ni">⚙️</span><span>Setup</span>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-bottom">
+    <div class="user-info">
+      <div class="user-avatar">MB</div>
+      <div>
+        <div class="user-name">M. Basit</div>
+        <div class="user-role">Administrator</div>
+      </div>
+    </div>
+    <div class="logout-link" onclick="logout()">
+      <span>🚪</span><span>Logout</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main-app" style="display:none">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1 id="page-title">Dashboard</h1>
+      <p id="page-sub">Live ticket overview</p>
+    </div>
+    <div class="topbar-right">
+      <span id="sync-status" style="font-size:11px;color:var(--text3);font-family:var(--mono)"></span>
+      <button onclick="fetchSheetTickets()" style="background:var(--accent-light);border:1px solid var(--accent);color:var(--accent);padding:5px 12px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)">⟳ Sync Now</button>
+      <div class="live-pill"><div class="ldot"></div>Live</div>
+      <div id="clock"></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD PAGE -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-info">
+            <div class="stat-label">Total Today</div>
+            <div class="stat-value sv-blue" id="s-today">0</div>
+            <div class="stat-sub" id="s-today-sub">business day tickets</div>
+          </div>
+          <div class="stat-icon si-blue">📋</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-info">
+            <div class="stat-label">Open</div>
+            <div class="stat-value sv-amber" id="s-open">0</div>
+            <div class="stat-sub">awaiting resolution</div>
+          </div>
+          <div class="stat-icon si-amber">🔓</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-info">
+            <div class="stat-label">Resolved</div>
+            <div class="stat-value sv-green" id="s-res">0</div>
+            <div class="stat-sub" id="s-res-sub">all time</div>
+          </div>
+          <div class="stat-icon si-green">✅</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-info">
+            <div class="stat-label">Overdue</div>
+            <div class="stat-value sv-red" id="s-over">0</div>
+            <div class="stat-sub">SLA breached</div>
+          </div>
+          <div class="stat-icon si-red">⚠️</div>
+        </div>
+      </div>
+
+      <!-- DATE NAVIGATION -->
+      <div class="date-nav">
+        <div class="date-nav-top">
+          <div class="date-nav-title">📅 Filter by Date</div>
+          <span style="font-size:11px;color:var(--text3)">⏰ 8PM ke baad ki tickets agle din mein count hoti hain</span>
+        </div>
+        <div class="date-tabs" id="date-tabs"></div>
+        <div class="date-range-row" id="date-range-row" style="display:none;margin-top:.8rem;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:7px">
+            <label style="font-size:11px;font-weight:600;color:var(--text2)">From</label>
+            <input type="date" id="date-from" style="background:var(--bg3);border:1.5px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:12px;padding:6px 10px;border-radius:var(--r);outline:none" onchange="applyDateRange()">
+          </div>
+          <div style="display:flex;align-items:center;gap:7px">
+            <label style="font-size:11px;font-weight:600;color:var(--text2)">To</label>
+            <input type="date" id="date-to" style="background:var(--bg3);border:1.5px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:12px;padding:6px 10px;border-radius:var(--r);outline:none" onchange="applyDateRange()">
+          </div>
+          <button onclick="clearDateRange()" style="padding:6px 14px;background:var(--bg4);border:1.5px solid var(--border2);color:var(--text2);border-radius:var(--r);cursor:pointer;font-size:12px;font-family:var(--font)">✕ Clear</button>
+          <span id="range-result" style="font-size:12px;color:var(--text2);font-family:var(--mono)"></span>
+        </div>
+      </div>
+
+      <!-- FILTER + TABLE -->
+      <div class="filter-row">
+        <div class="filter-left">
+          <button class="fb active" onclick="doFilter('all',this)">All</button>
+          <button class="fb" onclick="doFilter('open',this)">Open</button>
+          <button class="fb" onclick="doFilter('resolved',this)">Resolved</button>
+          <button class="fb" onclick="doFilter('overdue',this)">Overdue ⚠</button>
+        </div>
+        <div class="filter-right" id="ticket-count">0 tickets</div>
+      </div>
+
+      <div class="tickets-card">
+        <div class="tc-header">
+          <div>Ticket ID</div>
+          <div>Issue</div>
+          <div>Priority</div>
+          <div>Status</div>
+          <div>Timer</div>
+          <div>Action</div>
+        </div>
+        <div id="tlist"></div>
+      </div>
+    </div>
+
+    <!-- SETUP PAGE -->
+    <div class="page" id="page-setup">
+      <div class="setup-grid">
+        <div class="setup-card">
+          <h3>📧 EmailJS Configuration</h3>
+          <div class="cfg"><label>Public Key</label><input id="cfg-pk" placeholder="CaDPmanVvow..."></div>
+          <div class="cfg"><label>Service ID</label><input id="cfg-sid" placeholder="service_qxd5xz6"></div>
+          <div class="cfg"><label>Template ID — New Ticket</label><input id="cfg-t1" placeholder="template_xxxxxx"></div>
+          <div class="cfg"><label>Template ID — Resolved</label><input id="cfg-t2" placeholder="template_xxxxxx"></div>
+        </div>
+        <div class="setup-card">
+          <h3>📊 Google Sheets</h3>
+          <div class="cfg"><label>Apps Script Web App URL</label><input id="cfg-sh" placeholder="https://script.google.com/macros/s/.../exec"></div>
+          <h3 style="margin-top:1rem">🔐 Admin Password</h3>
+          <div class="cfg"><label>New Password</label><input type="password" id="cfg-pw" placeholder="Leave blank to keep current"></div>
+        </div>
+        <div class="setup-card full">
+          <h3>⚙️ EmailJS Setup Guide</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+            <div>
+              <div class="step-item"><div class="step-num">1</div><div>emailjs.com → Free account → Email Services → Add New Service → <strong>Microsoft Outlook</strong></div></div>
+              <div class="step-item"><div class="step-num">2</div><div>Connect <code>m.basit_cplusoft@outlook.com</code> → Copy <strong>Service ID</strong></div></div>
+              <div class="step-item"><div class="step-num">3</div><div>Email Templates → Create → Subject: <code>{{subject}}</code> → Body: <code>{{body}}</code> → To: <code>{{to_email}}</code></div></div>
+            </div>
+            <div>
+              <div class="step-item"><div class="step-num">4</div><div>From Email → tick <strong>"Use Default Email Address"</strong> → Save → Copy <strong>Template ID</strong></div></div>
+              <div class="step-item"><div class="step-num">5</div><div>Account → General → Copy <strong>Public Key</strong></div></div>
+              <div class="step-item"><div class="step-num">6</div><div>Paste all values above → Click <strong>Save Settings</strong></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="setup-card full">
+          <h3>📋 Google Apps Script Code</h3>
+          <div class="code-box" id="as-code"></div>
+          <button class="copy-btn" onclick="copyScript()">📋 Copy Code</button>
+        </div>
+      </div>
+      <div style="margin-top:1rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <button class="save-btn" onclick="saveConfig()">💾 Save All Settings</button>
+        <span class="cfg-ok" id="cfg-ok">✓ Settings saved successfully</span>
+      </div>
+      <div class="setup-card full" style="margin-top:1.2rem;border:1.5px solid var(--amber-border);background:var(--amber-bg)">
+        <h3 style="color:var(--amber)">🔄 Data Migration — Site Change ho gayi?</h3>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;line-height:1.6">Agar aapne Netlify site dobara upload ki aur tickets gayab ho gayi hain to neeche se purana data import karo.<br>Pehle <strong>purani site</strong> pe jao → Export karo → Yahan Import karo.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="save-btn" onclick="exportData()" style="background:var(--amber)">📤 Export All Tickets (JSON)</button>
+          <label style="padding:9px 22px;background:var(--accent);border:none;color:#fff;border-radius:var(--r);cursor:pointer;font-family:var(--font);font-size:13px;font-weight:600">
+            📥 Import Tickets (JSON)
+            <input type="file" accept=".json" onchange="importData(event)" style="display:none">
+          </label>
+          <button class="save-btn" onclick="exportConfig()" style="background:var(--text2)">📤 Export Config</button>
+          <label style="padding:9px 22px;background:var(--text2);border:none;color:#fff;border-radius:var(--r);cursor:pointer;font-family:var(--font);font-size:13px;font-weight:600">
+            📥 Import Config
+            <input type="file" accept=".json" onchange="importConfig(event)" style="display:none">
+          </label>
+        </div>
+        <div id="import-status" style="margin-top:.7rem;font-size:12.5px;font-weight:600;display:none"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DETAIL OVERLAY + PANEL -->
+<div class="detail-overlay" id="det-overlay" onclick="closePanel()"></div>
+<div class="detail-panel" id="detail-panel">
+  <div class="dp-head">
+    <h3 id="dp-id">TKT-000-00000</h3>
+    <button class="dp-close" onclick="closePanel()">✕</button>
+  </div>
+  <div class="dp-body" id="dp-body"></div>
+  <div id="resolve-cta"></div>
+</div>
+
+<!-- RESOLVE MODAL -->
+<div class="modal-overlay" id="res-modal">
+  <div class="modal">
+    <div class="mhead"><h2>✅ Confirm Resolution</h2><button class="mclose" onclick="closeModal('res-modal')">✕</button></div>
+    <div class="mbody">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:.8rem">Preview of resolution email that will be sent to the employee:</p>
+      <div class="email-preview" id="res-body"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn-cancel" onclick="closeModal('res-modal')">Cancel</button>
+      <button class="btn-confirm" id="res-confirm-btn">✅ Mark Resolved & Send Email</button>
+    </div>
+  </div>
+</div>
+
+<div id="tc"></div>
+
+<script>
+// ── CONSTANTS ─────────────────────────────────────────────
+const DEFAULT_PW = 'cplusoft2024';
+const AFTER_HOURS = 20; // 8PM
+
+// ── SESSION (persists on refresh) ─────────────────────────
+function isLoggedIn(){return sessionStorage.getItem('hd_auth')==='1'}
+function doLogin(){
+  let cfg={};try{cfg=JSON.parse(localStorage.getItem('cps_cfg')||'{}')}catch(e){}
+  const pw=cfg.adminPw||DEFAULT_PW;
+  if(document.getElementById('pw-input').value===pw){
+    sessionStorage.setItem('hd_auth','1');
+    document.getElementById('login-overlay').style.display='none';
+    document.getElementById('main-app').style.display='flex';
+    init();
+  } else {
+    document.getElementById('pw-err').style.display='block';
+    document.getElementById('pw-input').value='';
+  }
+}
+function logout(){
+  sessionStorage.removeItem('hd_auth');
+  location.reload();
+}
+
+// ── HARDCODED SHEETS URL ──────────────────────────────────
+const SHEETS_URL='https://script.google.com/macros/s/AKfycbw5VjU3WiNaz7JNhoaLzJOgTa5YVdgYhMbE5_NFatDr5Mj_3Kxl7geSoK02-sAadOYgjg/exec';
+
+// ── CONFIG ────────────────────────────────────────────────
+let CFG={};try{CFG=JSON.parse(localStorage.getItem('cps_cfg')||'{}')}catch(e){}
+if(CFG.pubkey){try{emailjs.init(CFG.pubkey)}catch(e){}}
+
+function loadCfgUI(){
+  if(CFG.pubkey) document.getElementById('cfg-pk').value=CFG.pubkey;
+  if(CFG.service) document.getElementById('cfg-sid').value=CFG.service;
+  if(CFG.template) document.getElementById('cfg-t1').value=CFG.template;
+  if(CFG.template2) document.getElementById('cfg-t2').value=CFG.template2;
+  if(CFG.sheets) document.getElementById('cfg-sh').value=CFG.sheets;
+}
+function saveConfig(){
+  const newPw=document.getElementById('cfg-pw').value;
+  CFG={
+    pubkey:document.getElementById('cfg-pk').value.trim(),
+    service:document.getElementById('cfg-sid').value.trim(),
+    template:document.getElementById('cfg-t1').value.trim(),
+    template2:document.getElementById('cfg-t2').value.trim(),
+    sheets:document.getElementById('cfg-sh').value.trim(),
+    adminPw:newPw||CFG.adminPw||DEFAULT_PW
+  };
+  localStorage.setItem('cps_cfg',JSON.stringify(CFG));
+  if(CFG.pubkey){try{emailjs.init(CFG.pubkey)}catch(e){}}
+  const ok=document.getElementById('cfg-ok');
+  ok.style.display='inline';
+  setTimeout(()=>ok.style.display='none',3000);
+  toast('Settings saved!','s');
+}
+
+// ── DATE LOGIC ────────────────────────────────────────────
+// Ticket created after 8PM → belongs to NEXT business day
+function getTicketDay(ts){
+  const d=new Date(ts);
+  if(d.getHours()>=AFTER_HOURS){
+    // Belongs to next day
+    const next=new Date(d);
+    next.setDate(next.getDate()+1);
+    return next.toDateString();
+  }
+  return d.toDateString();
+}
+
+function isAfterHours(ts){
+  const d=new Date(ts);
+  return d.getHours()>=AFTER_HOURS;
+}
+
+function getBusinessDayLabel(dateStr){
+  const today=new Date();
+  const yesterday=new Date(); yesterday.setDate(yesterday.getDate()-1);
+  const tomorrow=new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+  const d=new Date(dateStr);
+  if(d.toDateString()===today.toDateString()) return 'Today';
+  if(d.toDateString()===yesterday.toDateString()) return 'Yesterday';
+  if(d.toDateString()===tomorrow.toDateString()) return 'Tomorrow';
+  return d.toLocaleDateString('en-PK',{weekday:'short',month:'short',day:'numeric'});
+}
+
+// ── DATA ──────────────────────────────────────────────────
+function getTickets(){try{return JSON.parse(localStorage.getItem('cps_tickets')||'[]')}catch(e){return[]}}
+function saveTickets(t){try{localStorage.setItem('cps_tickets',JSON.stringify(t))}catch(e){}}
+
+// ── FETCH FROM GOOGLE SHEETS (All PCs ka data) ───────────
+async function fetchSheetTickets(){
+  try{
+    const res=await fetch(SHEETS_URL+'?action=getAll&t='+Date.now());
+    const rows=await res.json();
+    if(!Array.isArray(rows)||rows.length===0) return;
+
+    // Merge sheet tickets with local — sheet is source of truth
+    const local=getTickets();
+    const localMap={};
+    local.forEach(t=>localMap[t.id]=t);
+
+    rows.forEach(row=>{
+      const id=row['Ticket ID'];
+      if(!id) return;
+      if(!localMap[id]){
+        // New ticket from another PC — add to local
+        localMap[id]={
+          id,
+          name:row['Name']||'',
+          email:row['Email']||'',
+          dept:row['Department']||'',
+          category:row['Category']||'',
+          priority:row['Priority']||'Medium',
+          subject:row['Subject']||'',
+          description:row['Description']||'',
+          status:row['Status']||'Open',
+          createdAt:new Date(row['Created At']).getTime()||Date.now(),
+          slaMins:parseInt(row['SLA (min)'])||45,
+          resolvedAt:row['Resolved At']?new Date(row['Resolved At']).getTime():null,
+          timeline:[{time:new Date(row['Created At']).getTime()||Date.now(),text:'Ticket created via '+row['Department']+' department'}]
+        };
+      } else if(row['Status']==='Resolved' && localMap[id].status!=='Resolved'){
+        // Update resolve status from sheet
+        localMap[id].status='Resolved';
+        if(row['Resolved At']) localMap[id].resolvedAt=new Date(row['Resolved At']).getTime();
+      }
+    });
+
+    const merged=Object.values(localMap).sort((a,b)=>b.createdAt-a.createdAt);
+    saveTickets(merged);
+    buildDateTabs();
+    renderTickets();
+    document.getElementById('sync-status').textContent='✓ Synced '+new Date().toLocaleTimeString('en-PK',{timeZone:'Asia/Karachi',hour12:true});
+  }catch(err){
+    console.error('Sheet fetch error:',err);
+    document.getElementById('sync-status').textContent='⚠ Sync failed — check internet';
+  }
+}
+
+// ── STATE ─────────────────────────────────────────────────
+let curFilter='all';
+let curDate=''; // empty = today
+let curDateRange=null; // {from, to} for custom range
+
+// ── INIT ─────────────────────────────────────────────────
+function init(){
+  buildDateTabs();
+  renderTickets();
+  loadCfgUI();
+  document.getElementById('as-code').textContent=APPS_SCRIPT;
+  // Fetch from Google Sheets immediately
+  fetchSheetTickets();
+  // Auto-refresh every 20 seconds
+  setInterval(()=>{
+    if(document.getElementById('page-dashboard').classList.contains('active')){
+      fetchSheetTickets();
+    }
+  },20000);
+}
+
+// ── DATE TABS ─────────────────────────────────────────────
+function buildDateTabs(){
+  const tickets=getTickets();
+  // Get unique business days
+  const days={};
+  tickets.forEach(t=>{
+    const day=getTicketDay(t.createdAt);
+    if(!days[day]) days[day]=0;
+    if(t.status==='Open') days[day]++;
+  });
+
+  // Sort days descending
+  const sorted=Object.keys(days).sort((a,b)=>new Date(b)-new Date(a));
+  const today=new Date().toDateString();
+
+  // Always include today
+  if(!days[today]) days[today]=0;
+  if(!sorted.includes(today)) sorted.unshift(today);
+
+  // Set default to today if not set
+  if(!curDate) curDate=today;
+
+  const container=document.getElementById('date-tabs');
+  container.innerHTML='';
+
+  // All tickets tab
+  const allTab=document.createElement('button');
+  allTab.className='dtab'+(curDate==='all'?' active':'');
+  allTab.innerHTML='All Dates';
+  allTab.onclick=()=>{curDate='all';curDateRange=null;document.getElementById('date-range-row').style.display='none';buildDateTabs();renderTickets()};
+  container.appendChild(allTab);
+
+  // This Week tab
+  const weekTab=document.createElement('button');
+  const weekActive=curDate==='week';
+  weekTab.className='dtab'+(weekActive?' active':'');
+  weekTab.innerHTML='This Week';
+  weekTab.onclick=()=>{curDate='week';curDateRange=null;document.getElementById('date-range-row').style.display='none';buildDateTabs();renderTickets()};
+  container.appendChild(weekTab);
+
+  // This Month tab
+  const monthTab=document.createElement('button');
+  const monthActive=curDate==='month';
+  monthTab.className='dtab'+(monthActive?' active':'');
+  monthTab.innerHTML='This Month';
+  monthTab.onclick=()=>{curDate='month';curDateRange=null;document.getElementById('date-range-row').style.display='none';buildDateTabs();renderTickets()};
+  container.appendChild(monthTab);
+
+  // Last Month tab
+  const lastMonthTab=document.createElement('button');
+  const lastMonthActive=curDate==='lastmonth';
+  lastMonthTab.className='dtab'+(lastMonthActive?' active':'');
+  lastMonthTab.innerHTML='Last Month';
+  lastMonthTab.onclick=()=>{curDate='lastmonth';curDateRange=null;document.getElementById('date-range-row').style.display='none';buildDateTabs();renderTickets()};
+  container.appendChild(lastMonthTab);
+
+  // Custom Range tab
+  const customTab=document.createElement('button');
+  customTab.className='dtab'+(curDate==='custom'?' active':'');
+  customTab.innerHTML='📅 Custom Range';
+  customTab.onclick=()=>{
+    curDate='custom';
+    const row=document.getElementById('date-range-row');
+    row.style.display='flex';
+    buildDateTabs();
+  };
+  container.appendChild(customTab);
+
+  sorted.slice(0,7).forEach(day=>{
+    const btn=document.createElement('button');
+    btn.className='dtab'+(curDate===day?' active':'');
+    const label=getBusinessDayLabel(day);
+    const openCount=days[day]||0;
+    btn.innerHTML=label+(openCount>0?` <span class="dc">${openCount}</span>`:'');
+    btn.onclick=()=>{curDate=day;buildDateTabs();renderTickets()};
+    container.appendChild(btn);
+  });
+}
+
+// ── RENDER ────────────────────────────────────────────────
+function renderTickets(){
+  const now=Date.now();
+  let tickets=getTickets();
+
+  // Filter by date
+  let filtered=tickets;
+  const now2=new Date();
+  if(curDate==='custom'&&curDateRange){
+    filtered=tickets.filter(t=>{
+      const d=new Date(getTicketDay(t.createdAt));
+      return d>=curDateRange.from && d<=curDateRange.to;
+    });
+  } else if(curDate==='week'){
+    const weekStart=new Date(now2); weekStart.setDate(now2.getDate()-now2.getDay()); weekStart.setHours(0,0,0,0);
+    filtered=tickets.filter(t=>new Date(t.createdAt)>=weekStart);
+  } else if(curDate==='month'){
+    filtered=tickets.filter(t=>{
+      const d=new Date(t.createdAt);
+      return d.getMonth()===now2.getMonth()&&d.getFullYear()===now2.getFullYear();
+    });
+  } else if(curDate==='lastmonth'){
+    const lm=new Date(now2.getFullYear(),now2.getMonth()-1,1);
+    const lmEnd=new Date(now2.getFullYear(),now2.getMonth(),0,23,59,59);
+    filtered=tickets.filter(t=>{const d=new Date(t.createdAt);return d>=lm&&d<=lmEnd;});
+  } else if(curDate&&curDate!=='all'){
+    filtered=tickets.filter(t=>getTicketDay(t.createdAt)===curDate);
+  }
+
+  // Filter by status
+  if(curFilter==='open') filtered=filtered.filter(t=>t.status==='Open');
+  else if(curFilter==='resolved') filtered=filtered.filter(t=>t.status==='Resolved');
+  else if(curFilter==='overdue') filtered=filtered.filter(t=>t.status==='Open'&&(now-t.createdAt)>t.slaMins*60000);
+
+  document.getElementById('ticket-count').textContent=filtered.length+' ticket'+(filtered.length!==1?'s':'');
+
+  const el=document.getElementById('tlist');
+  if(!filtered.length){
+    el.innerHTML=`<div class="empty-state"><div class="ei">📭</div><h3>No tickets found</h3><p>No tickets match the selected filters.</p></div>`;
+    updateStats(tickets); return;
+  }
+
+  el.innerHTML=filtered.map(t=>{
+    const elapsed=now-t.createdAt;
+    const slaMs=t.slaMins*60000;
+    const isOver=t.status==='Open'&&elapsed>slaMs;
+    let tcls='tok',ttxt='';
+    if(t.status==='Resolved'){
+      const m=Math.round((t.resolvedAt-t.createdAt)/60000);
+      ttxt='Done in '+m+'m';
+      tcls=(t.resolvedAt-t.createdAt)<=slaMs?'tok':'tover';
+    } else if(isOver){
+      ttxt='+'+Math.round((elapsed-slaMs)/60000)+'m over';
+      tcls='tover';
+    } else {
+      const rem=Math.ceil((slaMs-elapsed)/60000);
+      ttxt=rem+'m left';
+      tcls=(elapsed/slaMs)>0.75?'twarn':'tok';
+    }
+    const pb={Critical:'bc',High:'bh',Medium:'bm',Low:'bl'}[t.priority]||'bm';
+    const sb=isOver?'bov':t.status==='Resolved'?'br':'bo';
+    const slabel=isOver?'⚠ Overdue':t.status;
+    const rowCls=(t.priority==='Critical'?'critical-row':t.priority==='High'?'high-row':'')+
+                 (isAfterHours(t.createdAt)?' after-hours':'');
+    const ahTag=isAfterHours(t.createdAt)?'<span class="ah-tag">After Hours</span>':'';
+
+    return `<div class="trow ${rowCls}" onclick="openPanel('${t.id}')">
+      <div class="tid">${t.id}<br><span style="font-size:9px;color:var(--text3)">${new Date(t.createdAt).toLocaleDateString('en-PK',{timeZone:'Asia/Karachi',day:'2-digit',month:'short',year:'numeric'})}</span><br><span style="font-size:9px;color:var(--text3)">${new Date(t.createdAt).toLocaleTimeString('en-PK',{timeZone:'Asia/Karachi',hour12:true,hour:'2-digit',minute:'2-digit'})}</span></div>
+      <div class="tinfo">
+        <div class="ttitle">${esc(t.subject)}</div>
+        <div class="tmeta"><span>${t.dept}</span><span>·</span><span>${t.name}</span>${ahTag}</div>
+      </div>
+      <div><span class="badge ${pb}">${t.priority}</span></div>
+      <div><span class="badge ${sb}">${slabel}</span></div>
+      <div class="timer ${tcls}">${ttxt}</div>
+      <div>${t.status!=='Resolved'
+        ?`<button class="rbtn" onclick="event.stopPropagation();openResolve('${t.id}')">✓ Resolve</button>`
+        :'<span class="rdone">✓ Done</span>'}</div>
+    </div>`;
+  }).join('');
+  updateStats(tickets);
+}
+
+function updateStats(tickets){
+  if(!tickets) tickets=getTickets();
+  const now=Date.now();
+  const today=new Date().toDateString();
+  const todayTickets=tickets.filter(t=>getTicketDay(t.createdAt)===today);
+  const open=tickets.filter(t=>t.status==='Open');
+  const over=tickets.filter(t=>t.status==='Open'&&(now-t.createdAt)>t.slaMins*60000);
+
+  document.getElementById('s-today').textContent=todayTickets.length;
+  document.getElementById('s-open').textContent=open.length;
+  document.getElementById('s-res').textContent=tickets.filter(t=>t.status==='Resolved').length;
+  document.getElementById('s-over').textContent=over.length;
+
+  // Badge on sidebar
+  const badge=document.getElementById('open-badge');
+  if(open.length>0){badge.style.display='';badge.textContent=open.length}
+  else{badge.style.display='none'}
+}
+
+function doFilter(f,btn){
+  curFilter=f;
+  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTickets();
+}
+
+// ── DETAIL PANEL ─────────────────────────────────────────
+function openPanel(id){
+  const tickets=getTickets();
+  const t=tickets.find(x=>x.id===id); if(!t) return;
+  document.getElementById('dp-id').textContent=t.id;
+  const elapsed=t.resolvedAt?Math.round((t.resolvedAt-t.createdAt)/60000):Math.round((Date.now()-t.createdAt)/60000);
+  const within=t.resolvedAt?(t.resolvedAt-t.createdAt)<=t.slaMins*60000:null;
+  document.getElementById('dp-body').innerHTML=`
+    <div class="dp-grid">
+      <div><div class="dp-lbl">Name</div><div class="dp-val">${esc(t.name)}</div></div>
+      <div><div class="dp-lbl">Email</div><div class="dp-val" style="font-size:12px;font-family:var(--mono)">${esc(t.email)}</div></div>
+      <div><div class="dp-lbl">Department</div><div class="dp-val">${t.dept}</div></div>
+      <div><div class="dp-lbl">Category</div><div class="dp-val">${t.category}</div></div>
+      <div><div class="dp-lbl">Priority</div><div class="dp-val"><span class="badge ${{Critical:'bc',High:'bh',Medium:'bm',Low:'bl'}[t.priority]}">${t.priority}</span></div></div>
+      <div><div class="dp-lbl">Status</div><div class="dp-val"><span class="badge ${t.status==='Resolved'?'br':'bo'}">${t.status}</span></div></div>
+      <div><div class="dp-lbl">SLA Target</div><div class="dp-val">${t.slaMins} minutes</div></div>
+      <div><div class="dp-lbl">Submitted</div><div class="dp-val" style="font-size:12px">${fmt(t.createdAt)}</div></div>
+      ${isAfterHours(t.createdAt)?`<div style="grid-column:1/-1"><div class="dp-lbl">Note</div><div class="dp-val" style="color:var(--amber)">⏰ After-hours ticket — counted in next business day</div></div>`:''}
+      ${t.resolvedAt?`<div><div class="dp-lbl">Time Taken</div><div class="dp-val" style="color:${within?'var(--green)':'var(--red)'}">${elapsed} min ${within?'✅ Within SLA':'⚠️ SLA Breached'}</div></div>`:''}
+    </div>
+    <div class="dp-section"><div class="dp-lbl" style="margin-bottom:6px">Description</div><div class="dp-desc">${esc(t.description)}</div></div>
+    <div class="dp-tl">
+      <div class="dp-lbl" style="margin-bottom:8px">Timeline</div>
+      ${(t.timeline||[]).map(e=>`<div class="tli"><div class="tlt">${new Date(e.time).toLocaleTimeString('en-PK',{timeZone:'Asia/Karachi'})}</div><div class="tltx">${esc(e.text)}</div></div>`).join('')}
+    </div>`;
+
+  document.getElementById('resolve-cta').innerHTML=t.status!=='Resolved'?`
+    <div class="resolve-box">
+      <h4>Mark as Resolved</h4>
+      <p>A resolution email will be sent to <strong>${esc(t.email)}</strong></p>
+      <button class="big-rbtn" onclick="closePanel();openResolve('${t.id}')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Mark Resolved & Send Email
+      </button>
+    </div>`:'';
+
+  document.getElementById('det-overlay').style.display='block';
+  document.getElementById('detail-panel').classList.add('open');
+}
+function closePanel(){
+  document.getElementById('det-overlay').style.display='none';
+  document.getElementById('detail-panel').classList.remove('open');
+}
+
+// ── RESOLVE ──────────────────────────────────────────────
+function buildResolveEmail(tk){
+  const elapsed=tk.resolvedAt?Math.round((tk.resolvedAt-tk.createdAt)/60000):0;
+  const within=elapsed<=tk.slaMins;
+  return `From : m.basit_cplusoft@outlook.com
+To   : ${tk.email}
+Subj : [${tk.id}] RESOLVED — ${tk.subject}
+Date : ${fmt(tk.resolvedAt||Date.now())}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  CPLUSOFT HELPDESK — ISSUE RESOLVED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Dear ${tk.name},
+
+Your support ticket has been resolved.
+
+  Ticket ID   :  ${tk.id}
+  Subject     :  ${tk.subject}
+  Department  :  ${tk.dept}
+  Priority    :  ${tk.priority}
+
+━━ Resolution Summary ━━━━━━━━━━━━━━━━
+
+  Submitted   :  ${fmt(tk.createdAt)}
+  Resolved    :  ${fmt(tk.resolvedAt||Date.now())}
+  Time Taken  :  ${elapsed} minute(s)
+  SLA Target  :  ${tk.slaMins} minutes
+  SLA Status  :  ${within?'✅ Resolved within SLA':'⚠️ SLA exceeded'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+For follow-up reference: ${tk.id}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+}
+
+function openResolve(id){
+  const tickets=getTickets();
+  const t=tickets.find(x=>x.id===id); if(!t) return;
+  document.getElementById('res-body').textContent=buildResolveEmail({...t,resolvedAt:Date.now()});
+  document.getElementById('res-modal').classList.add('show');
+  document.getElementById('res-confirm-btn').onclick=()=>confirmResolve(id);
+}
+
+async function confirmResolve(id){
+  const tickets=getTickets();
+  const t=tickets.find(x=>x.id===id); if(!t) return;
+  t.status='Resolved';
+  t.resolvedAt=Date.now();
+  const elapsed=Math.round((t.resolvedAt-t.createdAt)/60000);
+  if(!t.timeline) t.timeline=[];
+  t.timeline.push({time:Date.now(),text:`Resolved in ${elapsed} min. Email sent to ${t.email}`});
+  saveTickets(tickets);
+  closeModal('res-modal');
+
+  const emailBody=buildResolveEmail(t);
+  if(CFG.pubkey&&CFG.service&&(CFG.template2||CFG.template)){
+    try{
+      await emailjs.send(CFG.service,CFG.template2||CFG.template,{
+        to_email:t.email,from_name:'CPluSoft HelpDesk',
+        subject:`[${t.id}] RESOLVED — ${t.subject}`,
+        body:emailBody,reply_to:'m.basit_cplusoft@outlook.com'
+      });
+      toast('Resolution email sent to '+t.email,'s');
+    }catch(err){toast('Email failed — check EmailJS config','e')}
+  }
+
+  if(SHEETS_URL){
+    try{
+      fetch(SHEETS_URL,{method:'POST',mode:'no-cors',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({action:'resolve',id:t.id,status:'Resolved',
+          resolvedAt:fmt(t.resolvedAt),timeTaken:elapsed})
+      });
+      toast('Google Sheets updated','s');
+    }catch(e){}
+  }
+
+  buildDateTabs();
+  renderTickets();
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+
+// ── PAGE NAV ─────────────────────────────────────────────
+const pageTitles={dashboard:['Dashboard','Live ticket overview'],setup:['Setup','Configure EmailJS & Google Sheets']};
+function showPage(name,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const info=pageTitles[name]||[name,''];
+  document.getElementById('page-title').textContent=info[0];
+  document.getElementById('page-sub').textContent=info[1];
+  if(name==='setup') loadCfgUI();
+  if(name==='dashboard'){buildDateTabs();renderTickets();}
+}
+
+// ── APPS SCRIPT ───────────────────────────────────────────
+const APPS_SCRIPT=`function doPost(e) {
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName('Tickets');
+    if (!sheet) {
+      sheet = ss.insertSheet('Tickets');
+      sheet.appendRow(['Ticket ID','Name','Email','Department',
+        'Category','Priority','Subject','Description',
+        'Status','Created At','Resolved At',
+        'Time Taken (min)','SLA (min)','Within SLA']);
+      sheet.setFrozenRows(1);
+      sheet.getRange(1,1,1,14)
+        .setBackground('#3b5bdb')
+        .setFontColor('#ffffff')
+        .setFontWeight('bold');
+    }
+    if (data.action === 'create') {
+      sheet.appendRow([data.id,data.name,data.email,
+        data.dept,data.category,data.priority,
+        data.subject,data.description,
+        'Open',data.createdAt,'','',data.sla,'']);
+    } else if (data.action === 'resolve') {
+      var rows = sheet.getDataRange().getValues();
+      for (var i = 1; i < rows.length; i++) {
+        if (rows[i][0] === data.id) {
+          var mins = data.timeTaken || 0;
+          var sla = rows[i][12];
+          sheet.getRange(i+1,9).setValue('Resolved');
+          sheet.getRange(i+1,11).setValue(data.resolvedAt);
+          sheet.getRange(i+1,12).setValue(mins);
+          sheet.getRange(i+1,14).setValue(mins<=sla?'YES':'NO');
+          sheet.getRange(i+1,1,1,14).setBackground('#ebfbee');
+          break;
+        }
+      }
+    }
+    return ContentService
+      .createTextOutput(JSON.stringify({status:'ok'}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({status:'error',msg:err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+function doGet(e) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName('Tickets');
+    if (!sheet) {
+      return ContentService
+        .createTextOutput(JSON.stringify([]))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    var data = sheet.getDataRange().getValues();
+    if (data.length <= 1) {
+      return ContentService
+        .createTextOutput(JSON.stringify([]))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    var headers = data[0];
+    var rows = data.slice(1).map(function(row) {
+      var obj = {};
+      headers.forEach(function(h, i) { obj[h] = row[i]; });
+      return obj;
+    });
+    return ContentService
+      .createTextOutput(JSON.stringify(rows))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({error: err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}`;
+
+document.getElementById('as-code').textContent=APPS_SCRIPT;
+function copyScript(){navigator.clipboard.writeText(APPS_SCRIPT).then(()=>toast('Apps Script code copied!','s'))}
+
+// ── UTILS ─────────────────────────────────────────────────
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function fmt(ts){return new Date(ts).toLocaleString('en-PK',{timeZone:'Asia/Karachi',hour12:true})}
+function toast(msg,type='i'){
+  const c=document.getElementById('tc');
+  const t=document.createElement('div');
+  t.className='toast '+type; t.textContent=msg; c.appendChild(t);
+  setTimeout(()=>t.remove(),4000);
+}
+
+// ── CLOCK & AUTO REFRESH ─────────────────────────────────
+setInterval(()=>{
+  document.getElementById('clock').textContent=
+    new Date().toLocaleTimeString('en-PK',{timeZone:'Asia/Karachi',hour12:false});
+},1000);
+setInterval(()=>{
+  if(document.getElementById('page-dashboard').classList.contains('active')){
+    buildDateTabs(); renderTickets();
+  }
+},30000);
+
+// ── DATE RANGE ───────────────────────────────────────────
+function applyDateRange(){
+  const from=document.getElementById('date-from').value;
+  const to=document.getElementById('date-to').value;
+  if(!from&&!to){curDateRange=null;document.getElementById('range-result').textContent='';renderTickets();return;}
+  const fromDate=from?new Date(from+'T00:00:00'):new Date('2020-01-01');
+  const toDate=to?new Date(to+'T23:59:59'):new Date();
+  curDateRange={from:fromDate,to:toDate};
+  const result=document.getElementById('range-result');
+  result.textContent=`Showing: ${from||'start'} → ${to||'today'}`;
+  renderTickets();
+}
+function clearDateRange(){
+  document.getElementById('date-from').value='';
+  document.getElementById('date-to').value='';
+  curDateRange=null;
+  curDate='all';
+  document.getElementById('date-range-row').style.display='none';
+  document.getElementById('range-result').textContent='';
+  buildDateTabs();renderTickets();
+}
+
+// ── EXPORT / IMPORT ──────────────────────────────────────
+function exportData(){
+  const tickets=getTickets();
+  const blob=new Blob([JSON.stringify(tickets,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='helpdesk_tickets_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  toast('Tickets exported successfully!','s');
+}
+
+function importData(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      const imported=JSON.parse(ev.target.result);
+      if(!Array.isArray(imported)) throw new Error('Invalid format');
+      const existing=getTickets();
+      const existingIds=new Set(existing.map(t=>t.id));
+      const newTickets=imported.filter(t=>!existingIds.has(t.id));
+      const merged=[...existing,...newTickets];
+      saveTickets(merged);
+      const status=document.getElementById('import-status');
+      status.style.display='block';
+      status.style.color='var(--green)';
+      status.textContent='✓ Imported '+newTickets.length+' new tickets ('+imported.length+' total in file)';
+      buildDateTabs(); renderTickets();
+      toast(newTickets.length+' tickets imported!','s');
+    }catch(err){
+      const status=document.getElementById('import-status');
+      status.style.display='block';
+      status.style.color='var(--red)';
+      status.textContent='✕ Import failed: '+err.message;
+      toast('Import failed','e');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function exportConfig(){
+  const blob=new Blob([JSON.stringify(CFG,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='helpdesk_config.json';
+  a.click();
+  toast('Config exported!','s');
+}
+
+function importConfig(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      const cfg=JSON.parse(ev.target.result);
+      CFG=cfg;
+      localStorage.setItem('cps_cfg',JSON.stringify(CFG));
+      if(CFG.pubkey){try{emailjs.init(CFG.pubkey)}catch(e){}}
+      loadCfgUI();
+      toast('Config imported & applied!','s');
+    }catch(err){ toast('Config import failed','e'); }
+  };
+  reader.readAsText(file);
+}
+
+// ── AUTO LOGIN CHECK ──────────────────────────────────────
+if(isLoggedIn()){
+  document.getElementById('login-overlay').style.display='none';
+  document.getElementById('main-app').style.display='flex';
+  init();
+}
+</script>
+</body>
+</html>

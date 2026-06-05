@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPluSoft — Submit Support Ticket</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+:root{
+  --bg:#f0f2f5;--bg2:#ffffff;--bg3:#f8f9fb;--bg4:#eef0f3;
+  --sidebar:#1a2035;
+  --border:#e2e5ea;--border2:#d0d5dd;
+  --text:#1a1f2e;--text2:#5a6478;--text3:#9aa3b5;
+  --accent:#3b5bdb;--accent2:#4c6ef5;--accent-light:#eef2ff;
+  --green:#2f9e44;--green-bg:#ebfbee;--green-border:#b2f2bb;
+  --red:#e03131;--red-bg:#fff5f5;--red-border:#ffc9c9;
+  --amber:#e67700;--amber-bg:#fff9db;--amber-border:#ffec99;
+  --blue:#1971c2;--blue-bg:#e7f5ff;--blue-border:#a5d8ff;
+  --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+  --r:8px;--r2:12px;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
+  --shadow2:0 4px 16px rgba(0,0,0,0.1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+
+/* NAV */
+nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-logo{width:34px;height:34px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
+.nav-title{font-size:.95rem;font-weight:700;color:#fff;letter-spacing:-.01em}
+.nav-sub{font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px}
+.nav-right{display:flex;align-items:center;gap:10px}
+.live-pill{background:rgba(47,158,68,0.15);border:1px solid rgba(47,158,68,0.3);color:#69db7c;padding:4px 11px;border-radius:20px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:5px}
+.ldot{width:5px;height:5px;background:#69db7c;border-radius:50%;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+#clock{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.35)}
+
+/* LAYOUT */
+.wrap{max-width:780px;margin:0 auto;padding:2rem 1.5rem}
+
+/* PAGE HEADER */
+.page-head{text-align:center;margin-bottom:2rem}
+.page-head .icon-wrap{width:56px;height:56px;background:var(--accent-light);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:24px;border:1.5px solid rgba(59,91,219,0.15)}
+.page-head h1{font-size:1.6rem;font-weight:700;color:var(--text);letter-spacing:-.02em;margin-bottom:.4rem}
+.page-head p{color:var(--text2);font-size:13.5px;line-height:1.6}
+
+/* FORM CARD */
+.form-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--shadow2);overflow:hidden}
+.form-card-header{background:var(--sidebar);padding:1rem 1.5rem;display:flex;align-items:center;gap:10px}
+.form-card-header h2{font-size:.9rem;font-weight:600;color:rgba(255,255,255,0.85)}
+.form-card-header span{font-size:11px;color:rgba(255,255,255,0.35);margin-left:auto;font-family:var(--mono)}
+.form-body{padding:1.5rem}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.fi{display:flex;flex-direction:column;gap:5px}
+.fi.full{grid-column:1/-1}
+.fi label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:4px}
+.req{color:var(--red);font-size:12px}
+.fi input,.fi select,.fi textarea{background:var(--bg3);border:1.5px solid var(--border2);color:var(--text);font-family:var(--font);font-size:13.5px;padding:10px 13px;border-radius:var(--r);outline:none;transition:border .2s;width:100%}
+.fi input:focus,.fi select:focus,.fi textarea:focus{border-color:var(--accent);background:var(--bg2)}
+.fi select option{background:var(--bg2)}
+.fi textarea{resize:vertical;min-height:95px;line-height:1.6}
+.fi input::placeholder,.fi textarea::placeholder{color:var(--text3)}
+
+/* PRIORITY */
+.priority-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pb{padding:10px 8px;border-radius:var(--r);border:1.5px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-family:var(--font);font-size:11.5px;font-weight:600;text-align:center;transition:all .2s;line-height:1.5;width:100%}
+.pb small{display:block;font-weight:400;font-size:10px;opacity:.7;margin-top:2px}
+.pb.pc{--c:#e03131;--cb:#fff5f5;--cbr:#ffc9c9}
+.pb.ph2{--c:#e67700;--cb:#fff9db;--cbr:#ffec99}
+.pb.pm{--c:#1971c2;--cb:#e7f5ff;--cbr:#a5d8ff}
+.pb.pl{--c:#2f9e44;--cb:#ebfbee;--cbr:#b2f2bb}
+.pb.sel{border-color:var(--c);background:var(--cb);color:var(--c)}
+.pb:hover:not(.sel){border-color:var(--border2);background:var(--bg4);color:var(--text)}
+
+/* DIVIDER */
+.form-divider{height:1px;background:var(--border);margin:.3rem 0}
+
+/* SUBMIT */
+.sub-btn{width:100%;padding:13px;background:var(--accent);border:none;color:#fff;font-family:var(--font);font-size:14px;font-weight:700;border-radius:var(--r);cursor:pointer;margin-top:1.2rem;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.01em}
+.sub-btn:hover:not(:disabled){background:var(--accent2);transform:translateY(-1px);box-shadow:0 4px 12px rgba(59,91,219,0.3)}
+.sub-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* SLA INFO */
+.sla-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1rem 1.2rem;margin-top:1rem;box-shadow:var(--shadow)}
+.sla-card-title{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.7rem;display:flex;align-items:center;gap:6px}
+.sla-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.sla-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:.6rem .8rem;text-align:center}
+.sla-dept{font-size:11px;font-weight:700;color:var(--text);margin-bottom:2px}
+.sla-time{font-size:10px;color:var(--text2);font-family:var(--mono)}
+.sla-bar{height:3px;border-radius:2px;margin-top:5px}
+.bar-cs{background:#1971c2}.bar-bd{background:#e67700}.bar-dev{background:#7048e8}.bar-other{background:#2f9e44}
+
+/* SUCCESS */
+.success-card{background:var(--bg2);border:1px solid var(--green-border);border-radius:var(--r2);box-shadow:var(--shadow2);overflow:hidden;display:none}
+.success-card-header{background:var(--green);padding:1.5rem;text-align:center}
+.success-card-header .tick{width:56px;height:56px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .8rem;font-size:24px}
+.success-card-header h2{font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:.3rem}
+.success-card-header p{font-size:12.5px;color:rgba(255,255,255,0.8)}
+.success-body{padding:1.5rem}
+.ticket-id-box{background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--r);padding:.9rem 1.2rem;text-align:center;margin-bottom:1.2rem}
+.ticket-id-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.ticket-id-val{font-size:1.4rem;font-weight:700;font-family:var(--mono);color:var(--accent);letter-spacing:.05em}
+.success-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.2rem}
+.si-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:.8rem;text-align:center}
+.si-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.si-val{font-size:13px;font-weight:600;color:var(--text)}
+.success-note{background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:var(--r);padding:.8rem 1rem;font-size:12.5px;color:var(--blue);line-height:1.6;margin-bottom:1.2rem}
+.new-ticket-btn{width:100%;padding:11px;background:transparent;border:1.5px solid var(--border2);color:var(--text2);font-family:var(--font);font-size:13px;font-weight:600;border-radius:var(--r);cursor:pointer;transition:all .2s}
+.new-ticket-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+
+/* TOAST */
+#tc{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:7px}
+.toast{background:var(--bg2);border:1.5px solid var(--border2);padding:10px 14px;border-radius:var(--r);font-size:13px;min-width:240px;box-shadow:var(--shadow2);animation:tin .3s ease;display:flex;align-items:center;gap:9px}
+@keyframes tin{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
+.toast.s{border-color:var(--green-border);background:var(--green-bg)}
+.toast.s::before{content:'✓';color:var(--green);font-weight:700}
+.toast.w{border-color:var(--amber-border);background:var(--amber-bg)}
+.toast.w::before{content:'⚠';color:var(--amber)}
+.toast.e{border-color:var(--red-border);background:var(--red-bg)}
+.toast.e::before{content:'✕';color:var(--red);font-weight:700}
+
+@media(max-width:600px){
+  .form-grid{grid-template-columns:1fr}
+  .priority-grid{grid-template-columns:1fr 1fr}
+  .sla-grid{grid-template-columns:1fr 1fr}
+  .success-info-grid{grid-template-columns:1fr 1fr}
+  nav{padding:.8rem 1rem}
+  .wrap{padding:1.2rem 1rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">CP</div>
+    <div>
+      <div class="nav-title">CPluSoft Support</div>
+      <div class="nav-sub">IT Help Desk</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="live-pill"><div class="ldot"></div>Live</div>
+    <span id="clock"></span>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <div class="page-head">
+    <div class="icon-wrap">🎫</div>
+    <h1>Submit a Support Ticket</h1>
+    <p>Facing an issue? Fill the form below.<br>You'll receive an email confirmation with your ticket ID and resolution deadline.</p>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-card" id="form-section">
+    <div class="form-card-header">
+      <span style="font-size:14px">📋</span>
+      <h2>New Support Ticket</h2>
+      <span id="form-clock2"></span>
+    </div>
+    <div class="form-body">
+      <div class="form-grid">
+        <div class="fi">
+          <label>Full Name <span class="req">*</span></label>
+          <input id="fn" placeholder="Muhammad Ali">
+        </div>
+        <div class="fi">
+          <label>Email Address <span class="req">*</span></label>
+          <input id="fe" type="email" placeholder="ali@cplusoft.com">
+        </div>
+        <div class="fi">
+          <label>Department <span class="req">*</span></label>
+          <select id="fd">
+            <option value="">— Select Department —</option>
+            <option value="BD">Business Development (BD)</option>
+            <option value="CS">Customer Support (CS)</option>
+            <option value="Dev">Development (Dev)</option>
+            <option value="HR">Human Resources (HR)</option>
+            <option value="Finance">Finance</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Operations">Operations</option>
+          </select>
+        </div>
+        <div class="fi">
+          <label>Issue Category <span class="req">*</span></label>
+          <select id="fc">
+            <option value="">— Select Category —</option>
+            <option value="Technical">Technical Issue</option>
+            <option value="Access">Access / Permissions</option>
+            <option value="Software">Software / Tools</option>
+            <option value="Hardware">Hardware</option>
+            <option value="Network">Network / Connectivity</option>
+            <option value="Process">Process / Workflow</option>
+            <option value="Security">Security Incident</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="fi full">
+          <label>Subject <span class="req">*</span></label>
+          <input id="fs" placeholder="Brief description of the issue">
+        </div>
+        <div class="fi full">
+          <label>Priority Level <span class="req">*</span></label>
+          <div class="priority-grid">
+            <button class="pb pc" onclick="selP('Critical',this)">🔴 Critical<small>System Down</small></button>
+            <button class="pb ph2" onclick="selP('High',this)">🟡 High<small>Major Impact</small></button>
+            <button class="pb pm" onclick="selP('Medium',this)">🔵 Medium<small>Minor Impact</small></button>
+            <button class="pb pl" onclick="selP('Low',this)">🟢 Low<small>No Urgency</small></button>
+          </div>
+        </div>
+        <div class="fi full">
+          <label>Detailed Description <span class="req">*</span></label>
+          <textarea id="fdes" placeholder="Describe the issue in detail — what happened, any error messages, steps to reproduce..."></textarea>
+        </div>
+      </div>
+      <button class="sub-btn" id="sub-btn" onclick="submitTicket()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Submit Ticket & Send Confirmation Email
+      </button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-card" id="success-section">
+    <div class="success-card-header">
+      <div class="tick">✅</div>
+      <h2>Ticket Submitted Successfully!</h2>
+      <p>A confirmation email has been sent to <strong id="s-email"></strong></p>
+    </div>
+    <div class="success-body">
+      <div class="ticket-id-box">
+        <div class="ticket-id-label">Your Ticket Reference Number</div>
+        <div class="ticket-id-val" id="s-tid">TKT-XXX-00000</div>
+      </div>
+      <div class="success-info-grid">
+        <div class="si-item">
+          <div class="si-label">Department</div>
+          <div class="si-val" id="s-dept">—</div>
+        </div>
+        <div class="si-item">
+          <div class="si-label">Priority</div>
+          <div class="si-val" id="s-pri">—</div>
+        </div>
+        <div class="si-item">
+          <div class="si-label">SLA Target</div>
+          <div class="si-val" id="s-sla">— min</div>
+        </div>
+      </div>
+      <div class="success-note">
+        📧 Check your email for full ticket details and resolution deadline.<br>
+        🕐 Our support team will resolve your issue within the SLA window.<br>
+        ✉️ You will receive another email once your ticket is resolved.
+      </div>
+      <button class="new-ticket-btn" onclick="newTicket()">+ Submit Another Ticket</button>
+    </div>
+  </div>
+
+  <!-- SLA INFO -->
+  <div class="sla-card">
+    <div class="sla-card-title">⏱ Service Level Agreement (SLA)</div>
+    <div class="sla-grid">
+      <div class="sla-item">
+        <div class="sla-dept">CS</div>
+        <div class="sla-time">10–15 min</div>
+        <div class="sla-bar bar-cs"></div>
+      </div>
+      <div class="sla-item">
+        <div class="sla-dept">BD</div>
+        <div class="sla-time">15–20 min</div>
+        <div class="sla-bar bar-bd"></div>
+      </div>
+      <div class="sla-item">
+        <div class="sla-dept">Dev</div>
+        <div class="sla-time">30 min</div>
+        <div class="sla-bar bar-dev"></div>
+      </div>
+      <div class="sla-item">
+        <div class="sla-dept">Others</div>
+        <div class="sla-time">45 min</div>
+        <div class="sla-bar bar-other"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="tc"></div>
+
+<script>
+// ── HARDCODED CONFIG ─────────────────────────────────────
+const SHEETS_URL='https://script.google.com/macros/s/AKfycbw5VjU3WiNaz7JNhoaLzJOgTa5YVdgYhMbE5_NFatDr5Mj_3Kxl7geSoK02-sAadOYgjg/exec';
+
+let CFG={};try{CFG=JSON.parse(localStorage.getItem('cps_cfg')||'{}')}catch(e){}
+if(CFG.pubkey){try{emailjs.init(CFG.pubkey)}catch(e){}}
+
+let tickets=[];try{tickets=JSON.parse(localStorage.getItem('cps_tickets')||'[]')}catch(e){}
+let selPriority='';
+
+const SLA={BD:15,CS:10,Dev:30,HR:45,Finance:45,Marketing:45,Operations:45};
+function getSLA(d){return SLA[d]||45}
+function genId(d){return 'TKT-'+d.toUpperCase().slice(0,3)+'-'+String(Date.now()).slice(-5)}
+function fmt(ts){return new Date(ts).toLocaleString('en-PK',{timeZone:'Asia/Karachi',hour12:true})}
+function save(){try{localStorage.setItem('cps_tickets',JSON.stringify(tickets))}catch(e){}}
+
+function toast(msg,type='s'){
+  const c=document.getElementById('tc');
+  const t=document.createElement('div');
+  t.className='toast '+type;t.textContent=msg;c.appendChild(t);
+  setTimeout(()=>t.remove(),4200);
+}
+
+function selP(p,btn){
+  selPriority=p;
+  document.querySelectorAll('.pb').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+
+function buildEmail(tk){
+  const deadline=fmt(tk.createdAt+tk.slaMins*60000);
+  return `From : m.basit_cplusoft@outlook.com
+To   : ${tk.email}
+Subj : [${tk.id}] Ticket Received — ${tk.subject}
+Date : ${fmt(tk.createdAt)}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  CPLUSOFT HELPDESK — TICKET CONFIRMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Dear ${tk.name},
+
+Your support ticket has been submitted.
+
+  Ticket ID   :  ${tk.id}
+  Department  :  ${tk.dept}
+  Category    :  ${tk.category}
+  Priority    :  ${tk.priority}
+  Status      :  Open
+  Submitted   :  ${fmt(tk.createdAt)}
+
+━━ SLA & Resolution Deadline ━━━━━━━━━━
+
+  Target Time  :  ${tk.slaMins} minutes
+  Deadline     :  ${deadline}
+  Priority     :  ${tk.priority==='Critical'?'🔴 CRITICAL — Immediate response':tk.priority==='High'?'🟡 HIGH — Response within 5 min':tk.priority==='Medium'?'🔵 MEDIUM — Standard queue':'🟢 LOW — Next available slot'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Reference ID: ${tk.id}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
+}
+
+async function submitTicket(){
+  const name=document.getElementById('fn').value.trim();
+  const email=document.getElementById('fe').value.trim();
+  const dept=document.getElementById('fd').value;
+  const cat=document.getElementById('fc').value;
+  const subj=document.getElementById('fs').value.trim();
+  const desc=document.getElementById('fdes').value.trim();
+
+  if(!name||!email||!dept||!cat||!subj||!desc||!selPriority){
+    toast('Please fill all required fields','w');return;
+  }
+  if(!email.includes('@')){toast('Invalid email address','w');return;}
+
+  const btn=document.getElementById('sub-btn');
+  btn.disabled=true;
+  btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur=".8s" repeatCount="indefinite"/></circle></svg> Submitting...';
+
+  const tk={
+    id:genId(dept),name,email,dept,category:cat,
+    subject:subj,description:desc,priority:selPriority,
+    status:'Open',createdAt:Date.now(),slaMins:getSLA(dept),
+    timeline:[{time:Date.now(),text:'Ticket created. Confirmation email sent to '+email}]
+  };
+  tickets.unshift(tk);save();
+
+  if(CFG.pubkey&&CFG.service&&CFG.template){
+    try{
+      await emailjs.send(CFG.service,CFG.template,{
+        to_email:email,from_name:'CPluSoft HelpDesk',
+        subject:`[${tk.id}] Ticket Received — ${tk.subject}`,
+        body:buildEmail(tk),reply_to:'m.basit_cplusoft@outlook.com'
+      });
+      toast('Confirmation email sent to '+email,'s');
+    }catch(err){toast('Email failed — contact support','e')}
+  }
+
+  // Send to Google Sheets (hardcoded URL — works from any PC)
+  try{
+    fetch(SHEETS_URL,{method:'POST',mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'create',id:tk.id,name:tk.name,
+        email:tk.email,dept:tk.dept,category:tk.category,
+        priority:tk.priority,subject:tk.subject,
+        description:tk.description,createdAt:fmt(tk.createdAt),sla:tk.slaMins})
+    });
+  }catch(e){console.error('Sheets error:',e);}
+
+  document.getElementById('form-section').style.display='none';
+  document.getElementById('success-section').style.display='block';
+  document.getElementById('s-email').textContent=email;
+  document.getElementById('s-tid').textContent=tk.id;
+  document.getElementById('s-dept').textContent=tk.dept;
+  document.getElementById('s-pri').textContent=tk.priority;
+  document.getElementById('s-sla').textContent=tk.slaMins+' min';
+
+  btn.disabled=false;
+  btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Submit Ticket & Send Confirmation Email';
+}
+
+function newTicket(){
+  document.getElementById('form-section').style.display='block';
+  document.getElementById('success-section').style.display='none';
+  ['fn','fe','fs','fdes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fd').value='';
+  document.getElementById('fc').value='';
+  selPriority='';
+  document.querySelectorAll('.pb').forEach(b=>b.classList.remove('sel'));
+}
+
+setInterval(()=>{
+  const t=new Date().toLocaleTimeString('en-PK',{timeZone:'Asia/Karachi',hour12:false});
+  document.getElementById('clock').textContent=t;
+  const d=new Date().toLocaleDateString('en-PK',{timeZone:'Asia/Karachi',day:'2-digit',month:'short',year:'numeric'});
+  document.getElementById('form-clock2').textContent=d+' '+t;
+},1000);
+</script>
+</body>
+</html>

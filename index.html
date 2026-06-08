@@ -419,21 +419,36 @@ function newTicket(){
   document.querySelectorAll('.pb').forEach(b=>b.classList.remove('sel'));
 }
 
-// Google Sheets - reliable cross-device method
+// Google Sheets - 100% cross-device method using form submit
 function sendToSheets(url, data){
-  // Method 1: fetch with text/plain (works on most devices)
-  fetch(url, {
-    method:'POST',
-    mode:'no-cors',
-    cache:'no-cache',
-    headers:{'Content-Type':'text/plain'},
-    body:JSON.stringify(data)
-  }).catch(function(){
-    // Method 2: fallback - GET with encoded params (works everywhere)
-    var encoded = encodeURIComponent(JSON.stringify(data));
-    var img = new Image();
-    img.src = url + '?data=' + encoded;
-  });
+  // Create hidden iframe to avoid page navigation
+  var iframeName = 'gs_frame_' + Date.now();
+  var iframe = document.createElement('iframe');
+  iframe.name = iframeName;
+  iframe.style.display = 'none';
+  document.body.appendChild(iframe);
+
+  // Create hidden form targeting iframe
+  var form = document.createElement('form');
+  form.method = 'POST';
+  form.action = url;
+  form.target = iframeName;
+  form.style.display = 'none';
+
+  // Add data as hidden input
+  var input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'payload';
+  input.value = JSON.stringify(data);
+  form.appendChild(input);
+
+  document.body.appendChild(form);
+  form.submit();
+
+  // Cleanup after 5 seconds
+  setTimeout(function(){
+    try{ document.body.removeChild(form); document.body.removeChild(iframe); }catch(e){}
+  }, 5000);
 }
 
 setInterval(()=>{

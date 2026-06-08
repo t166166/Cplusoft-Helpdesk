@@ -296,6 +296,7 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
       <p id="page-sub">Live ticket overview</p>
     </div>
     <div class="topbar-right">
+      <button onclick="manualSync()" id="sync-btn" style="padding:5px 13px;background:var(--accent-light);border:1.5px solid rgba(59,91,219,0.2);color:var(--accent);border-radius:var(--r);cursor:pointer;font-family:var(--font);font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px">🔄 Sync</button>
       <div class="live-pill"><div class="ldot"></div>Live</div>
       <div id="clock"></div>
     </div>
@@ -563,17 +564,47 @@ function getBusinessDayLabel(dateStr){
 function getTickets(){try{return JSON.parse(localStorage.getItem('cps_tickets')||'[]')}catch(e){return[]}}
 function saveTickets(t){try{localStorage.setItem('cps_tickets',JSON.stringify(t))}catch(e){}}
 
+// Load tickets from Google Sheets (central source)
+async function syncFromSheets(){
+  if(!CFG.sheets) return;
+  try{
+    const url = CFG.sheets + '?action=getTickets&t=' + Date.now();
+    const res = await fetch(url);
+    const data = await res.json();
+    if(data.status==='ok' && Array.isArray(data.tickets) && data.tickets.length>0){
+      // Merge: sheets is source of truth
+      const sheetsData = data.tickets;
+      const local = getTickets();
+      // Keep local tickets not yet in sheets
+      const sheetIds = new Set(sheetsData.map(t=>t.id));
+      const localOnly = local.filter(t=>!sheetIds.has(t.id));
+      const merged = [...sheetsData, ...localOnly];
+      // Sort by createdAt desc
+      merged.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+      saveTickets(merged);
+      return merged;
+    }
+  }catch(e){ console.warn('Sheets sync failed',e); }
+  return getTickets();
+}
+
 // ── STATE ─────────────────────────────────────────────────
 let curFilter='all';
 let curDate=''; // empty = today
 let curDateRange=null; // {from, to} for custom range
 
 // ── INIT ─────────────────────────────────────────────────
-function init(){
-  buildDateTabs();
-  renderTickets();
+async function init(){
   loadCfgUI();
   document.getElementById('as-code').textContent=APPS_SCRIPT;
+  // Show loading
+  document.getElementById('tlist').innerHTML='<div class="empty-state"><div class="ei">🔄</div><h3>Loading tickets...</h3><p>Syncing from Google Sheets</p></div>';
+  buildDateTabs();
+  // Sync from sheets first
+  await syncFromSheets();
+  buildDateTabs();
+  renderTickets();
+  toast('Tickets synced from Google Sheets','s');
 }
 
 // ── DATE TABS ─────────────────────────────────────────────
@@ -911,18 +942,21 @@ const APPS_SCRIPT=`function doPost(e) {
       sheet.appendRow(['Ticket ID','Name','Email','Department',
         'Category','Priority','Subject','Description',
         'Status','Created At','Resolved At',
-        'Time Taken (min)','SLA (min)','Within SLA']);
+        'Time Taken (min)','SLA (min)','Within SLA',
+        'createdAtTS','slaMins','resolvedAtTS','timeline']);
       sheet.setFrozenRows(1);
-      sheet.getRange(1,1,1,14)
+      sheet.getRange(1,1,1,18)
         .setBackground('#3b5bdb')
         .setFontColor('#ffffff')
         .setFontWeight('bold');
     }
     if (data.action === 'create') {
-      sheet.appendRow([data.id,data.name,data.email,
-        data.dept,data.category,data.priority,
-        data.subject,data.description,
-        'Open',data.createdAt,'','',data.sla,'']);
+      sheet.appendRow([
+        data.id, data.name, data.email, data.dept,
+        data.category, data.priority, data.subject, data.description,
+        'Open', data.createdAt, '', '', data.sla, '',
+        data.createdAtTS, data.slaMins, '', JSON.stringify(data.timeline||[])
+      ]);
     } else if (data.action === 'resolve') {
       var rows = sheet.getDataRange().getValues();
       for (var i = 1; i < rows.length; i++) {
@@ -933,23 +967,52 @@ const APPS_SCRIPT=`function doPost(e) {
           sheet.getRange(i+1,11).setValue(data.resolvedAt);
           sheet.getRange(i+1,12).setValue(mins);
           sheet.getRange(i+1,14).setValue(mins<=sla?'YES':'NO');
-          sheet.getRange(i+1,1,1,14).setBackground('#ebfbee');
+          sheet.getRange(i+1,17).setValue(data.resolvedAtTS);
+          sheet.getRange(i+1,18).setValue(JSON.stringify(data.timeline||[]));
+          sheet.getRange(i+1,1,1,18).setBackground('#ebfbee');
           break;
         }
       }
     }
-    return ContentService
-      .createTextOutput(JSON.stringify({status:'ok'}))
-      .setMimeType(ContentService.MimeType.JSON);
+    return buildResponse({status:'ok'});
   } catch(err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({status:'error',msg:err.toString()}))
-      .setMimeType(ContentService.MimeType.JSON);
+    return buildResponse({status:'error',msg:err.toString()});
   }
 }
+
 function doGet(e) {
+  try {
+    var action = e && e.parameter && e.parameter.action;
+    if (action === 'getTickets') {
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var sheet = ss.getSheetByName('Tickets');
+      if (!sheet) return buildResponse({status:'ok',tickets:[]});
+      var rows = sheet.getDataRange().getValues();
+      var tickets = [];
+      for (var i = 1; i < rows.length; i++) {
+        var r = rows[i];
+        if (!r[0]) continue;
+        var tl = [];
+        try { tl = JSON.parse(r[17]||'[]'); } catch(e2){}
+        tickets.push({
+          id: r[0], name: r[1], email: r[2], dept: r[3],
+          category: r[4], priority: r[5], subject: r[6],
+          description: r[7], status: r[8],
+          createdAt: r[14]||0, slaMins: r[15]||45,
+          resolvedAt: r[16]||null, timeline: tl
+        });
+      }
+      return buildResponse({status:'ok',tickets:tickets});
+    }
+    return buildResponse({status:'ok',message:'HelpDesk API active'});
+  } catch(err) {
+    return buildResponse({status:'error',msg:err.toString()});
+  }
+}
+
+function buildResponse(data) {
   return ContentService
-    .createTextOutput(JSON.stringify({status:'ok',message:'HelpDesk API active'}))
+    .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
 }`;
 
@@ -971,9 +1034,11 @@ setInterval(()=>{
   document.getElementById('clock').textContent=
     new Date().toLocaleTimeString('en-PK',{timeZone:'Asia/Karachi',hour12:false});
 },1000);
-setInterval(()=>{
+setInterval(async ()=>{
   if(document.getElementById('page-dashboard').classList.contains('active')){
-    buildDateTabs(); renderTickets();
+    await syncFromSheets();
+    buildDateTabs();
+    renderTickets();
   }
 },30000);
 
@@ -997,6 +1062,19 @@ function clearDateRange(){
   document.getElementById('date-range-row').style.display='none';
   document.getElementById('range-result').textContent='';
   buildDateTabs();renderTickets();
+}
+
+// ── MANUAL SYNC ──────────────────────────────────────────
+async function manualSync(){
+  const btn=document.getElementById('sync-btn');
+  btn.textContent='🔄 Syncing...';
+  btn.disabled=true;
+  await syncFromSheets();
+  buildDateTabs();
+  renderTickets();
+  btn.textContent='🔄 Sync';
+  btn.disabled=false;
+  toast('Synced from Google Sheets!','s');
 }
 
 // ── EXPORT / IMPORT ──────────────────────────────────────

@@ -296,8 +296,6 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
       <p id="page-sub">Live ticket overview</p>
     </div>
     <div class="topbar-right">
-      <span id="sync-status" style="font-size:11px;color:var(--text3);font-family:var(--mono)"></span>
-      <button onclick="fetchSheetTickets()" style="background:var(--accent-light);border:1px solid var(--accent);color:var(--accent);padding:5px 12px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)">⟳ Sync Now</button>
       <div class="live-pill"><div class="ldot"></div>Live</div>
       <div id="clock"></div>
     </div>
@@ -503,9 +501,6 @@ function logout(){
   location.reload();
 }
 
-// ── HARDCODED SHEETS URL ──────────────────────────────────
-const SHEETS_URL='https://script.google.com/macros/s/AKfycbw5VjU3WiNaz7JNhoaLzJOgTa5YVdgYhMbE5_NFatDr5Mj_3Kxl7geSoK02-sAadOYgjg/exec';
-
 // ── CONFIG ────────────────────────────────────────────────
 let CFG={};try{CFG=JSON.parse(localStorage.getItem('cps_cfg')||'{}')}catch(e){}
 if(CFG.pubkey){try{emailjs.init(CFG.pubkey)}catch(e){}}
@@ -568,56 +563,6 @@ function getBusinessDayLabel(dateStr){
 function getTickets(){try{return JSON.parse(localStorage.getItem('cps_tickets')||'[]')}catch(e){return[]}}
 function saveTickets(t){try{localStorage.setItem('cps_tickets',JSON.stringify(t))}catch(e){}}
 
-// ── FETCH FROM GOOGLE SHEETS (All PCs ka data) ───────────
-async function fetchSheetTickets(){
-  try{
-    const res=await fetch(SHEETS_URL+'?action=getAll&t='+Date.now());
-    const rows=await res.json();
-    if(!Array.isArray(rows)||rows.length===0) return;
-
-    // Merge sheet tickets with local — sheet is source of truth
-    const local=getTickets();
-    const localMap={};
-    local.forEach(t=>localMap[t.id]=t);
-
-    rows.forEach(row=>{
-      const id=row['Ticket ID'];
-      if(!id) return;
-      if(!localMap[id]){
-        // New ticket from another PC — add to local
-        localMap[id]={
-          id,
-          name:row['Name']||'',
-          email:row['Email']||'',
-          dept:row['Department']||'',
-          category:row['Category']||'',
-          priority:row['Priority']||'Medium',
-          subject:row['Subject']||'',
-          description:row['Description']||'',
-          status:row['Status']||'Open',
-          createdAt:new Date(row['Created At']).getTime()||Date.now(),
-          slaMins:parseInt(row['SLA (min)'])||45,
-          resolvedAt:row['Resolved At']?new Date(row['Resolved At']).getTime():null,
-          timeline:[{time:new Date(row['Created At']).getTime()||Date.now(),text:'Ticket created via '+row['Department']+' department'}]
-        };
-      } else if(row['Status']==='Resolved' && localMap[id].status!=='Resolved'){
-        // Update resolve status from sheet
-        localMap[id].status='Resolved';
-        if(row['Resolved At']) localMap[id].resolvedAt=new Date(row['Resolved At']).getTime();
-      }
-    });
-
-    const merged=Object.values(localMap).sort((a,b)=>b.createdAt-a.createdAt);
-    saveTickets(merged);
-    buildDateTabs();
-    renderTickets();
-    document.getElementById('sync-status').textContent='✓ Synced '+new Date().toLocaleTimeString('en-PK',{timeZone:'Asia/Karachi',hour12:true});
-  }catch(err){
-    console.error('Sheet fetch error:',err);
-    document.getElementById('sync-status').textContent='⚠ Sync failed — check internet';
-  }
-}
-
 // ── STATE ─────────────────────────────────────────────────
 let curFilter='all';
 let curDate=''; // empty = today
@@ -629,14 +574,6 @@ function init(){
   renderTickets();
   loadCfgUI();
   document.getElementById('as-code').textContent=APPS_SCRIPT;
-  // Fetch from Google Sheets immediately
-  fetchSheetTickets();
-  // Auto-refresh every 20 seconds
-  setInterval(()=>{
-    if(document.getElementById('page-dashboard').classList.contains('active')){
-      fetchSheetTickets();
-    }
-  },20000);
 }
 
 // ── DATE TABS ─────────────────────────────────────────────
@@ -937,15 +874,10 @@ async function confirmResolve(id){
     }catch(err){toast('Email failed — check EmailJS config','e')}
   }
 
-  if(SHEETS_URL){
-    try{
-      fetch(SHEETS_URL,{method:'POST',mode:'no-cors',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({action:'resolve',id:t.id,status:'Resolved',
-          resolvedAt:fmt(t.resolvedAt),timeTaken:elapsed})
-      });
-      toast('Google Sheets updated','s');
-    }catch(e){}
+  if(CFG.sheets){
+    sendToSheets(CFG.sheets,{action:'resolve',id:t.id,
+      status:'Resolved',resolvedAt:fmt(t.resolvedAt),timeTaken:elapsed});
+    toast('Google Sheets updated','s');
   }
 
   buildDateTabs();
@@ -1016,34 +948,9 @@ const APPS_SCRIPT=`function doPost(e) {
   }
 }
 function doGet(e) {
-  try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getSheetByName('Tickets');
-    if (!sheet) {
-      return ContentService
-        .createTextOutput(JSON.stringify([]))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-    var data = sheet.getDataRange().getValues();
-    if (data.length <= 1) {
-      return ContentService
-        .createTextOutput(JSON.stringify([]))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-    var headers = data[0];
-    var rows = data.slice(1).map(function(row) {
-      var obj = {};
-      headers.forEach(function(h, i) { obj[h] = row[i]; });
-      return obj;
-    });
-    return ContentService
-      .createTextOutput(JSON.stringify(rows))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch(err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({error: err.toString()}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
+  return ContentService
+    .createTextOutput(JSON.stringify({status:'ok',message:'HelpDesk API active'}))
+    .setMimeType(ContentService.MimeType.JSON);
 }`;
 
 document.getElementById('as-code').textContent=APPS_SCRIPT;
@@ -1155,6 +1062,17 @@ function importConfig(e){
     }catch(err){ toast('Config import failed','e'); }
   };
   reader.readAsText(file);
+}
+
+// ── GOOGLE SHEETS UNIVERSAL SEND ─────────────────────────
+function sendToSheets(url, data){
+  fetch(url, {
+    method:'POST',
+    mode:'no-cors',
+    cache:'no-cache',
+    headers:{'Content-Type':'text/plain'},
+    body:JSON.stringify(data)
+  }).catch(function(){});
 }
 
 // ── AUTO LOGIN CHECK ──────────────────────────────────────

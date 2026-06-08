@@ -291,9 +291,6 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 <div id="tc"></div>
 
 <script>
-// ── HARDCODED CONFIG ─────────────────────────────────────
-const SHEETS_URL='https://script.google.com/macros/s/AKfycbw5VjU3WiNaz7JNhoaLzJOgTa5YVdgYhMbE5_NFatDr5Mj_3Kxl7geSoK02-sAadOYgjg/exec';
-
 let CFG={};try{CFG=JSON.parse(localStorage.getItem('cps_cfg')||'{}')}catch(e){}
 if(CFG.pubkey){try{emailjs.init(CFG.pubkey)}catch(e){}}
 
@@ -388,16 +385,15 @@ async function submitTicket(){
     }catch(err){toast('Email failed — contact support','e')}
   }
 
-  // Send to Google Sheets (hardcoded URL — works from any PC)
-  try{
-    fetch(SHEETS_URL,{method:'POST',mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:'create',id:tk.id,name:tk.name,
+  if(CFG.sheets){
+    try{
+      var payload={action:'create',id:tk.id,name:tk.name,
         email:tk.email,dept:tk.dept,category:tk.category,
         priority:tk.priority,subject:tk.subject,
-        description:tk.description,createdAt:fmt(tk.createdAt),sla:tk.slaMins})
-    });
-  }catch(e){console.error('Sheets error:',e);}
+        description:tk.description,createdAt:fmt(tk.createdAt),sla:tk.slaMins};
+      sendToSheets(CFG.sheets, payload);
+    }catch(e){}
+  }
 
   document.getElementById('form-section').style.display='none';
   document.getElementById('success-section').style.display='block';
@@ -419,6 +415,18 @@ function newTicket(){
   document.getElementById('fc').value='';
   selPriority='';
   document.querySelectorAll('.pb').forEach(b=>b.classList.remove('sel'));
+}
+
+// Google Sheets via no-cors (works from all devices)
+function sendToSheets(url, data){
+  // Use fetch with no-cors - works universally
+  fetch(url, {
+    method:'POST',
+    mode:'no-cors',
+    cache:'no-cache',
+    headers:{'Content-Type':'text/plain'},
+    body:JSON.stringify(data)
+  }).catch(function(){});
 }
 
 setInterval(()=>{

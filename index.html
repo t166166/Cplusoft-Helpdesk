@@ -390,7 +390,9 @@ async function submitTicket(){
       var payload={action:'create',id:tk.id,name:tk.name,
         email:tk.email,dept:tk.dept,category:tk.category,
         priority:tk.priority,subject:tk.subject,
-        description:tk.description,createdAt:fmt(tk.createdAt),sla:tk.slaMins};
+        description:tk.description,createdAt:fmt(tk.createdAt),
+        sla:tk.slaMins, createdAtTS:tk.createdAt,
+        slaMins:tk.slaMins, timeline:tk.timeline};
       sendToSheets(CFG.sheets, payload);
     }catch(e){}
   }

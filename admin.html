@@ -934,7 +934,15 @@ function showPage(name,el){
 // ── APPS SCRIPT ───────────────────────────────────────────
 const APPS_SCRIPT=`function doPost(e) {
   try {
-    var data = JSON.parse(e.postData.contents);
+    var data;
+    // Handle both JSON body and form payload
+    if (e.postData && e.postData.contents) {
+      try { data = JSON.parse(e.postData.contents); } catch(ex) {}
+    }
+    if (!data && e.parameter && e.parameter.payload) {
+      data = JSON.parse(e.parameter.payload);
+    }
+    if (!data) return buildResponse({status:'error',msg:'No data received'});
     return processData(data);
   } catch(err) {
     return buildResponse({status:'error',msg:err.toString()});
@@ -943,12 +951,16 @@ const APPS_SCRIPT=`function doPost(e) {
 
 function doGet(e) {
   try {
-    var action = e && e.parameter && e.parameter.action;
-    // Fallback: data sent via GET param
+    // Handle form submit fallback via GET
+    if (e && e.parameter && e.parameter.payload) {
+      var data = JSON.parse(e.parameter.payload);
+      return processData(data);
+    }
     if (e && e.parameter && e.parameter.data) {
       var data = JSON.parse(decodeURIComponent(e.parameter.data));
       return processData(data);
     }
+    var action = e && e.parameter && e.parameter.action;
     if (action === 'getTickets') {
       var ss = SpreadsheetApp.getActiveSpreadsheet();
       var sheet = ss.getSheetByName('Tickets');
@@ -1154,18 +1166,26 @@ function importConfig(e){
 
 // ── GOOGLE SHEETS UNIVERSAL SEND ─────────────────────────
 function sendToSheets(url, data){
-  fetch(url, {
-    method:'POST',
-    mode:'no-cors',
-    cache:'no-cache',
-    headers:{'Content-Type':'text/plain'},
-    body:JSON.stringify(data)
-  }).catch(function(){
-    // Fallback GET method for mobile/CORS issues
-    var encoded = encodeURIComponent(JSON.stringify(data));
-    var img = new Image();
-    img.src = url + '?data=' + encoded;
-  });
+  var iframeName = 'gs_frame_' + Date.now();
+  var iframe = document.createElement('iframe');
+  iframe.name = iframeName;
+  iframe.style.display = 'none';
+  document.body.appendChild(iframe);
+  var f = document.createElement('form');
+  f.method = 'POST';
+  f.action = url;
+  f.target = iframeName;
+  f.style.display = 'none';
+  var input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'payload';
+  input.value = JSON.stringify(data);
+  f.appendChild(input);
+  document.body.appendChild(f);
+  f.submit();
+  setTimeout(function(){
+    try{document.body.removeChild(f);document.body.removeChild(iframe);}catch(e){}
+  },5000);
 }
 
 // ── AUTO LOGIN CHECK ──────────────────────────────────────

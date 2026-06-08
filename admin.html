@@ -935,46 +935,7 @@ function showPage(name,el){
 const APPS_SCRIPT=`function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getSheetByName('Tickets');
-    if (!sheet) {
-      sheet = ss.insertSheet('Tickets');
-      sheet.appendRow(['Ticket ID','Name','Email','Department',
-        'Category','Priority','Subject','Description',
-        'Status','Created At','Resolved At',
-        'Time Taken (min)','SLA (min)','Within SLA',
-        'createdAtTS','slaMins','resolvedAtTS','timeline']);
-      sheet.setFrozenRows(1);
-      sheet.getRange(1,1,1,18)
-        .setBackground('#3b5bdb')
-        .setFontColor('#ffffff')
-        .setFontWeight('bold');
-    }
-    if (data.action === 'create') {
-      sheet.appendRow([
-        data.id, data.name, data.email, data.dept,
-        data.category, data.priority, data.subject, data.description,
-        'Open', data.createdAt, '', '', data.sla, '',
-        data.createdAtTS, data.slaMins, '', JSON.stringify(data.timeline||[])
-      ]);
-    } else if (data.action === 'resolve') {
-      var rows = sheet.getDataRange().getValues();
-      for (var i = 1; i < rows.length; i++) {
-        if (rows[i][0] === data.id) {
-          var mins = data.timeTaken || 0;
-          var sla = rows[i][12];
-          sheet.getRange(i+1,9).setValue('Resolved');
-          sheet.getRange(i+1,11).setValue(data.resolvedAt);
-          sheet.getRange(i+1,12).setValue(mins);
-          sheet.getRange(i+1,14).setValue(mins<=sla?'YES':'NO');
-          sheet.getRange(i+1,17).setValue(data.resolvedAtTS);
-          sheet.getRange(i+1,18).setValue(JSON.stringify(data.timeline||[]));
-          sheet.getRange(i+1,1,1,18).setBackground('#ebfbee');
-          break;
-        }
-      }
-    }
-    return buildResponse({status:'ok'});
+    return processData(data);
   } catch(err) {
     return buildResponse({status:'error',msg:err.toString()});
   }
@@ -983,6 +944,11 @@ const APPS_SCRIPT=`function doPost(e) {
 function doGet(e) {
   try {
     var action = e && e.parameter && e.parameter.action;
+    // Fallback: data sent via GET param
+    if (e && e.parameter && e.parameter.data) {
+      var data = JSON.parse(decodeURIComponent(e.parameter.data));
+      return processData(data);
+    }
     if (action === 'getTickets') {
       var ss = SpreadsheetApp.getActiveSpreadsheet();
       var sheet = ss.getSheetByName('Tickets');
@@ -995,11 +961,11 @@ function doGet(e) {
         var tl = [];
         try { tl = JSON.parse(r[17]||'[]'); } catch(e2){}
         tickets.push({
-          id: r[0], name: r[1], email: r[2], dept: r[3],
-          category: r[4], priority: r[5], subject: r[6],
-          description: r[7], status: r[8],
-          createdAt: r[14]||0, slaMins: r[15]||45,
-          resolvedAt: r[16]||null, timeline: tl
+          id:String(r[0]), name:String(r[1]), email:String(r[2]),
+          dept:String(r[3]), category:String(r[4]), priority:String(r[5]),
+          subject:String(r[6]), description:String(r[7]), status:String(r[8]),
+          createdAt:Number(r[14])||0, slaMins:Number(r[15])||45,
+          resolvedAt:r[16]?Number(r[16]):null, timeline:tl
         });
       }
       return buildResponse({status:'ok',tickets:tickets});
@@ -1008,6 +974,50 @@ function doGet(e) {
   } catch(err) {
     return buildResponse({status:'error',msg:err.toString()});
   }
+}
+
+function processData(data) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('Tickets');
+  if (!sheet) {
+    sheet = ss.insertSheet('Tickets');
+    sheet.appendRow(['Ticket ID','Name','Email','Department',
+      'Category','Priority','Subject','Description',
+      'Status','Created At','Resolved At',
+      'Time Taken (min)','SLA (min)','Within SLA',
+      'createdAtTS','slaMins','resolvedAtTS','timeline']);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1,1,1,18)
+      .setBackground('#3b5bdb')
+      .setFontColor('#ffffff')
+      .setFontWeight('bold');
+  }
+  if (data.action === 'create') {
+    sheet.appendRow([
+      data.id, data.name, data.email, data.dept,
+      data.category, data.priority, data.subject, data.description,
+      'Open', data.createdAt, '', '', data.sla, '',
+      data.createdAtTS||Date.now(), data.slaMins||45,
+      '', JSON.stringify(data.timeline||[])
+    ]);
+  } else if (data.action === 'resolve') {
+    var rows = sheet.getDataRange().getValues();
+    for (var i = 1; i < rows.length; i++) {
+      if (String(rows[i][0]) === String(data.id)) {
+        var mins = data.timeTaken || 0;
+        var sla = Number(rows[i][12]) || 45;
+        sheet.getRange(i+1,9).setValue('Resolved');
+        sheet.getRange(i+1,11).setValue(data.resolvedAt);
+        sheet.getRange(i+1,12).setValue(mins);
+        sheet.getRange(i+1,14).setValue(mins<=sla?'YES':'NO');
+        sheet.getRange(i+1,17).setValue(data.resolvedAtTS||Date.now());
+        sheet.getRange(i+1,18).setValue(JSON.stringify(data.timeline||[]));
+        sheet.getRange(i+1,1,1,18).setBackground('#ebfbee');
+        break;
+      }
+    }
+  }
+  return buildResponse({status:'ok'});
 }
 
 function buildResponse(data) {
@@ -1150,7 +1160,12 @@ function sendToSheets(url, data){
     cache:'no-cache',
     headers:{'Content-Type':'text/plain'},
     body:JSON.stringify(data)
-  }).catch(function(){});
+  }).catch(function(){
+    // Fallback GET method for mobile/CORS issues
+    var encoded = encodeURIComponent(JSON.stringify(data));
+    var img = new Image();
+    img.src = url + '?data=' + encoded;
+  });
 }
 
 // ── AUTO LOGIN CHECK ──────────────────────────────────────

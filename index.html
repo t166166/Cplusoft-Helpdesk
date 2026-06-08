@@ -419,16 +419,21 @@ function newTicket(){
   document.querySelectorAll('.pb').forEach(b=>b.classList.remove('sel'));
 }
 
-// Google Sheets via no-cors (works from all devices)
+// Google Sheets - reliable cross-device method
 function sendToSheets(url, data){
-  // Use fetch with no-cors - works universally
+  // Method 1: fetch with text/plain (works on most devices)
   fetch(url, {
     method:'POST',
     mode:'no-cors',
     cache:'no-cache',
     headers:{'Content-Type':'text/plain'},
     body:JSON.stringify(data)
-  }).catch(function(){});
+  }).catch(function(){
+    // Method 2: fallback - GET with encoded params (works everywhere)
+    var encoded = encodeURIComponent(JSON.stringify(data));
+    var img = new Image();
+    img.src = url + '?data=' + encoded;
+  });
 }
 
 setInterval(()=>{

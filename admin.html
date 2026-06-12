@@ -598,6 +598,8 @@ function logout(){sessionStorage.removeItem('hd_auth');location.reload()}
 
 // ── CONFIG ────────────────────────────────────────────────
 let CFG={};try{CFG=JSON.parse(localStorage.getItem('cps_cfg')||'{}')}catch(e){}
+if(!CFG.paCreateUrl) CFG.paCreateUrl='https://defaultde683246e4814c8e85bd79f9eed871.3e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/225f529d56354059bab2c61f52986343/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=yTm0nC2mzH9KijTNZESuV4CiC_NlkDloAalqpHNyL4Y';
+if(!CFG.paResolveUrl) CFG.paResolveUrl='https://defaultde683246e4814c8e85bd79f9eed871.3e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/0f759f6a847545f09402f5968f060197/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=LQu8c6bAAb0njctflyCcm9-aq9XlScVzMouFFEOt-BA';
 
 function loadCfgUI(){
   if(CFG.paCreateUrl) document.getElementById('cfg-pa-create').value=CFG.paCreateUrl;

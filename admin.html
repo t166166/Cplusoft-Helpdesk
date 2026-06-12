@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CPluSoft HelpDesk — Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 :root{
   --bg:#f0f2f5;--bg2:#ffffff;--bg3:#f8f9fb;--bg4:#eef0f3;
@@ -24,7 +23,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex}
 
-/* ── LOGIN ── */
+/* LOGIN */
 .login-overlay{position:fixed;inset:0;background:var(--sidebar);display:flex;align-items:center;justify-content:center;z-index:999}
 .login-card{background:var(--bg2);border-radius:16px;padding:2.5rem;width:380px;box-shadow:var(--shadow2)}
 .login-logo{display:flex;align-items:center;gap:10px;margin-bottom:2rem}
@@ -39,7 +38,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .login-btn:hover{background:var(--accent2)}
 .login-err{color:var(--red);font-size:12px;margin-top:.5rem;display:none;text-align:center}
 
-/* ── SIDEBAR ── */
+/* SIDEBAR */
 .sidebar{width:240px;background:var(--sidebar);min-height:100vh;display:flex;flex-direction:column;flex-shrink:0;position:fixed;left:0;top:0;bottom:0;z-index:50}
 .sidebar-logo{padding:1.5rem 1.2rem 1rem;border-bottom:1px solid rgba(255,255,255,0.06)}
 .logo-mark{display:flex;align-items:center;gap:10px}
@@ -62,7 +61,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .logout-link{display:flex;align-items:center;gap:8px;padding:.5rem .5rem;color:rgba(255,255,255,0.35);font-size:12px;cursor:pointer;border-radius:var(--r);transition:all .2s;margin-top:4px}
 .logout-link:hover{color:rgba(240,79,79,.8);background:rgba(240,79,79,.08)}
 
-/* ── MAIN ── */
+/* MAIN */
 .main{margin-left:240px;flex:1;display:flex;flex-direction:column;min-height:100vh}
 .topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:.8rem 1.8rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;box-shadow:var(--shadow)}
 .topbar-left h1{font-size:1.1rem;font-weight:700;color:var(--text)}
@@ -75,12 +74,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 .content{padding:1.5rem 1.8rem;flex:1}
 
-/* ── PAGES ── */
+/* PAGES */
 .page{display:none;animation:fadeIn .25s ease}
 .page.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── STATS ── */
+/* STATS */
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:1.5rem}
 .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.2rem 1.3rem;box-shadow:var(--shadow);display:flex;align-items:flex-start;justify-content:space-between}
 .stat-info .stat-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
@@ -90,7 +89,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .si-blue{background:var(--blue-bg)}.si-amber{background:var(--amber-bg)}.si-green{background:var(--green-bg)}.si-red{background:var(--red-bg)}
 .sv-blue{color:var(--blue)}.sv-amber{color:var(--amber)}.sv-green{color:var(--green)}.sv-red{color:var(--red)}
 
-/* ── DATE TABS ── */
+/* DATE TABS */
 .date-nav{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1rem 1.2rem;margin-bottom:1.2rem;box-shadow:var(--shadow)}
 .date-nav-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem}
 input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:pointer}
@@ -102,14 +101,14 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
 .dtab .dc{background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;min-width:16px;text-align:center}
 .dtab.active .dc{background:var(--accent);color:#fff}
 
-/* ── FILTER ROW ── */
+/* FILTER ROW */
 .filter-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
 .filter-left{display:flex;gap:6px}
 .fb{padding:5px 13px;border-radius:6px;border:1.5px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;font-size:12px;font-family:var(--font);font-weight:500;transition:all .2s}
 .fb.active{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
 .filter-right{font-size:12px;color:var(--text3);font-family:var(--mono)}
 
-/* ── TICKET TABLE ── */
+/* TICKET TABLE */
 .tickets-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--shadow);overflow:hidden}
 .tc-header{display:grid;grid-template-columns:130px 1fr 90px 90px 100px 110px;gap:10px;padding:.7rem 1.1rem;background:var(--bg3);border-bottom:1px solid var(--border);font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em}
 .trow{display:grid;grid-template-columns:130px 1fr 90px 90px 100px 110px;gap:10px;padding:.9rem 1.1rem;border-bottom:1px solid var(--border);align-items:center;transition:background .15s;cursor:pointer}
@@ -144,7 +143,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
 .empty-state h3{font-size:.95rem;color:var(--text2);margin-bottom:4px}
 .empty-state p{font-size:12px}
 
-/* ── DETAIL PANEL ── */
+/* DETAIL PANEL */
 .detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:100;display:none;backdrop-filter:blur(2px)}
 .detail-panel{position:fixed;right:0;top:0;bottom:0;width:440px;background:var(--bg2);border-left:1px solid var(--border);z-index:101;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease;box-shadow:-4px 0 20px rgba(0,0,0,.1)}
 .detail-panel.open{transform:translateX(0)}
@@ -169,7 +168,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
 .big-rbtn{width:100%;padding:12px;background:var(--green);border:none;color:#fff;font-family:var(--font);font-size:13.5px;font-weight:700;border-radius:var(--r);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px}
 .big-rbtn:hover{filter:brightness(1.08);transform:translateY(-1px)}
 
-/* ── RESOLVE MODAL ── */
+/* RESOLVE MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
 .modal-overlay.show{display:flex}
 .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r2);max-width:560px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow2);animation:mup .25s ease}
@@ -186,28 +185,30 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
 .btn-confirm{padding:8px 20px;background:var(--green);border:none;color:#fff;border-radius:var(--r);cursor:pointer;font-family:var(--font);font-size:13px;font-weight:700}
 .btn-confirm:hover{filter:brightness(1.08)}
 
-/* ── SETUP PAGE ── */
+/* SETUP PAGE */
 .setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
 .setup-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.4rem;box-shadow:var(--shadow)}
 .setup-card h3{font-size:13px;font-weight:700;color:var(--text);margin-bottom:1rem;display:flex;align-items:center;gap:7px;padding-bottom:.7rem;border-bottom:1px solid var(--border)}
 .setup-card.full{grid-column:1/-1}
 .cfg{display:flex;flex-direction:column;gap:5px;margin-bottom:.9rem}
 .cfg label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em}
-.cfg input{background:var(--bg3);border:1.5px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:12px;padding:9px 12px;border-radius:var(--r);outline:none;transition:border .2s}
-.cfg input:focus{border-color:var(--accent)}
-.cfg input::placeholder{color:var(--text3)}
+.cfg input,.cfg textarea{background:var(--bg3);border:1.5px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:12px;padding:9px 12px;border-radius:var(--r);outline:none;transition:border .2s;width:100%}
+.cfg textarea{resize:vertical;min-height:60px;line-height:1.5}
+.cfg input:focus,.cfg textarea:focus{border-color:var(--accent)}
+.cfg input::placeholder,.cfg textarea::placeholder{color:var(--text3)}
 .save-btn{padding:9px 22px;background:var(--accent);border:none;color:#fff;border-radius:var(--r);cursor:pointer;font-family:var(--font);font-size:13px;font-weight:600;transition:background .2s}
 .save-btn:hover{background:var(--accent2)}
 .cfg-ok{font-size:12px;color:var(--green);margin-top:.5rem;display:none;font-weight:500}
-.step-list{counter-reset:steps}
 .step-item{display:flex;gap:10px;margin-bottom:.7rem;font-size:12.5px;color:var(--text2);line-height:1.6}
 .step-num{width:22px;height:22px;background:var(--accent-light);color:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
 code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--mono);font-size:11px;color:var(--accent);border:1px solid var(--border2)}
-.code-box{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:1rem;font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--text2);max-height:240px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;margin-bottom:.8rem}
+.code-box{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:1rem;font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--text2);max-height:300px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;margin-bottom:.8rem}
 .copy-btn{padding:7px 16px;background:transparent;border:1.5px solid var(--border2);color:var(--text2);border-radius:var(--r);cursor:pointer;font-family:var(--font);font-size:12px;font-weight:500}
 .copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+.info-box{background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:var(--r);padding:.8rem 1rem;font-size:12px;color:var(--blue);line-height:1.7;margin-bottom:.9rem}
+.warn-box{background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:var(--r);padding:.8rem 1rem;font-size:12px;color:var(--amber);line-height:1.7;margin-bottom:.9rem}
 
-/* ── TOAST ── */
+/* TOAST */
 #tc{position:fixed;bottom:20px;right:20px;z-index:500;display:flex;flex-direction:column;gap:7px}
 .toast{background:var(--bg2);border:1.5px solid var(--border2);padding:10px 14px;border-radius:var(--r);font-size:13px;min-width:240px;box-shadow:var(--shadow2);animation:tin .3s ease;display:flex;align-items:center;gap:9px;font-family:var(--font)}
 @keyframes tin{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
@@ -296,7 +297,7 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
       <p id="page-sub">Live ticket overview</p>
     </div>
     <div class="topbar-right">
-      <button onclick="manualSync()" id="sync-btn" style="padding:5px 13px;background:var(--accent-light);border:1.5px solid rgba(59,91,219,0.2);color:var(--accent);border-radius:var(--r);cursor:pointer;font-family:var(--font);font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px">🔄 Sync</button>
+      <button onclick="manualSync()" id="sync-btn" style="padding:5px 13px;background:var(--accent-light);border:1.5px solid rgba(59,91,219,0.2);color:var(--accent);border-radius:var(--r);cursor:pointer;font-family:var(--font);font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px">🔄 Sync SharePoint</button>
       <div class="live-pill"><div class="ldot"></div>Live</div>
       <div id="clock"></div>
     </div>
@@ -389,60 +390,156 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
     <!-- SETUP PAGE -->
     <div class="page" id="page-setup">
       <div class="setup-grid">
+
+        <!-- Power Automate — New Ticket Flow -->
         <div class="setup-card">
-          <h3>📧 EmailJS Configuration</h3>
-          <div class="cfg"><label>Public Key</label><input id="cfg-pk" placeholder="CaDPmanVvow..."></div>
-          <div class="cfg"><label>Service ID</label><input id="cfg-sid" placeholder="service_qxd5xz6"></div>
-          <div class="cfg"><label>Template ID — New Ticket</label><input id="cfg-t1" placeholder="template_xxxxxx"></div>
-          <div class="cfg"><label>Template ID — Resolved</label><input id="cfg-t2" placeholder="template_xxxxxx"></div>
+          <h3>⚡ Power Automate — New Ticket Flow</h3>
+          <div class="info-box">
+            Yeh URL Power Automate ka <strong>HTTP Trigger</strong> hai. Jab koi ticket submit kare, system is URL ko call karta hai. Power Automate automatically:<br>
+            ① SharePoint list mein entry save karta hai<br>
+            ② User ko <strong>m.basit_cplusoft@outlook.com</strong> se auto-email bhejta hai
+          </div>
+          <div class="cfg">
+            <label>HTTP Trigger URL — Create Ticket</label>
+            <input id="cfg-pa-create" placeholder="https://prod-xx.westus.logic.azure.com/workflows/...">
+          </div>
         </div>
+
+        <!-- Power Automate — Resolve Flow -->
         <div class="setup-card">
-          <h3>📊 Google Sheets</h3>
-          <div class="cfg"><label>Apps Script Web App URL</label><input id="cfg-sh" placeholder="https://script.google.com/macros/s/.../exec"></div>
-          <h3 style="margin-top:1rem">🔐 Admin Password</h3>
-          <div class="cfg"><label>New Password</label><input type="password" id="cfg-pw" placeholder="Leave blank to keep current"></div>
+          <h3>✅ Power Automate — Resolve Ticket Flow</h3>
+          <div class="info-box">
+            Jab admin ticket resolve kare, system is URL ko call karta hai. Power Automate automatically:<br>
+            ① SharePoint mein ticket status <strong>Resolved</strong> karta hai<br>
+            ② Resolution details fill karta hai (time taken, SLA status)<br>
+            ③ User ko closing email bhejta hai
+          </div>
+          <div class="cfg">
+            <label>HTTP Trigger URL — Resolve Ticket</label>
+            <input id="cfg-pa-resolve" placeholder="https://prod-xx.westus.logic.azure.com/workflows/...">
+          </div>
         </div>
+
+        <!-- Power Automate — Get Tickets -->
+        <div class="setup-card">
+          <h3>📥 Power Automate — Get Tickets Flow</h3>
+          <div class="info-box">
+            Yeh URL SharePoint se latest tickets fetch karta hai admin dashboard mein dikhane ke liye.
+          </div>
+          <div class="cfg">
+            <label>HTTP Trigger URL — Get All Tickets</label>
+            <input id="cfg-pa-get" placeholder="https://prod-xx.westus.logic.azure.com/workflows/...">
+          </div>
+        </div>
+
+        <!-- Admin Password -->
+        <div class="setup-card">
+          <h3>🔐 Admin Settings</h3>
+          <div class="cfg">
+            <label>New Admin Password</label>
+            <input type="password" id="cfg-pw" placeholder="Leave blank to keep current">
+          </div>
+          <div style="margin-top:.5rem;padding:.7rem;background:var(--bg3);border-radius:var(--r);font-size:11.5px;color:var(--text2);line-height:1.6">
+            Default password: <code>cplusoft2024</code><br>
+            Setup ke baad change karna zaroori hai.
+          </div>
+        </div>
+
+        <!-- Power Automate Setup Guide -->
         <div class="setup-card full">
-          <h3>⚙️ EmailJS Setup Guide</h3>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <h3>🚀 Power Automate Setup Guide (Step-by-Step)</h3>
+          <div class="warn-box">
+            ⚠️ Yeh ek-baar setup hai. SharePoint list banao, phir teen flows banao. Har flow ka URL yahan paste karo.
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
             <div>
-              <div class="step-item"><div class="step-num">1</div><div>emailjs.com → Free account → Email Services → Add New Service → <strong>Microsoft Outlook</strong></div></div>
-              <div class="step-item"><div class="step-num">2</div><div>Connect <code>m.basit_cplusoft@outlook.com</code> → Copy <strong>Service ID</strong></div></div>
-              <div class="step-item"><div class="step-num">3</div><div>Email Templates → Create → Subject: <code>{{subject}}</code> → Body: <code>{{body}}</code> → To: <code>{{to_email}}</code></div></div>
+              <p style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:.7rem">📋 Step 1 — SharePoint List</p>
+              <div class="step-item"><div class="step-num">1</div><div>SharePoint site kholo → <strong>New → List</strong> → Name: <code>HelpDeskTickets</code></div></div>
+              <div class="step-item"><div class="step-num">2</div><div>Yeh columns banao (single line of text unless noted):<br>
+                <code>TicketID</code>, <code>SubmitterName</code>, <code>SubmitterEmail</code>, <code>Department</code>, <code>Category</code>, <code>Priority</code>, <code>Subject</code>, <code>Description</code> (multi-line), <code>Status</code>, <code>SLAMinutes</code> (number), <code>Deadline</code>, <code>ResolvedAt</code>, <code>TimeTakenMinutes</code> (number), <code>SLAMet</code> (yes/no), <code>Timeline</code> (multi-line), <code>CreatedAtTS</code> (number)
+              </div></div>
+
+              <p style="font-size:12px;font-weight:700;color:var(--text);margin:.9rem 0 .7rem">⚡ Step 2 — Flow 1: Create Ticket</p>
+              <div class="step-item"><div class="step-num">1</div><div>Power Automate → Create → <strong>Instant cloud flow</strong> → Trigger: <strong>"When an HTTP request is received"</strong></div></div>
+              <div class="step-item"><div class="step-num">2</div><div>JSON Schema field mein neeche wala schema paste karo → Save</div></div>
+              <div class="step-item"><div class="step-num">3</div><div>Action add karo: <strong>SharePoint → Create item</strong> → Site: aapki SharePoint URL → List: <code>HelpDeskTickets</code> → Har field mein dynamic content se match karo</div></div>
+              <div class="step-item"><div class="step-num">4</div><div>Action add karo: <strong>Office 365 Outlook → Send an email (V2)</strong>:<br>
+                From: <code>m.basit_cplusoft@outlook.com</code><br>
+                To: <code>@{triggerBody()?['email']}</code><br>
+                Subject: <code>[Ticket @{triggerBody()?['id']}] Received</code><br>
+                Body: neeche wala Email Body Template use karo</div></div>
+              <div class="step-item"><div class="step-num">5</div><div>Save → <strong>HTTP POST URL copy karo</strong> → yahan "Create Ticket URL" mein paste karo</div></div>
             </div>
+
             <div>
-              <div class="step-item"><div class="step-num">4</div><div>From Email → tick <strong>"Use Default Email Address"</strong> → Save → Copy <strong>Template ID</strong></div></div>
-              <div class="step-item"><div class="step-num">5</div><div>Account → General → Copy <strong>Public Key</strong></div></div>
-              <div class="step-item"><div class="step-num">6</div><div>Paste all values above → Click <strong>Save Settings</strong></div></div>
+              <p style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:.7rem">⚡ Step 3 — Flow 2: Resolve Ticket</p>
+              <div class="step-item"><div class="step-num">1</div><div>Naya Instant flow → HTTP trigger</div></div>
+              <div class="step-item"><div class="step-num">2</div><div>Action: <strong>SharePoint → Get items</strong> → Filter: <code>TicketID eq '@{triggerBody()?['id']}'</code></div></div>
+              <div class="step-item"><div class="step-num">3</div><div>Action: <strong>SharePoint → Update item</strong> → ID: <code>@{first(body('Get_items')?['value'])?['ID']}</code> → Status: <code>Resolved</code>, ResolvedAt, TimeTakenMinutes, SLAMet fields update karo</div></div>
+              <div class="step-item"><div class="step-num">4</div><div>Action: <strong>Outlook → Send email</strong> → Resolution email user ko</div></div>
+              <div class="step-item"><div class="step-num">5</div><div>HTTP URL copy → "Resolve Ticket URL" mein paste karo</div></div>
+
+              <p style="font-size:12px;font-weight:700;color:var(--text);margin:.9rem 0 .7rem">⚡ Step 4 — Flow 3: Get Tickets</p>
+              <div class="step-item"><div class="step-num">1</div><div>Naya Instant flow → HTTP trigger</div></div>
+              <div class="step-item"><div class="step-num">2</div><div>Action: <strong>SharePoint → Get items</strong> → List: <code>HelpDeskTickets</code> → Top: 500</div></div>
+              <div class="step-item"><div class="step-num">3</div><div>Action: <strong>Response</strong> → Status: 200 → Body: <code>@{body('Get_items')}</code> → Content-Type: <code>application/json</code></div></div>
+              <div class="step-item"><div class="step-num">4</div><div>HTTP URL copy → "Get Tickets URL" mein paste karo</div></div>
             </div>
           </div>
         </div>
+
+        <!-- JSON Schemas -->
         <div class="setup-card full">
-          <h3>📋 Google Apps Script Code</h3>
-          <div class="code-box" id="as-code"></div>
-          <button class="copy-btn" onclick="copyScript()">📋 Copy Code</button>
+          <h3>📄 JSON Schemas & Templates</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+            <div>
+              <p style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:.4rem">Flow 1 — Create Ticket HTTP Schema:</p>
+              <div class="code-box" id="schema-create"></div>
+              <button class="copy-btn" onclick="copyText('schema-create','Schema copied!')">📋 Copy Schema</button>
+            </div>
+            <div>
+              <p style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:.4rem">Flow 2 — Resolve Ticket HTTP Schema:</p>
+              <div class="code-box" id="schema-resolve"></div>
+              <button class="copy-btn" onclick="copyText('schema-resolve','Schema copied!')">📋 Copy Schema</button>
+            </div>
+            <div>
+              <p style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:.4rem">Flow 1 — New Ticket Email Body (HTML):</p>
+              <div class="code-box" id="email-create-tpl"></div>
+              <button class="copy-btn" onclick="copyText('email-create-tpl','Email template copied!')">📋 Copy Email Template</button>
+            </div>
+            <div>
+              <p style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:.4rem">Flow 2 — Resolution Email Body (HTML):</p>
+              <div class="code-box" id="email-resolve-tpl"></div>
+              <button class="copy-btn" onclick="copyText('email-resolve-tpl','Email template copied!')">📋 Copy Email Template</button>
+            </div>
+          </div>
         </div>
+
+        <!-- Data Tools -->
+        <div class="setup-card full" style="border:1.5px solid var(--amber-border);background:var(--amber-bg)">
+          <h3 style="color:var(--amber)">🔄 Data Tools — Export / Import</h3>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;line-height:1.6">SharePoint primary source hai. Local backup ke liye export/import use karein.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="save-btn" onclick="exportData()" style="background:var(--amber)">📤 Export All Tickets (JSON)</button>
+            <label style="padding:9px 22px;background:var(--accent);border:none;color:#fff;border-radius:var(--r);cursor:pointer;font-family:var(--font);font-size:13px;font-weight:600">
+              📥 Import Tickets (JSON)
+              <input type="file" accept=".json" onchange="importData(event)" style="display:none">
+            </label>
+            <button class="save-btn" onclick="exportConfig()" style="background:var(--text2)">📤 Export Config</button>
+            <label style="padding:9px 22px;background:var(--text2);border:none;color:#fff;border-radius:var(--r);cursor:pointer;font-family:var(--font);font-size:13px;font-weight:600">
+              📥 Import Config
+              <input type="file" accept=".json" onchange="importConfig(event)" style="display:none">
+            </label>
+          </div>
+          <div id="import-status" style="margin-top:.7rem;font-size:12.5px;font-weight:600;display:none"></div>
+        </div>
+
       </div>
+
       <div style="margin-top:1rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <button class="save-btn" onclick="saveConfig()">💾 Save All Settings</button>
         <span class="cfg-ok" id="cfg-ok">✓ Settings saved successfully</span>
-      </div>
-      <div class="setup-card full" style="margin-top:1.2rem;border:1.5px solid var(--amber-border);background:var(--amber-bg)">
-        <h3 style="color:var(--amber)">🔄 Data Migration — Site Change ho gayi?</h3>
-        <p style="font-size:13px;color:var(--text2);margin-bottom:1rem;line-height:1.6">Agar aapne Netlify site dobara upload ki aur tickets gayab ho gayi hain to neeche se purana data import karo.<br>Pehle <strong>purani site</strong> pe jao → Export karo → Yahan Import karo.</p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="save-btn" onclick="exportData()" style="background:var(--amber)">📤 Export All Tickets (JSON)</button>
-          <label style="padding:9px 22px;background:var(--accent);border:none;color:#fff;border-radius:var(--r);cursor:pointer;font-family:var(--font);font-size:13px;font-weight:600">
-            📥 Import Tickets (JSON)
-            <input type="file" accept=".json" onchange="importData(event)" style="display:none">
-          </label>
-          <button class="save-btn" onclick="exportConfig()" style="background:var(--text2)">📤 Export Config</button>
-          <label style="padding:9px 22px;background:var(--text2);border:none;color:#fff;border-radius:var(--r);cursor:pointer;font-family:var(--font);font-size:13px;font-weight:600">
-            📥 Import Config
-            <input type="file" accept=".json" onchange="importConfig(event)" style="display:none">
-          </label>
-        </div>
-        <div id="import-status" style="margin-top:.7rem;font-size:12.5px;font-weight:600;display:none"></div>
       </div>
     </div>
 
@@ -482,7 +579,7 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
 const DEFAULT_PW = 'cplusoft2024';
 const AFTER_HOURS = 20; // 8PM
 
-// ── SESSION (persists on refresh) ─────────────────────────
+// ── SESSION ───────────────────────────────────────────────
 function isLoggedIn(){return sessionStorage.getItem('hd_auth')==='1'}
 function doLogin(){
   let cfg={};try{cfg=JSON.parse(localStorage.getItem('cps_cfg')||'{}')}catch(e){}
@@ -497,34 +594,26 @@ function doLogin(){
     document.getElementById('pw-input').value='';
   }
 }
-function logout(){
-  sessionStorage.removeItem('hd_auth');
-  location.reload();
-}
+function logout(){sessionStorage.removeItem('hd_auth');location.reload()}
 
 // ── CONFIG ────────────────────────────────────────────────
 let CFG={};try{CFG=JSON.parse(localStorage.getItem('cps_cfg')||'{}')}catch(e){}
-if(CFG.pubkey){try{emailjs.init(CFG.pubkey)}catch(e){}}
 
 function loadCfgUI(){
-  if(CFG.pubkey) document.getElementById('cfg-pk').value=CFG.pubkey;
-  if(CFG.service) document.getElementById('cfg-sid').value=CFG.service;
-  if(CFG.template) document.getElementById('cfg-t1').value=CFG.template;
-  if(CFG.template2) document.getElementById('cfg-t2').value=CFG.template2;
-  if(CFG.sheets) document.getElementById('cfg-sh').value=CFG.sheets;
+  if(CFG.paCreateUrl) document.getElementById('cfg-pa-create').value=CFG.paCreateUrl;
+  if(CFG.paResolveUrl) document.getElementById('cfg-pa-resolve').value=CFG.paResolveUrl;
+  if(CFG.paGetUrl) document.getElementById('cfg-pa-get').value=CFG.paGetUrl;
 }
+
 function saveConfig(){
   const newPw=document.getElementById('cfg-pw').value;
   CFG={
-    pubkey:document.getElementById('cfg-pk').value.trim(),
-    service:document.getElementById('cfg-sid').value.trim(),
-    template:document.getElementById('cfg-t1').value.trim(),
-    template2:document.getElementById('cfg-t2').value.trim(),
-    sheets:document.getElementById('cfg-sh').value.trim(),
+    paCreateUrl:document.getElementById('cfg-pa-create').value.trim(),
+    paResolveUrl:document.getElementById('cfg-pa-resolve').value.trim(),
+    paGetUrl:document.getElementById('cfg-pa-get').value.trim(),
     adminPw:newPw||CFG.adminPw||DEFAULT_PW
   };
   localStorage.setItem('cps_cfg',JSON.stringify(CFG));
-  if(CFG.pubkey){try{emailjs.init(CFG.pubkey)}catch(e){}}
   const ok=document.getElementById('cfg-ok');
   ok.style.display='inline';
   setTimeout(()=>ok.style.display='none',3000);
@@ -532,27 +621,17 @@ function saveConfig(){
 }
 
 // ── DATE LOGIC ────────────────────────────────────────────
-// Ticket created after 8PM → belongs to NEXT business day
 function getTicketDay(ts){
   const d=new Date(ts);
   if(d.getHours()>=AFTER_HOURS){
-    // Belongs to next day
-    const next=new Date(d);
-    next.setDate(next.getDate()+1);
-    return next.toDateString();
+    const next=new Date(d);next.setDate(next.getDate()+1);return next.toDateString();
   }
   return d.toDateString();
 }
-
-function isAfterHours(ts){
-  const d=new Date(ts);
-  return d.getHours()>=AFTER_HOURS;
-}
-
+function isAfterHours(ts){return new Date(ts).getHours()>=AFTER_HOURS}
 function getBusinessDayLabel(dateStr){
-  const today=new Date();
-  const yesterday=new Date(); yesterday.setDate(yesterday.getDate()-1);
-  const tomorrow=new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+  const today=new Date();const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);
   const d=new Date(dateStr);
   if(d.toDateString()===today.toDateString()) return 'Today';
   if(d.toDateString()===yesterday.toDateString()) return 'Yesterday';
@@ -564,123 +643,99 @@ function getBusinessDayLabel(dateStr){
 function getTickets(){try{return JSON.parse(localStorage.getItem('cps_tickets')||'[]')}catch(e){return[]}}
 function saveTickets(t){try{localStorage.setItem('cps_tickets',JSON.stringify(t))}catch(e){}}
 
-// Load tickets from Google Sheets (central source)
+// ── SYNC FROM POWER AUTOMATE (SharePoint) ─────────────────
 async function syncFromSheets(){
-  if(!CFG.sheets) return;
+  if(!CFG.paGetUrl) return;
   try{
-    const url = CFG.sheets + '?action=getTickets&t=' + Date.now();
-    const res = await fetch(url);
-    const data = await res.json();
-    if(data.status==='ok' && Array.isArray(data.tickets) && data.tickets.length>0){
-      // Merge: sheets is source of truth
-      const sheetsData = data.tickets;
-      const local = getTickets();
-      // Keep local tickets not yet in sheets
-      const sheetIds = new Set(sheetsData.map(t=>t.id));
-      const localOnly = local.filter(t=>!sheetIds.has(t.id));
-      const merged = [...sheetsData, ...localOnly];
-      // Sort by createdAt desc
-      merged.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-      saveTickets(merged);
-      return merged;
-    }
-  }catch(e){ console.warn('Sheets sync failed',e); }
-  return getTickets();
+    const res=await fetch(CFG.paGetUrl,{method:'GET'});
+    const raw=await res.json();
+
+    // Power Automate returns SharePoint items in raw.value array
+    const items=raw.value||raw;
+    if(!Array.isArray(items)||items.length===0) return;
+
+    const mapped=items.map(r=>({
+      id:r.TicketID||r.id||'',
+      name:r.SubmitterName||r.name||'',
+      email:r.SubmitterEmail||r.email||'',
+      dept:r.Department||r.dept||'',
+      category:r.Category||r.category||'',
+      priority:r.Priority||r.priority||'',
+      subject:r.Subject||r.subject||'',
+      description:r.Description||r.description||'',
+      status:r.Status||r.status||'Open',
+      slaMins:Number(r.SLAMinutes||r.slaMins)||45,
+      createdAt:Number(r.CreatedAtTS||r.createdAt)||0,
+      resolvedAt:r.ResolvedAtTS?Number(r.ResolvedAtTS):null,
+      timeline:(()=>{try{return JSON.parse(r.Timeline||'[]')}catch(e){return[]}}())
+    })).filter(t=>t.id&&t.createdAt);
+
+    const local=getTickets();
+    const remoteIds=new Set(mapped.map(t=>t.id));
+    const localOnly=local.filter(t=>!remoteIds.has(t.id));
+    const merged=[...mapped,...localOnly];
+    merged.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    saveTickets(merged);
+  }catch(e){console.warn('SharePoint sync failed:',e)}
 }
 
 // ── STATE ─────────────────────────────────────────────────
 let curFilter='all';
-let curDate=''; // empty = today
-let curDateRange=null; // {from, to} for custom range
+let curDate='';
+let curDateRange=null;
 
 // ── INIT ─────────────────────────────────────────────────
 async function init(){
   loadCfgUI();
-  document.getElementById('as-code').textContent=APPS_SCRIPT;
-  // Show loading
-  document.getElementById('tlist').innerHTML='<div class="empty-state"><div class="ei">🔄</div><h3>Loading tickets...</h3><p>Syncing from Google Sheets</p></div>';
+  fillSchemas();
+  document.getElementById('tlist').innerHTML='<div class="empty-state"><div class="ei">🔄</div><h3>Loading tickets...</h3><p>Syncing from SharePoint</p></div>';
   buildDateTabs();
-  // Sync from sheets first
   await syncFromSheets();
   buildDateTabs();
   renderTickets();
-  toast('Tickets synced from Google Sheets','s');
+  toast('Tickets synced from SharePoint','s');
 }
 
 // ── DATE TABS ─────────────────────────────────────────────
 function buildDateTabs(){
   const tickets=getTickets();
-  // Get unique business days
   const days={};
   tickets.forEach(t=>{
     const day=getTicketDay(t.createdAt);
     if(!days[day]) days[day]=0;
     if(t.status==='Open') days[day]++;
   });
-
-  // Sort days descending
   const sorted=Object.keys(days).sort((a,b)=>new Date(b)-new Date(a));
   const today=new Date().toDateString();
-
-  // Always include today
   if(!days[today]) days[today]=0;
   if(!sorted.includes(today)) sorted.unshift(today);
-
-  // Set default to today if not set
   if(!curDate) curDate=today;
-
   const container=document.getElementById('date-tabs');
   container.innerHTML='';
-
-  // All tickets tab
-  const allTab=document.createElement('button');
-  allTab.className='dtab'+(curDate==='all'?' active':'');
-  allTab.innerHTML='All Dates';
-  allTab.onclick=()=>{curDate='all';curDateRange=null;document.getElementById('date-range-row').style.display='none';buildDateTabs();renderTickets()};
-  container.appendChild(allTab);
-
-  // This Week tab
-  const weekTab=document.createElement('button');
-  const weekActive=curDate==='week';
-  weekTab.className='dtab'+(weekActive?' active':'');
-  weekTab.innerHTML='This Week';
-  weekTab.onclick=()=>{curDate='week';curDateRange=null;document.getElementById('date-range-row').style.display='none';buildDateTabs();renderTickets()};
-  container.appendChild(weekTab);
-
-  // This Month tab
-  const monthTab=document.createElement('button');
-  const monthActive=curDate==='month';
-  monthTab.className='dtab'+(monthActive?' active':'');
-  monthTab.innerHTML='This Month';
-  monthTab.onclick=()=>{curDate='month';curDateRange=null;document.getElementById('date-range-row').style.display='none';buildDateTabs();renderTickets()};
-  container.appendChild(monthTab);
-
-  // Last Month tab
-  const lastMonthTab=document.createElement('button');
-  const lastMonthActive=curDate==='lastmonth';
-  lastMonthTab.className='dtab'+(lastMonthActive?' active':'');
-  lastMonthTab.innerHTML='Last Month';
-  lastMonthTab.onclick=()=>{curDate='lastmonth';curDateRange=null;document.getElementById('date-range-row').style.display='none';buildDateTabs();renderTickets()};
-  container.appendChild(lastMonthTab);
-
-  // Custom Range tab
-  const customTab=document.createElement('button');
-  customTab.className='dtab'+(curDate==='custom'?' active':'');
-  customTab.innerHTML='📅 Custom Range';
-  customTab.onclick=()=>{
-    curDate='custom';
-    const row=document.getElementById('date-range-row');
-    row.style.display='flex';
-    buildDateTabs();
-  };
-  container.appendChild(customTab);
-
+  const tabs=[
+    {label:'All Dates',val:'all'},
+    {label:'This Week',val:'week'},
+    {label:'This Month',val:'month'},
+    {label:'Last Month',val:'lastmonth'},
+    {label:'📅 Custom Range',val:'custom'}
+  ];
+  tabs.forEach(({label,val})=>{
+    const btn=document.createElement('button');
+    btn.className='dtab'+(curDate===val?' active':'');
+    btn.innerHTML=label;
+    btn.onclick=()=>{
+      curDate=val;curDateRange=null;
+      const row=document.getElementById('date-range-row');
+      row.style.display=val==='custom'?'flex':'none';
+      buildDateTabs();renderTickets();
+    };
+    container.appendChild(btn);
+  });
   sorted.slice(0,7).forEach(day=>{
     const btn=document.createElement('button');
     btn.className='dtab'+(curDate===day?' active':'');
-    const label=getBusinessDayLabel(day);
     const openCount=days[day]||0;
-    btn.innerHTML=label+(openCount>0?` <span class="dc">${openCount}</span>`:'');
+    btn.innerHTML=getBusinessDayLabel(day)+(openCount>0?` <span class="dc">${openCount}</span>`:'');
     btn.onclick=()=>{curDate=day;buildDateTabs();renderTickets()};
     container.appendChild(btn);
   });
@@ -690,44 +745,28 @@ function buildDateTabs(){
 function renderTickets(){
   const now=Date.now();
   let tickets=getTickets();
-
-  // Filter by date
-  let filtered=tickets;
   const now2=new Date();
+  let filtered=tickets;
   if(curDate==='custom'&&curDateRange){
-    filtered=tickets.filter(t=>{
-      const d=new Date(getTicketDay(t.createdAt));
-      return d>=curDateRange.from && d<=curDateRange.to;
-    });
+    filtered=tickets.filter(t=>{const d=new Date(getTicketDay(t.createdAt));return d>=curDateRange.from&&d<=curDateRange.to});
   } else if(curDate==='week'){
-    const weekStart=new Date(now2); weekStart.setDate(now2.getDate()-now2.getDay()); weekStart.setHours(0,0,0,0);
-    filtered=tickets.filter(t=>new Date(t.createdAt)>=weekStart);
+    const ws=new Date(now2);ws.setDate(now2.getDate()-now2.getDay());ws.setHours(0,0,0,0);
+    filtered=tickets.filter(t=>new Date(t.createdAt)>=ws);
   } else if(curDate==='month'){
-    filtered=tickets.filter(t=>{
-      const d=new Date(t.createdAt);
-      return d.getMonth()===now2.getMonth()&&d.getFullYear()===now2.getFullYear();
-    });
+    filtered=tickets.filter(t=>{const d=new Date(t.createdAt);return d.getMonth()===now2.getMonth()&&d.getFullYear()===now2.getFullYear()});
   } else if(curDate==='lastmonth'){
     const lm=new Date(now2.getFullYear(),now2.getMonth()-1,1);
     const lmEnd=new Date(now2.getFullYear(),now2.getMonth(),0,23,59,59);
-    filtered=tickets.filter(t=>{const d=new Date(t.createdAt);return d>=lm&&d<=lmEnd;});
+    filtered=tickets.filter(t=>{const d=new Date(t.createdAt);return d>=lm&&d<=lmEnd});
   } else if(curDate&&curDate!=='all'){
     filtered=tickets.filter(t=>getTicketDay(t.createdAt)===curDate);
   }
-
-  // Filter by status
   if(curFilter==='open') filtered=filtered.filter(t=>t.status==='Open');
   else if(curFilter==='resolved') filtered=filtered.filter(t=>t.status==='Resolved');
   else if(curFilter==='overdue') filtered=filtered.filter(t=>t.status==='Open'&&(now-t.createdAt)>t.slaMins*60000);
-
   document.getElementById('ticket-count').textContent=filtered.length+' ticket'+(filtered.length!==1?'s':'');
-
   const el=document.getElementById('tlist');
-  if(!filtered.length){
-    el.innerHTML=`<div class="empty-state"><div class="ei">📭</div><h3>No tickets found</h3><p>No tickets match the selected filters.</p></div>`;
-    updateStats(tickets); return;
-  }
-
+  if(!filtered.length){el.innerHTML=`<div class="empty-state"><div class="ei">📭</div><h3>No tickets found</h3><p>No tickets match the selected filters.</p></div>`;updateStats(tickets);return}
   el.innerHTML=filtered.map(t=>{
     const elapsed=now-t.createdAt;
     const slaMs=t.slaMins*60000;
@@ -735,23 +774,17 @@ function renderTickets(){
     let tcls='tok',ttxt='';
     if(t.status==='Resolved'){
       const m=Math.round((t.resolvedAt-t.createdAt)/60000);
-      ttxt='Done in '+m+'m';
-      tcls=(t.resolvedAt-t.createdAt)<=slaMs?'tok':'tover';
+      ttxt='Done in '+m+'m';tcls=(t.resolvedAt-t.createdAt)<=slaMs?'tok':'tover';
     } else if(isOver){
-      ttxt='+'+Math.round((elapsed-slaMs)/60000)+'m over';
-      tcls='tover';
+      ttxt='+'+Math.round((elapsed-slaMs)/60000)+'m over';tcls='tover';
     } else {
-      const rem=Math.ceil((slaMs-elapsed)/60000);
-      ttxt=rem+'m left';
-      tcls=(elapsed/slaMs)>0.75?'twarn':'tok';
+      const rem=Math.ceil((slaMs-elapsed)/60000);ttxt=rem+'m left';tcls=(elapsed/slaMs)>0.75?'twarn':'tok';
     }
     const pb={Critical:'bc',High:'bh',Medium:'bm',Low:'bl'}[t.priority]||'bm';
     const sb=isOver?'bov':t.status==='Resolved'?'br':'bo';
     const slabel=isOver?'⚠ Overdue':t.status;
-    const rowCls=(t.priority==='Critical'?'critical-row':t.priority==='High'?'high-row':'')+
-                 (isAfterHours(t.createdAt)?' after-hours':'');
+    const rowCls=(t.priority==='Critical'?'critical-row':t.priority==='High'?'high-row':'')+(isAfterHours(t.createdAt)?' after-hours':'');
     const ahTag=isAfterHours(t.createdAt)?'<span class="ah-tag">After Hours</span>':'';
-
     return `<div class="trow ${rowCls}" onclick="openPanel('${t.id}')">
       <div class="tid">${t.id}<br><span style="font-size:9px;color:var(--text3)">${new Date(t.createdAt).toLocaleDateString('en-PK',{timeZone:'Asia/Karachi',day:'2-digit',month:'short',year:'numeric'})}</span><br><span style="font-size:9px;color:var(--text3)">${new Date(t.createdAt).toLocaleTimeString('en-PK',{timeZone:'Asia/Karachi',hour12:true,hour:'2-digit',minute:'2-digit'})}</span></div>
       <div class="tinfo">
@@ -776,13 +809,10 @@ function updateStats(tickets){
   const todayTickets=tickets.filter(t=>getTicketDay(t.createdAt)===today);
   const open=tickets.filter(t=>t.status==='Open');
   const over=tickets.filter(t=>t.status==='Open'&&(now-t.createdAt)>t.slaMins*60000);
-
   document.getElementById('s-today').textContent=todayTickets.length;
   document.getElementById('s-open').textContent=open.length;
   document.getElementById('s-res').textContent=tickets.filter(t=>t.status==='Resolved').length;
   document.getElementById('s-over').textContent=over.length;
-
-  // Badge on sidebar
   const badge=document.getElementById('open-badge');
   if(open.length>0){badge.style.display='';badge.textContent=open.length}
   else{badge.style.display='none'}
@@ -798,7 +828,7 @@ function doFilter(f,btn){
 // ── DETAIL PANEL ─────────────────────────────────────────
 function openPanel(id){
   const tickets=getTickets();
-  const t=tickets.find(x=>x.id===id); if(!t) return;
+  const t=tickets.find(x=>x.id===id);if(!t) return;
   document.getElementById('dp-id').textContent=t.id;
   const elapsed=t.resolvedAt?Math.round((t.resolvedAt-t.createdAt)/60000):Math.round((Date.now()-t.createdAt)/60000);
   const within=t.resolvedAt?(t.resolvedAt-t.createdAt)<=t.slaMins*60000:null;
@@ -820,7 +850,6 @@ function openPanel(id){
       <div class="dp-lbl" style="margin-bottom:8px">Timeline</div>
       ${(t.timeline||[]).map(e=>`<div class="tli"><div class="tlt">${new Date(e.time).toLocaleTimeString('en-PK',{timeZone:'Asia/Karachi'})}</div><div class="tltx">${esc(e.text)}</div></div>`).join('')}
     </div>`;
-
   document.getElementById('resolve-cta').innerHTML=t.status!=='Resolved'?`
     <div class="resolve-box">
       <h4>Mark as Resolved</h4>
@@ -830,7 +859,6 @@ function openPanel(id){
         Mark Resolved & Send Email
       </button>
     </div>`:'';
-
   document.getElementById('det-overlay').style.display='block';
   document.getElementById('detail-panel').classList.add('open');
 }
@@ -840,7 +868,7 @@ function closePanel(){
 }
 
 // ── RESOLVE ──────────────────────────────────────────────
-function buildResolveEmail(tk){
+function buildResolveEmailPreview(tk){
   const elapsed=tk.resolvedAt?Math.round((tk.resolvedAt-tk.createdAt)/60000):0;
   const within=elapsed<=tk.slaMins;
   return `From : m.basit_cplusoft@outlook.com
@@ -876,39 +904,58 @@ For follow-up reference: ${tk.id}
 
 function openResolve(id){
   const tickets=getTickets();
-  const t=tickets.find(x=>x.id===id); if(!t) return;
-  document.getElementById('res-body').textContent=buildResolveEmail({...t,resolvedAt:Date.now()});
+  const t=tickets.find(x=>x.id===id);if(!t) return;
+  document.getElementById('res-body').textContent=buildResolveEmailPreview({...t,resolvedAt:Date.now()});
   document.getElementById('res-modal').classList.add('show');
   document.getElementById('res-confirm-btn').onclick=()=>confirmResolve(id);
 }
 
 async function confirmResolve(id){
   const tickets=getTickets();
-  const t=tickets.find(x=>x.id===id); if(!t) return;
+  const t=tickets.find(x=>x.id===id);if(!t) return;
   t.status='Resolved';
   t.resolvedAt=Date.now();
   const elapsed=Math.round((t.resolvedAt-t.createdAt)/60000);
+  const within=elapsed<=t.slaMins;
   if(!t.timeline) t.timeline=[];
-  t.timeline.push({time:Date.now(),text:`Resolved in ${elapsed} min. Email sent to ${t.email}`});
+  t.timeline.push({time:Date.now(),text:`Resolved in ${elapsed} min by Admin. Email sent to ${t.email}`});
   saveTickets(tickets);
   closeModal('res-modal');
 
-  const emailBody=buildResolveEmail(t);
-  if(CFG.pubkey&&CFG.service&&(CFG.template2||CFG.template)){
+  // Send to Power Automate — updates SharePoint + sends Outlook resolution email
+  if(CFG.paResolveUrl){
     try{
-      await emailjs.send(CFG.service,CFG.template2||CFG.template,{
-        to_email:t.email,from_name:'CPluSoft HelpDesk',
-        subject:`[${t.id}] RESOLVED — ${t.subject}`,
-        body:emailBody,reply_to:'m.basit_cplusoft@outlook.com'
-      });
-      toast('Resolution email sent to '+t.email,'s');
-    }catch(err){toast('Email failed — check EmailJS config','e')}
-  }
-
-  if(CFG.sheets){
-    sendToSheets(CFG.sheets,{action:'resolve',id:t.id,
-      status:'Resolved',resolvedAt:fmt(t.resolvedAt),timeTaken:elapsed});
-    toast('Google Sheets updated','s');
+      const payload={
+        id:t.id,
+        status:'Resolved',
+        resolvedAt:fmt(t.resolvedAt),
+        resolvedAtTS:t.resolvedAt,
+        timeTaken:elapsed,
+        slaMet:within?'YES':'NO',
+        slaMinutes:t.slaMins,
+        // For email
+        name:t.name,
+        email:t.email,
+        subject:t.subject,
+        dept:t.dept,
+        priority:t.priority,
+        createdAt:fmt(t.createdAt),
+        priorityLabel:t.priority==='Critical'?'🔴 CRITICAL':t.priority==='High'?'🟡 HIGH':t.priority==='Medium'?'🔵 MEDIUM':'🟢 LOW',
+        slaStatusLabel:within?'✅ Resolved within SLA':'⚠️ SLA exceeded',
+        timeline:JSON.stringify(t.timeline)
+      };
+      const res=await fetch(CFG.paResolveUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      if(res.ok||res.status===202){
+        toast('Resolved! Resolution email sent to '+t.email,'s');
+      } else {
+        toast('Resolved locally (SharePoint may be delayed)','w');
+      }
+    }catch(err){
+      toast('Resolved locally — check Power Automate','w');
+      console.warn('PA resolve error:',err);
+    }
+  } else {
+    toast('Ticket marked resolved (Power Automate URL not set)','w');
   }
 
   buildDateTabs();
@@ -918,7 +965,10 @@ async function confirmResolve(id){
 function closeModal(id){document.getElementById(id).classList.remove('show')}
 
 // ── PAGE NAV ─────────────────────────────────────────────
-const pageTitles={dashboard:['Dashboard','Live ticket overview'],setup:['Setup','Configure EmailJS & Google Sheets']};
+const pageTitles={
+  dashboard:['Dashboard','Live ticket overview — SharePoint synced'],
+  setup:['Setup','Configure Power Automate & SharePoint']
+};
 function showPage(name,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
@@ -928,159 +978,107 @@ function showPage(name,el){
   document.getElementById('page-title').textContent=info[0];
   document.getElementById('page-sub').textContent=info[1];
   if(name==='setup') loadCfgUI();
-  if(name==='dashboard'){buildDateTabs();renderTickets();}
+  if(name==='dashboard'){buildDateTabs();renderTickets()}
 }
 
-// ── APPS SCRIPT ───────────────────────────────────────────
-const APPS_SCRIPT=`function doPost(e) {
-  try {
-    var data;
-    // Handle both JSON body and form payload
-    if (e.postData && e.postData.contents) {
-      try { data = JSON.parse(e.postData.contents); } catch(ex) {}
+// ── SCHEMAS & TEMPLATES ───────────────────────────────────
+function fillSchemas(){
+  document.getElementById('schema-create').textContent=JSON.stringify({
+    "type":"object",
+    "properties":{
+      "id":{"type":"string"},
+      "name":{"type":"string"},
+      "email":{"type":"string"},
+      "dept":{"type":"string"},
+      "category":{"type":"string"},
+      "priority":{"type":"string"},
+      "subject":{"type":"string"},
+      "description":{"type":"string"},
+      "status":{"type":"string"},
+      "slaMins":{"type":"integer"},
+      "deadline":{"type":"string"},
+      "createdAt":{"type":"integer"},
+      "createdAtStr":{"type":"string"},
+      "priorityLabel":{"type":"string"},
+      "timeline":{"type":"array"}
     }
-    if (!data && e.parameter && e.parameter.payload) {
-      data = JSON.parse(e.parameter.payload);
+  },null,2);
+
+  document.getElementById('schema-resolve').textContent=JSON.stringify({
+    "type":"object",
+    "properties":{
+      "id":{"type":"string"},
+      "status":{"type":"string"},
+      "resolvedAt":{"type":"string"},
+      "resolvedAtTS":{"type":"integer"},
+      "timeTaken":{"type":"integer"},
+      "slaMet":{"type":"string"},
+      "slaMinutes":{"type":"integer"},
+      "name":{"type":"string"},
+      "email":{"type":"string"},
+      "subject":{"type":"string"},
+      "dept":{"type":"string"},
+      "priority":{"type":"string"},
+      "createdAt":{"type":"string"},
+      "slaStatusLabel":{"type":"string"},
+      "timeline":{"type":"string"}
     }
-    if (!data) return buildResponse({status:'error',msg:'No data received'});
-    return processData(data);
-  } catch(err) {
-    return buildResponse({status:'error',msg:err.toString()});
-  }
+  },null,2);
+
+  document.getElementById('email-create-tpl').textContent=
+`<p>Dear @{triggerBody()?['name']},</p>
+<p>Your support ticket has been <strong>received</strong>.</p>
+<table>
+  <tr><td><b>Ticket ID</b></td><td>@{triggerBody()?['id']}</td></tr>
+  <tr><td><b>Department</b></td><td>@{triggerBody()?['dept']}</td></tr>
+  <tr><td><b>Category</b></td><td>@{triggerBody()?['category']}</td></tr>
+  <tr><td><b>Priority</b></td><td>@{triggerBody()?['priority']}</td></tr>
+  <tr><td><b>Subject</b></td><td>@{triggerBody()?['subject']}</td></tr>
+  <tr><td><b>SLA Target</b></td><td>@{triggerBody()?['slaMins']} minutes</td></tr>
+  <tr><td><b>Deadline</b></td><td>@{triggerBody()?['deadline']}</td></tr>
+  <tr><td><b>Priority Level</b></td><td>@{triggerBody()?['priorityLabel']}</td></tr>
+</table>
+<p>Our team will resolve your issue within the SLA window.<br>
+You will receive a closing email once resolved.</p>
+<p>— CPluSoft HelpDesk<br>m.basit_cplusoft@outlook.com</p>`;
+
+  document.getElementById('email-resolve-tpl').textContent=
+`<p>Dear @{triggerBody()?['name']},</p>
+<p>Your support ticket has been <strong>resolved</strong>.</p>
+<table>
+  <tr><td><b>Ticket ID</b></td><td>@{triggerBody()?['id']}</td></tr>
+  <tr><td><b>Subject</b></td><td>@{triggerBody()?['subject']}</td></tr>
+  <tr><td><b>Department</b></td><td>@{triggerBody()?['dept']}</td></tr>
+  <tr><td><b>Priority</b></td><td>@{triggerBody()?['priority']}</td></tr>
+  <tr><td><b>Submitted</b></td><td>@{triggerBody()?['createdAt']}</td></tr>
+  <tr><td><b>Resolved</b></td><td>@{triggerBody()?['resolvedAt']}</td></tr>
+  <tr><td><b>Time Taken</b></td><td>@{triggerBody()?['timeTaken']} minutes</td></tr>
+  <tr><td><b>SLA Status</b></td><td>@{triggerBody()?['slaStatusLabel']}</td></tr>
+</table>
+<p>If you have further issues, please submit a new ticket.<br>
+— CPluSoft HelpDesk<br>m.basit_cplusoft@outlook.com</p>`;
 }
 
-function doGet(e) {
-  try {
-    // Handle form submit fallback via GET
-    if (e && e.parameter && e.parameter.payload) {
-      var data = JSON.parse(e.parameter.payload);
-      return processData(data);
-    }
-    if (e && e.parameter && e.parameter.data) {
-      var data = JSON.parse(decodeURIComponent(e.parameter.data));
-      return processData(data);
-    }
-    var action = e && e.parameter && e.parameter.action;
-    if (action === 'getTickets') {
-      var ss = SpreadsheetApp.getActiveSpreadsheet();
-      var sheet = ss.getSheetByName('Tickets');
-      if (!sheet) return buildResponse({status:'ok',tickets:[]});
-      var rows = sheet.getDataRange().getValues();
-      var tickets = [];
-      for (var i = 1; i < rows.length; i++) {
-        var r = rows[i];
-        if (!r[0]) continue;
-        var tl = [];
-        try { tl = JSON.parse(r[17]||'[]'); } catch(e2){}
-        tickets.push({
-          id:String(r[0]), name:String(r[1]), email:String(r[2]),
-          dept:String(r[3]), category:String(r[4]), priority:String(r[5]),
-          subject:String(r[6]), description:String(r[7]), status:String(r[8]),
-          createdAt:Number(r[14])||0, slaMins:Number(r[15])||45,
-          resolvedAt:r[16]?Number(r[16]):null, timeline:tl
-        });
-      }
-      return buildResponse({status:'ok',tickets:tickets});
-    }
-    return buildResponse({status:'ok',message:'HelpDesk API active'});
-  } catch(err) {
-    return buildResponse({status:'error',msg:err.toString()});
-  }
+function copyText(elId,msg){
+  const t=document.getElementById(elId);
+  navigator.clipboard.writeText(t.textContent||t.innerText).then(()=>toast(msg,'s'));
 }
-
-function processData(data) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName('Tickets');
-  if (!sheet) {
-    sheet = ss.insertSheet('Tickets');
-    sheet.appendRow(['Ticket ID','Name','Email','Department',
-      'Category','Priority','Subject','Description',
-      'Status','Created At','Resolved At',
-      'Time Taken (min)','SLA (min)','Within SLA',
-      'createdAtTS','slaMins','resolvedAtTS','timeline']);
-    sheet.setFrozenRows(1);
-    sheet.getRange(1,1,1,18)
-      .setBackground('#3b5bdb')
-      .setFontColor('#ffffff')
-      .setFontWeight('bold');
-  }
-  if (data.action === 'create') {
-    sheet.appendRow([
-      data.id, data.name, data.email, data.dept,
-      data.category, data.priority, data.subject, data.description,
-      'Open', data.createdAt, '', '', data.sla, '',
-      data.createdAtTS||Date.now(), data.slaMins||45,
-      '', JSON.stringify(data.timeline||[])
-    ]);
-  } else if (data.action === 'resolve') {
-    var rows = sheet.getDataRange().getValues();
-    for (var i = 1; i < rows.length; i++) {
-      if (String(rows[i][0]) === String(data.id)) {
-        var mins = data.timeTaken || 0;
-        var sla = Number(rows[i][12]) || 45;
-        sheet.getRange(i+1,9).setValue('Resolved');
-        sheet.getRange(i+1,11).setValue(data.resolvedAt);
-        sheet.getRange(i+1,12).setValue(mins);
-        sheet.getRange(i+1,14).setValue(mins<=sla?'YES':'NO');
-        sheet.getRange(i+1,17).setValue(data.resolvedAtTS||Date.now());
-        sheet.getRange(i+1,18).setValue(JSON.stringify(data.timeline||[]));
-        sheet.getRange(i+1,1,1,18).setBackground('#ebfbee');
-        break;
-      }
-    }
-  }
-  return buildResponse({status:'ok'});
-}
-
-function buildResponse(data) {
-  return ContentService
-    .createTextOutput(JSON.stringify(data))
-    .setMimeType(ContentService.MimeType.JSON);
-}`;
-
-document.getElementById('as-code').textContent=APPS_SCRIPT;
-function copyScript(){navigator.clipboard.writeText(APPS_SCRIPT).then(()=>toast('Apps Script code copied!','s'))}
-
-// ── UTILS ─────────────────────────────────────────────────
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function fmt(ts){return new Date(ts).toLocaleString('en-PK',{timeZone:'Asia/Karachi',hour12:true})}
-function toast(msg,type='i'){
-  const c=document.getElementById('tc');
-  const t=document.createElement('div');
-  t.className='toast '+type; t.textContent=msg; c.appendChild(t);
-  setTimeout(()=>t.remove(),4000);
-}
-
-// ── CLOCK & AUTO REFRESH ─────────────────────────────────
-setInterval(()=>{
-  document.getElementById('clock').textContent=
-    new Date().toLocaleTimeString('en-PK',{timeZone:'Asia/Karachi',hour12:false});
-},1000);
-setInterval(async ()=>{
-  if(document.getElementById('page-dashboard').classList.contains('active')){
-    await syncFromSheets();
-    buildDateTabs();
-    renderTickets();
-  }
-},30000);
 
 // ── DATE RANGE ───────────────────────────────────────────
 function applyDateRange(){
   const from=document.getElementById('date-from').value;
   const to=document.getElementById('date-to').value;
-  if(!from&&!to){curDateRange=null;document.getElementById('range-result').textContent='';renderTickets();return;}
+  if(!from&&!to){curDateRange=null;document.getElementById('range-result').textContent='';renderTickets();return}
   const fromDate=from?new Date(from+'T00:00:00'):new Date('2020-01-01');
   const toDate=to?new Date(to+'T23:59:59'):new Date();
   curDateRange={from:fromDate,to:toDate};
-  const result=document.getElementById('range-result');
-  result.textContent=`Showing: ${from||'start'} → ${to||'today'}`;
+  document.getElementById('range-result').textContent=`Showing: ${from||'start'} → ${to||'today'}`;
   renderTickets();
 }
 function clearDateRange(){
   document.getElementById('date-from').value='';
   document.getElementById('date-to').value='';
-  curDateRange=null;
-  curDate='all';
+  curDateRange=null;curDate='all';
   document.getElementById('date-range-row').style.display='none';
   document.getElementById('range-result').textContent='';
   buildDateTabs();renderTickets();
@@ -1089,29 +1087,23 @@ function clearDateRange(){
 // ── MANUAL SYNC ──────────────────────────────────────────
 async function manualSync(){
   const btn=document.getElementById('sync-btn');
-  btn.textContent='🔄 Syncing...';
-  btn.disabled=true;
+  btn.textContent='🔄 Syncing...';btn.disabled=true;
   await syncFromSheets();
-  buildDateTabs();
-  renderTickets();
-  btn.textContent='🔄 Sync';
-  btn.disabled=false;
-  toast('Synced from Google Sheets!','s');
+  buildDateTabs();renderTickets();
+  btn.textContent='🔄 Sync SharePoint';btn.disabled=false;
+  toast('Synced from SharePoint!','s');
 }
 
 // ── EXPORT / IMPORT ──────────────────────────────────────
 function exportData(){
   const tickets=getTickets();
   const blob=new Blob([JSON.stringify(tickets,null,2)],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='helpdesk_tickets_'+new Date().toISOString().slice(0,10)+'.json';
-  a.click();
-  toast('Tickets exported successfully!','s');
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='helpdesk_tickets_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  toast('Tickets exported!','s');
 }
-
 function importData(e){
-  const file=e.target.files[0]; if(!file) return;
+  const file=e.target.files[0];if(!file) return;
   const reader=new FileReader();
   reader.onload=function(ev){
     try{
@@ -1120,73 +1112,59 @@ function importData(e){
       const existing=getTickets();
       const existingIds=new Set(existing.map(t=>t.id));
       const newTickets=imported.filter(t=>!existingIds.has(t.id));
-      const merged=[...existing,...newTickets];
-      saveTickets(merged);
+      saveTickets([...existing,...newTickets]);
       const status=document.getElementById('import-status');
-      status.style.display='block';
-      status.style.color='var(--green)';
-      status.textContent='✓ Imported '+newTickets.length+' new tickets ('+imported.length+' total in file)';
-      buildDateTabs(); renderTickets();
-      toast(newTickets.length+' tickets imported!','s');
+      status.style.display='block';status.style.color='var(--green)';
+      status.textContent='✓ Imported '+newTickets.length+' new tickets';
+      buildDateTabs();renderTickets();toast(newTickets.length+' tickets imported!','s');
     }catch(err){
       const status=document.getElementById('import-status');
-      status.style.display='block';
-      status.style.color='var(--red)';
+      status.style.display='block';status.style.color='var(--red)';
       status.textContent='✕ Import failed: '+err.message;
       toast('Import failed','e');
     }
   };
   reader.readAsText(file);
 }
-
 function exportConfig(){
   const blob=new Blob([JSON.stringify(CFG,null,2)],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='helpdesk_config.json';
-  a.click();
-  toast('Config exported!','s');
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='helpdesk_config.json';a.click();toast('Config exported!','s');
 }
-
 function importConfig(e){
-  const file=e.target.files[0]; if(!file) return;
+  const file=e.target.files[0];if(!file) return;
   const reader=new FileReader();
   reader.onload=function(ev){
     try{
-      const cfg=JSON.parse(ev.target.result);
-      CFG=cfg;
+      CFG=JSON.parse(ev.target.result);
       localStorage.setItem('cps_cfg',JSON.stringify(CFG));
-      if(CFG.pubkey){try{emailjs.init(CFG.pubkey)}catch(e){}}
-      loadCfgUI();
-      toast('Config imported & applied!','s');
-    }catch(err){ toast('Config import failed','e'); }
+      loadCfgUI();toast('Config imported & applied!','s');
+    }catch(err){toast('Config import failed','e')}
   };
   reader.readAsText(file);
 }
 
-// ── GOOGLE SHEETS UNIVERSAL SEND ─────────────────────────
-function sendToSheets(url, data){
-  var iframeName = 'gs_frame_' + Date.now();
-  var iframe = document.createElement('iframe');
-  iframe.name = iframeName;
-  iframe.style.display = 'none';
-  document.body.appendChild(iframe);
-  var f = document.createElement('form');
-  f.method = 'POST';
-  f.action = url;
-  f.target = iframeName;
-  f.style.display = 'none';
-  var input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'payload';
-  input.value = JSON.stringify(data);
-  f.appendChild(input);
-  document.body.appendChild(f);
-  f.submit();
-  setTimeout(function(){
-    try{document.body.removeChild(f);document.body.removeChild(iframe);}catch(e){}
-  },5000);
+// ── UTILS ─────────────────────────────────────────────────
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function fmt(ts){return new Date(ts).toLocaleString('en-PK',{timeZone:'Asia/Karachi',hour12:true})}
+function toast(msg,type='i'){
+  const c=document.getElementById('tc');
+  const t=document.createElement('div');
+  t.className='toast '+type;t.textContent=msg;c.appendChild(t);
+  setTimeout(()=>t.remove(),4000);
 }
+
+// ── CLOCK & AUTO REFRESH ─────────────────────────────────
+setInterval(()=>{
+  document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-PK',{timeZone:'Asia/Karachi',hour12:false});
+},1000);
+
+// Auto-refresh every 30 seconds
+setInterval(async()=>{
+  if(document.getElementById('page-dashboard').classList.contains('active')){
+    await syncFromSheets();buildDateTabs();renderTickets();
+  }
+},30000);
 
 // ── AUTO LOGIN CHECK ──────────────────────────────────────
 if(isLoggedIn()){

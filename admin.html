@@ -655,7 +655,7 @@ function parseTimeline(str){
 async function syncFromSheets(){
   if(!CFG.paGetUrl) return;
   try{
-    const res=await fetch(CFG.paGetUrl,{method:'GET'});
+    const res=await fetch(CFG.paGetUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});
     const raw=await res.json();
 
     // Power Automate returns SharePoint items in raw.value array

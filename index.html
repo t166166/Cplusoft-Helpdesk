@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CPluSoft — Submit Support Ticket</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 :root{
   --bg:#f0f2f5;--bg2:#ffffff;--bg3:#f8f9fb;--bg4:#eef0f3;
@@ -25,7 +24,6 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
 
-/* NAV */
 nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
 .nav-brand{display:flex;align-items:center;gap:10px}
 .nav-logo{width:34px;height:34px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
@@ -37,16 +35,13 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 #clock{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.35)}
 
-/* LAYOUT */
 .wrap{max-width:780px;margin:0 auto;padding:2rem 1.5rem}
 
-/* PAGE HEADER */
 .page-head{text-align:center;margin-bottom:2rem}
 .page-head .icon-wrap{width:56px;height:56px;background:var(--accent-light);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:24px;border:1.5px solid rgba(59,91,219,0.15)}
 .page-head h1{font-size:1.6rem;font-weight:700;color:var(--text);letter-spacing:-.02em;margin-bottom:.4rem}
 .page-head p{color:var(--text2);font-size:13.5px;line-height:1.6}
 
-/* FORM CARD */
 .form-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--shadow2);overflow:hidden}
 .form-card-header{background:var(--sidebar);padding:1rem 1.5rem;display:flex;align-items:center;gap:10px}
 .form-card-header h2{font-size:.9rem;font-weight:600;color:rgba(255,255,255,0.85)}
@@ -63,7 +58,6 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 .fi textarea{resize:vertical;min-height:95px;line-height:1.6}
 .fi input::placeholder,.fi textarea::placeholder{color:var(--text3)}
 
-/* PRIORITY */
 .priority-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .pb{padding:10px 8px;border-radius:var(--r);border:1.5px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-family:var(--font);font-size:11.5px;font-weight:600;text-align:center;transition:all .2s;line-height:1.5;width:100%}
 .pb small{display:block;font-weight:400;font-size:10px;opacity:.7;margin-top:2px}
@@ -74,15 +68,12 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 .pb.sel{border-color:var(--c);background:var(--cb);color:var(--c)}
 .pb:hover:not(.sel){border-color:var(--border2);background:var(--bg4);color:var(--text)}
 
-/* DIVIDER */
 .form-divider{height:1px;background:var(--border);margin:.3rem 0}
 
-/* SUBMIT */
 .sub-btn{width:100%;padding:13px;background:var(--accent);border:none;color:#fff;font-family:var(--font);font-size:14px;font-weight:700;border-radius:var(--r);cursor:pointer;margin-top:1.2rem;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.01em}
 .sub-btn:hover:not(:disabled){background:var(--accent2);transform:translateY(-1px);box-shadow:0 4px 12px rgba(59,91,219,0.3)}
 .sub-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
 
-/* SLA INFO */
 .sla-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1rem 1.2rem;margin-top:1rem;box-shadow:var(--shadow)}
 .sla-card-title{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.7rem;display:flex;align-items:center;gap:6px}
 .sla-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
@@ -92,7 +83,6 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 .sla-bar{height:3px;border-radius:2px;margin-top:5px}
 .bar-cs{background:#1971c2}.bar-bd{background:#e67700}.bar-dev{background:#7048e8}.bar-other{background:#2f9e44}
 
-/* SUCCESS */
 .success-card{background:var(--bg2);border:1px solid var(--green-border);border-radius:var(--r2);box-shadow:var(--shadow2);overflow:hidden;display:none}
 .success-card-header{background:var(--green);padding:1.5rem;text-align:center}
 .success-card-header .tick{width:56px;height:56px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .8rem;font-size:24px}
@@ -110,7 +100,6 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 .new-ticket-btn{width:100%;padding:11px;background:transparent;border:1.5px solid var(--border2);color:var(--text2);font-family:var(--font);font-size:13px;font-weight:600;border-radius:var(--r);cursor:pointer;transition:all .2s}
 .new-ticket-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
 
-/* TOAST */
 #tc{position:fixed;bottom:20px;right:20px;z-index:300;display:flex;flex-direction:column;gap:7px}
 .toast{background:var(--bg2);border:1.5px solid var(--border2);padding:10px 14px;border-radius:var(--r);font-size:13px;min-width:240px;box-shadow:var(--shadow2);animation:tin .3s ease;display:flex;align-items:center;gap:9px}
 @keyframes tin{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
@@ -291,17 +280,23 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 <div id="tc"></div>
 
 <script>
-let CFG={};try{CFG=JSON.parse(localStorage.getItem('cps_cfg')||'{}')}catch(e){}
-if(CFG.pubkey){try{emailjs.init(CFG.pubkey)}catch(e){}}
+// ── CONFIG (Power Automate HTTP Trigger URLs) ─────────────
+// Admin panel ke Setup page se configure karein
+let CFG={};
+try{CFG=JSON.parse(localStorage.getItem('cps_cfg')||'{}')}catch(e){}
 
-let tickets=[];try{tickets=JSON.parse(localStorage.getItem('cps_tickets')||'[]')}catch(e){}
 let selPriority='';
 
+// SLA in minutes per department
 const SLA={BD:15,CS:10,Dev:30,HR:45,Finance:45,Marketing:45,Operations:45};
 function getSLA(d){return SLA[d]||45}
-function genId(d){return 'TKT-'+d.toUpperCase().slice(0,3)+'-'+String(Date.now()).slice(-5)}
-function fmt(ts){return new Date(ts).toLocaleString('en-PK',{timeZone:'Asia/Karachi',hour12:true})}
-function save(){try{localStorage.setItem('cps_tickets',JSON.stringify(tickets))}catch(e){}}
+
+function genId(d){
+  return 'TKT-'+d.toUpperCase().slice(0,3)+'-'+String(Date.now()).slice(-5);
+}
+function fmt(ts){
+  return new Date(ts).toLocaleString('en-PK',{timeZone:'Asia/Karachi',hour12:true});
+}
 
 function toast(msg,type='s'){
   const c=document.getElementById('tc');
@@ -316,39 +311,7 @@ function selP(p,btn){
   btn.classList.add('sel');
 }
 
-function buildEmail(tk){
-  const deadline=fmt(tk.createdAt+tk.slaMins*60000);
-  return `From : m.basit_cplusoft@outlook.com
-To   : ${tk.email}
-Subj : [${tk.id}] Ticket Received — ${tk.subject}
-Date : ${fmt(tk.createdAt)}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  CPLUSOFT HELPDESK — TICKET CONFIRMATION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Dear ${tk.name},
-
-Your support ticket has been submitted.
-
-  Ticket ID   :  ${tk.id}
-  Department  :  ${tk.dept}
-  Category    :  ${tk.category}
-  Priority    :  ${tk.priority}
-  Status      :  Open
-  Submitted   :  ${fmt(tk.createdAt)}
-
-━━ SLA & Resolution Deadline ━━━━━━━━━━
-
-  Target Time  :  ${tk.slaMins} minutes
-  Deadline     :  ${deadline}
-  Priority     :  ${tk.priority==='Critical'?'🔴 CRITICAL — Immediate response':tk.priority==='High'?'🟡 HIGH — Response within 5 min':tk.priority==='Medium'?'🔵 MEDIUM — Standard queue':'🟢 LOW — Next available slot'}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Reference ID: ${tk.id}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`;
-}
-
+// ── SUBMIT TICKET ─────────────────────────────────────────
 async function submitTicket(){
   const name=document.getElementById('fn').value.trim();
   const email=document.getElementById('fe').value.trim();
@@ -362,48 +325,71 @@ async function submitTicket(){
   }
   if(!email.includes('@')){toast('Invalid email address','w');return;}
 
+  // Check Power Automate URL configured
+  if(!CFG.paCreateUrl){
+    toast('Power Automate URL not set — see Setup page','w');return;
+  }
+
   const btn=document.getElementById('sub-btn');
   btn.disabled=true;
   btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur=".8s" repeatCount="indefinite"/></circle></svg> Submitting...';
 
+  const slaMins=getSLA(dept);
+  const createdAt=Date.now();
+  const deadline=fmt(createdAt+slaMins*60000);
+
   const tk={
-    id:genId(dept),name,email,dept,category:cat,
-    subject:subj,description:desc,priority:selPriority,
-    status:'Open',createdAt:Date.now(),slaMins:getSLA(dept),
-    timeline:[{time:Date.now(),text:'Ticket created. Confirmation email sent to '+email}]
+    id:genId(dept),
+    name,email,dept,
+    category:cat,
+    subject:subj,
+    description:desc,
+    priority:selPriority,
+    status:'Open',
+    createdAt,
+    createdAtStr:fmt(createdAt),
+    slaMins,
+    deadline,
+    priorityLabel:selPriority==='Critical'?'🔴 CRITICAL — Immediate response':
+                  selPriority==='High'?'🟡 HIGH — Response within 5 min':
+                  selPriority==='Medium'?'🔵 MEDIUM — Standard queue':'🟢 LOW — Next available slot',
+    timeline:[{time:createdAt,text:'Ticket created. Confirmation email sent to '+email}]
   };
-  tickets.unshift(tk);save();
 
-  if(CFG.pubkey&&CFG.service&&CFG.template){
-    try{
-      await emailjs.send(CFG.service,CFG.template,{
-        to_email:email,from_name:'CPluSoft HelpDesk',
-        subject:`[${tk.id}] Ticket Received — ${tk.subject}`,
-        body:buildEmail(tk),reply_to:'m.basit_cplusoft@outlook.com'
-      });
-      toast('Confirmation email sent to '+email,'s');
-    }catch(err){toast('Email failed — contact support','e')}
+  try{
+    // Send to Power Automate — it saves to SharePoint AND sends Outlook email
+    const res=await fetch(CFG.paCreateUrl,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(tk)
+    });
+
+    if(res.ok||res.status===202){
+      toast('Ticket submitted! Email sent to '+email,'s');
+    } else {
+      toast('Submitted (email may be delayed)','w');
+    }
+  }catch(err){
+    // Network error — still show success since PA may have received it
+    toast('Ticket submitted (check email)','w');
+    console.warn('PA fetch error:',err);
   }
 
-  if(CFG.sheets){
-    try{
-      var payload={action:'create',id:tk.id,name:tk.name,
-        email:tk.email,dept:tk.dept,category:tk.category,
-        priority:tk.priority,subject:tk.subject,
-        description:tk.description,createdAt:fmt(tk.createdAt),
-        sla:tk.slaMins, createdAtTS:tk.createdAt,
-        slaMins:tk.slaMins, timeline:tk.timeline};
-      sendToSheets(CFG.sheets, payload);
-    }catch(e){}
-  }
+  // Also save locally as backup
+  try{
+    const local=JSON.parse(localStorage.getItem('cps_tickets')||'[]');
+    local.unshift(tk);
+    localStorage.setItem('cps_tickets',JSON.stringify(local));
+  }catch(e){}
 
+  // Show success screen
   document.getElementById('form-section').style.display='none';
   document.getElementById('success-section').style.display='block';
   document.getElementById('s-email').textContent=email;
   document.getElementById('s-tid').textContent=tk.id;
   document.getElementById('s-dept').textContent=tk.dept;
   document.getElementById('s-pri').textContent=tk.priority;
-  document.getElementById('s-sla').textContent=tk.slaMins+' min';
+  document.getElementById('s-sla').textContent=slaMins+' min';
 
   btn.disabled=false;
   btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Submit Ticket & Send Confirmation Email';
@@ -417,38 +403,6 @@ function newTicket(){
   document.getElementById('fc').value='';
   selPriority='';
   document.querySelectorAll('.pb').forEach(b=>b.classList.remove('sel'));
-}
-
-// Google Sheets - 100% cross-device method using form submit
-function sendToSheets(url, data){
-  // Create hidden iframe to avoid page navigation
-  var iframeName = 'gs_frame_' + Date.now();
-  var iframe = document.createElement('iframe');
-  iframe.name = iframeName;
-  iframe.style.display = 'none';
-  document.body.appendChild(iframe);
-
-  // Create hidden form targeting iframe
-  var form = document.createElement('form');
-  form.method = 'POST';
-  form.action = url;
-  form.target = iframeName;
-  form.style.display = 'none';
-
-  // Add data as hidden input
-  var input = document.createElement('input');
-  input.type = 'hidden';
-  input.name = 'payload';
-  input.value = JSON.stringify(data);
-  form.appendChild(input);
-
-  document.body.appendChild(form);
-  form.submit();
-
-  // Cleanup after 5 seconds
-  setTimeout(function(){
-    try{ document.body.removeChild(form); document.body.removeChild(iframe); }catch(e){}
-  }, 5000);
 }
 
 setInterval(()=>{

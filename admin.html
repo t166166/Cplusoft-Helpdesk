@@ -643,6 +643,11 @@ function getBusinessDayLabel(dateStr){
 function getTickets(){try{return JSON.parse(localStorage.getItem('cps_tickets')||'[]')}catch(e){return[]}}
 function saveTickets(t){try{localStorage.setItem('cps_tickets',JSON.stringify(t))}catch(e){}}
 
+// ── HELPERS ───────────────────────────────────────────────
+function parseTimeline(str){
+  try{return JSON.parse(str||'[]')}catch(e){return[]}
+}
+
 // ── SYNC FROM POWER AUTOMATE (SharePoint) ─────────────────
 async function syncFromSheets(){
   if(!CFG.paGetUrl) return;
@@ -667,7 +672,7 @@ async function syncFromSheets(){
       slaMins:Number(r.SLAMinutes||r.slaMins)||45,
       createdAt:Number(r.CreatedAtTS||r.createdAt)||0,
       resolvedAt:r.ResolvedAtTS?Number(r.ResolvedAtTS):null,
-      timeline:(()=>{try{return JSON.parse(r.Timeline||'[]')}catch(e){return[]}}())
+      timeline:parseTimeline(r.Timeline)
     })).filter(t=>t.id&&t.createdAt);
 
     const local=getTickets();

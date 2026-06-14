@@ -58,15 +58,13 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 .fi textarea{resize:vertical;min-height:95px;line-height:1.6}
 .fi input::placeholder,.fi textarea::placeholder{color:var(--text3)}
 
-.priority-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.pb{padding:10px 8px;border-radius:var(--r);border:1.5px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-family:var(--font);font-size:11.5px;font-weight:600;text-align:center;transition:all .2s;line-height:1.5;width:100%}
-.pb small{display:block;font-weight:400;font-size:10px;opacity:.7;margin-top:2px}
-.pb.pc{--c:#e03131;--cb:#fff5f5;--cbr:#ffc9c9}
-.pb.ph2{--c:#e67700;--cb:#fff9db;--cbr:#ffec99}
-.pb.pm{--c:#1971c2;--cb:#e7f5ff;--cbr:#a5d8ff}
-.pb.pl{--c:#2f9e44;--cb:#ebfbee;--cbr:#b2f2bb}
-.pb.sel{border-color:var(--c);background:var(--cb);color:var(--c)}
-.pb:hover:not(.sel){border-color:var(--border2);background:var(--bg4);color:var(--text)}
+.ai-priority-box{display:flex;flex-direction:column;gap:8px;padding:12px 14px;background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--r)}
+.ai-priority-badge{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:20px;font-size:12.5px;font-weight:700;width:fit-content;border:1.5px solid var(--border2);transition:all .2s}
+.ai-priority-badge.pc{background:var(--red-bg);color:var(--red);border-color:var(--red-border)}
+.ai-priority-badge.ph2{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-border)}
+.ai-priority-badge.pm{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-border)}
+.ai-priority-badge.pl{background:var(--green-bg);color:var(--green);border-color:var(--green-border)}
+.ai-priority-note{font-size:11.5px;color:var(--text3);line-height:1.55}
 
 .form-divider{height:1px;background:var(--border);margin:.3rem 0}
 
@@ -112,7 +110,6 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 
 @media(max-width:600px){
   .form-grid{grid-template-columns:1fr}
-  .priority-grid{grid-template-columns:1fr 1fr}
   .sla-grid{grid-template-columns:1fr 1fr}
   .success-info-grid{grid-template-columns:1fr 1fr}
   nav{padding:.8rem 1rem}
@@ -176,7 +173,7 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
         </div>
         <div class="fi">
           <label>Issue Category <span class="req">*</span></label>
-          <select id="fc">
+          <select id="fc" onchange="updateAIPriority()">
             <option value="">— Select Category —</option>
             <option value="Technical">Technical Issue</option>
             <option value="Access">Access / Permissions</option>
@@ -190,20 +187,18 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
         </div>
         <div class="fi full">
           <label>Subject <span class="req">*</span></label>
-          <input id="fs" placeholder="Brief description of the issue">
+          <input id="fs" placeholder="Brief description of the issue" oninput="updateAIPriority()">
         </div>
         <div class="fi full">
-          <label>Priority Level <span class="req">*</span></label>
-          <div class="priority-grid">
-            <button class="pb pc" onclick="selP('Critical',this)">🔴 Critical<small>System Down</small></button>
-            <button class="pb ph2" onclick="selP('High',this)">🟡 High<small>Major Impact</small></button>
-            <button class="pb pm" onclick="selP('Medium',this)">🔵 Medium<small>Minor Impact</small></button>
-            <button class="pb pl" onclick="selP('Low',this)">🟢 Low<small>No Urgency</small></button>
+          <label>Priority Level <span style="color:var(--text3);font-weight:500;text-transform:none;letter-spacing:0">— AI Auto-Detected 🤖</span></label>
+          <div class="ai-priority-box" id="ai-priority-box">
+            <span class="ai-priority-badge pm" id="ai-priority-badge">🔵 Medium — Standard Queue</span>
+            <span class="ai-priority-note">Priority subject aur description ko analyze kar ke system khud automatically set karta hai — manual selection ki zarurat nahi.</span>
           </div>
         </div>
         <div class="fi full">
           <label>Detailed Description <span class="req">*</span></label>
-          <textarea id="fdes" placeholder="Describe the issue in detail — what happened, any error messages, steps to reproduce..."></textarea>
+          <textarea id="fdes" placeholder="Describe the issue in detail — what happened, any error messages, steps to reproduce..." oninput="updateAIPriority()"></textarea>
         </div>
       </div>
       <button class="sub-btn" id="sub-btn" onclick="submitTicket()">
@@ -281,14 +276,15 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 
 <script>
 // ── CONFIG (Power Automate HTTP Trigger URLs) ─────────────
-// Admin panel ke Setup page se configure karein
+// Admin panel ke Setup page se override/configure ho sakta hai (localStorage 'cps_cfg')
 let CFG={};
 try{CFG=JSON.parse(localStorage.getItem('cps_cfg')||'{}')}catch(e){}
-if(!CFG.paCreateUrl){
-  CFG.paCreateUrl='https://defaultde683246e4814c8e85bd79f9eed871.3e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/225f529d56354059bab2c61f52986343/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=yTm0nC2mzH9KijTNZESuV4CiC_NlkDloAalqpHNyL4Y';
-}
+// Default Create-Ticket Flow URL — yeh hamesha set rehta hai taake ticket
+// SharePoint + email ke liye Power Automate ko zaroor mile, chahe admin
+// panel se config kabhi save na hua ho ya is page ka localStorage alag ho.
+if(!CFG.paCreateUrl) CFG.paCreateUrl='https://defaultde683246e4814c8e85bd79f9eed871.3e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/225f529d56354059bab2c61f52986343/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=yTm0nC2mzH9KijTNZESuV4CiC_NlkDloAalqpHNyL4Y';
 
-let selPriority='';
+let selPriority='Medium';
 
 // SLA in minutes per department
 const SLA={BD:15,CS:10,Dev:30,HR:45,Finance:45,Marketing:45,Operations:45};
@@ -308,10 +304,49 @@ function toast(msg,type='s'){
   setTimeout(()=>t.remove(),4200);
 }
 
-function selP(p,btn){
-  selPriority=p;
-  document.querySelectorAll('.pb').forEach(b=>b.classList.remove('sel'));
-  btn.classList.add('sel');
+// ── AI PRIORITY DETECTION ──────────────────────────────────
+// Subject + Description ka text analyze kar ke priority khud decide
+// karta hai (keyword-weighted scoring). User ko manually select nahi karna.
+const PRIORITY_RULES={
+  critical:['server down','system down','site down','app down','production down','not working at all','completely down','totally down','cannot access','can not access','can\'t access','outage','data loss','data lost','lost data','hacked','breach','virus','malware','ransomware','all users','everyone affected','entire team','whole office','payment failing','payments down','down since','no internet','network down','cannot login at all'],
+  high:['error','not working','broken','blocked','failing','failed','crash','crashing','freezing','frozen','cannot login','can not login','can\'t login','unable to','urgent','asap','immediately','major issue','important','client waiting','client is waiting','multiple users','deadline','high priority','stuck','not loading','not opening'],
+  low:['question','suggestion','minor','cosmetic','small issue','small request','when possible','no rush','no urgency','feature request','enhancement','training','how to','how do i','request for','would like to','just wondering','for information']
+};
+
+function detectPriority(subject,desc,category){
+  const text=(subject+' '+desc).toLowerCase();
+  let score=0;
+  PRIORITY_RULES.critical.forEach(w=>{if(text.includes(w)) score+=3});
+  PRIORITY_RULES.high.forEach(w=>{if(text.includes(w)) score+=2});
+  PRIORITY_RULES.low.forEach(w=>{if(text.includes(w)) score-=2});
+
+  // Category-based adjustment
+  if(category==='Security') score+=3;
+  else if(category==='Network') score+=1;
+  else if(category==='Process') score-=1;
+
+  if(score>=5) return 'Critical';
+  if(score>=2) return 'High';
+  if(score>=0) return 'Medium';
+  return 'Low';
+}
+
+const AI_PRIORITY_MAP={
+  Critical:['🔴 Critical — System Down','pc'],
+  High:['🟡 High — Major Impact','ph2'],
+  Medium:['🔵 Medium — Standard Queue','pm'],
+  Low:['🟢 Low — No Urgency','pl']
+};
+
+function updateAIPriority(){
+  const subj=document.getElementById('fs').value.trim();
+  const desc=document.getElementById('fdes').value.trim();
+  const cat=document.getElementById('fc').value;
+  selPriority=detectPriority(subj,desc,cat);
+  const badge=document.getElementById('ai-priority-badge');
+  const[label,cls]=AI_PRIORITY_MAP[selPriority];
+  badge.className='ai-priority-badge '+cls;
+  badge.textContent='🤖 '+label;
 }
 
 // ── SUBMIT TICKET ─────────────────────────────────────────
@@ -323,10 +358,13 @@ async function submitTicket(){
   const subj=document.getElementById('fs').value.trim();
   const desc=document.getElementById('fdes').value.trim();
 
-  if(!name||!email||!dept||!cat||!subj||!desc||!selPriority){
+  if(!name||!email||!dept||!cat||!subj||!desc){
     toast('Please fill all required fields','w');return;
   }
   if(!email.includes('@')){toast('Invalid email address','w');return;}
+
+  // Final AI priority check (in case user submitted without typing events firing)
+  updateAIPriority();
 
   // Check Power Automate URL configured
   if(!CFG.paCreateUrl){
@@ -404,8 +442,7 @@ function newTicket(){
   ['fn','fe','fs','fdes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fd').value='';
   document.getElementById('fc').value='';
-  selPriority='';
-  document.querySelectorAll('.pb').forEach(b=>b.classList.remove('sel'));
+  updateAIPriority();
 }
 
 setInterval(()=>{
@@ -414,6 +451,8 @@ setInterval(()=>{
   const d=new Date().toLocaleDateString('en-PK',{timeZone:'Asia/Karachi',day:'2-digit',month:'short',year:'numeric'});
   document.getElementById('form-clock2').textContent=d+' '+t;
 },1000);
+
+updateAIPriority();
 </script>
 </body>
 </html>

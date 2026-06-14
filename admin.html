@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CPluSoft HelpDesk — Admin</title>
+<title>Cplusoft- IT Help Desk — Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -1050,7 +1050,7 @@ function fillSchemas(){
 </table>
 <p>Our team will resolve your issue within the SLA window.<br>
 You will receive a closing email once resolved.</p>
-<p>— CPluSoft HelpDesk<br>m.basit_cplusoft@outlook.com</p>`;
+<p>— Cplusoft-IT Help Desk<br>m.basit_cplusoft@outlook.com</p>`;
 
   document.getElementById('email-resolve-tpl').textContent=
 `<p>Dear @{triggerBody()?['name']},</p>
@@ -1066,7 +1066,7 @@ You will receive a closing email once resolved.</p>
   <tr><td><b>SLA Status</b></td><td>@{triggerBody()?['slaStatusLabel']}</td></tr>
 </table>
 <p>If you have further issues, please submit a new ticket.<br>
-— CPluSoft HelpDesk<br>m.basit_cplusoft@outlook.com</p>`;
+— Cplusoft- IT Help Desk<br>m.basit_cplusoft@outlook.com</p>`;
 }
 
 function copyText(elId,msg){

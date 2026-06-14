@@ -397,7 +397,8 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
           <div class="info-box">
             Yeh URL Power Automate ka <strong>HTTP Trigger</strong> hai. Jab koi ticket submit kare, system is URL ko call karta hai. Power Automate automatically:<br>
             ① SharePoint list mein entry save karta hai<br>
-            ② User ko <strong>m.basit_cplusoft@outlook.com</strong> se auto-email bhejta hai
+            ② User ko <strong>m.basit_cplusoft@outlook.com</strong> se auto-email bhejta hai<br><br>
+            🤖 <strong>Priority field</strong> ab user manually select nahi karta — ticket form (index.html) khud subject/description ko analyze kar ke <code>priority</code> value AI se set kar deta hai aur isi field mein bhej deta hai. Power Automate side par kuch change nahi karna — <code>Priority</code> column waise hi map hoga.
           </div>
           <div class="cfg">
             <label>HTTP Trigger URL — Create Ticket</label>
@@ -412,7 +413,8 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
             Jab admin ticket resolve kare, system is URL ko call karta hai. Power Automate automatically:<br>
             ① SharePoint mein ticket status <strong>Resolved</strong> karta hai<br>
             ② Resolution details fill karta hai (time taken, SLA status)<br>
-            ③ User ko closing email bhejta hai
+            ③ User ko closing email bhejta hai<br><br>
+            ⚠️ Zaroori: <code>ResolvedAtTS</code> aur <code>Timeline</code> columns bhi update karna na bhoolen — agar yeh missed ho gaye to "Sync SharePoint" ke baad resolved tickets ka "Time Taken" galat (NaN) dikhega.
           </div>
           <div class="cfg">
             <label>HTTP Trigger URL — Resolve Ticket</label>
@@ -457,7 +459,7 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
               <p style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:.7rem">📋 Step 1 — SharePoint List</p>
               <div class="step-item"><div class="step-num">1</div><div>SharePoint site kholo → <strong>New → List</strong> → Name: <code>HelpDeskTickets</code></div></div>
               <div class="step-item"><div class="step-num">2</div><div>Yeh columns banao (single line of text unless noted):<br>
-                <code>TicketID</code>, <code>SubmitterName</code>, <code>SubmitterEmail</code>, <code>Department</code>, <code>Category</code>, <code>Priority</code>, <code>Subject</code>, <code>Description</code> (multi-line), <code>Status</code>, <code>SLAMinutes</code> (number), <code>Deadline</code>, <code>ResolvedAt</code>, <code>TimeTakenMinutes</code> (number), <code>SLAMet</code> (yes/no), <code>Timeline</code> (multi-line), <code>CreatedAtTS</code> (number)
+                <code>TicketID</code>, <code>SubmitterName</code>, <code>SubmitterEmail</code>, <code>Department</code>, <code>Category</code>, <code>Priority</code>, <code>Subject</code>, <code>Description</code> (multi-line), <code>Status</code>, <code>SLAMinutes</code> (number), <code>Deadline</code>, <code>ResolvedAt</code>, <code>ResolvedAtTS</code> (number), <code>TimeTakenMinutes</code> (number), <code>SLAMet</code> (yes/no), <code>Timeline</code> (multi-line), <code>CreatedAtTS</code> (number)
               </div></div>
 
               <p style="font-size:12px;font-weight:700;color:var(--text);margin:.9rem 0 .7rem">⚡ Step 2 — Flow 1: Create Ticket</p>
@@ -476,7 +478,7 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
               <p style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:.7rem">⚡ Step 3 — Flow 2: Resolve Ticket</p>
               <div class="step-item"><div class="step-num">1</div><div>Naya Instant flow → HTTP trigger</div></div>
               <div class="step-item"><div class="step-num">2</div><div>Action: <strong>SharePoint → Get items</strong> → Filter: <code>TicketID eq '@{triggerBody()?['id']}'</code></div></div>
-              <div class="step-item"><div class="step-num">3</div><div>Action: <strong>SharePoint → Update item</strong> → ID: <code>@{first(body('Get_items')?['value'])?['ID']}</code> → Status: <code>Resolved</code>, ResolvedAt, TimeTakenMinutes, SLAMet fields update karo</div></div>
+              <div class="step-item"><div class="step-num">3</div><div>Action: <strong>SharePoint → Update item</strong> → ID: <code>@{first(body('Get_items')?['value'])?['ID']}</code> → update karo: <code>Status</code> = Resolved, <code>ResolvedAt</code>, <code>ResolvedAtTS</code> (= <code>@{triggerBody()?['resolvedAtTS']}</code> — number, isi se dashboard "Time Taken" sahi dikhata hai), <code>TimeTakenMinutes</code>, <code>SLAMet</code>, aur <code>Timeline</code> (= <code>@{triggerBody()?['timeline']}</code> — taake resolve ki entry bhi history mein save ho)</div></div>
               <div class="step-item"><div class="step-num">4</div><div>Action: <strong>Outlook → Send email</strong> → Resolution email user ko</div></div>
               <div class="step-item"><div class="step-num">5</div><div>HTTP URL copy → "Resolve Ticket URL" mein paste karo</div></div>
 

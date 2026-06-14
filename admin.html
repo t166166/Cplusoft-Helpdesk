@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cplusoft HelpDesk — Admin</title>
+<title>CPluSoft HelpDesk — Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -255,7 +255,7 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
     <div class="logo-mark">
       <div class="logo-box2">CP</div>
       <div>
-        <div class="logo-text">Cplusoft</div>
+        <div class="logo-text">CPluSoft</div>
         <div class="logo-sub">HelpDesk Admin</div>
       </div>
     </div>
@@ -600,9 +600,9 @@ function logout(){sessionStorage.removeItem('hd_auth');location.reload()}
 
 // ── CONFIG ────────────────────────────────────────────────
 let CFG={};try{CFG=JSON.parse(localStorage.getItem('cps_cfg')||'{}')}catch(e){}
-if(!CFG.paCreateUrl) CFG.paCreateUrl='https://defaultde683246e4814c8e85bd79f9eed871.3e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/225f529d56354059bab2c61f52986343/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=yTm0nC2mzH9KijTNZESuV4CiC_NlkDloAalqpHNyL4Y';
-if(!CFG.paResolveUrl) CFG.paResolveUrl='https://defaultde683246e4814c8e85bd79f9eed871.3e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/0f759f6a847545f09402f5968f060197/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=LQu8c6bAAb0njctflyCcm9-aq9XlScVzMouFFEOt-BA';
-if(!CFG.paGetUrl) CFG.paGetUrl='https://defaultde683246e4814c8e85bd79f9eed871.3e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/de0c2f3593f545f69aa4ccca5ed0a2e7/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=-mcNeKtP8MjGYSQG5EzdFsLQQ4PBj1s_03rGsbWGaRI';
+if(!CFG.paCreateUrl) CFG.paCreateUrl='https://defaultde683246e4814c8e85bd79f9eed871.3e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/12df94d16f3d45fe8c57ff99a9f974b6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=OWO4drHiR00G2xyJw6tTjA179cK9K-P-uA14AaZNu68';
+if(!CFG.paResolveUrl) CFG.paResolveUrl='https://defaultde683246e4814c8e85bd79f9eed871.3e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/fb927a25831f46f8aad381a8c65fa19f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=J3jBivabHPM4tAxW17bmM8lM12fwAEQhKE4wRXBukXE';
+if(!CFG.paGetUrl) CFG.paGetUrl='https://defaultde683246e4814c8e85bd79f9eed871.3e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/c2fec912746b40be831dbbc836ea3105/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=bToZJQX0O8kyhh3zyyClV3DVfr9vs4AY8JkNspztrtc';
 
 function loadCfgUI(){
   if(CFG.paCreateUrl) document.getElementById('cfg-pa-create').value=CFG.paCreateUrl;

@@ -399,19 +399,6 @@ async function submitTicket(){
     toast('Description must be at least 15 characters','w');return;
   }
 
-  // Block a new ticket from this email if a previous ticket is still open (not Closed/Resolved)
-  try{
-    const existing=JSON.parse(localStorage.getItem('cps_tickets')||'[]');
-    const openTicket=existing.find(t=>{
-      const st=(t.status||'').toLowerCase();
-      return t.email && t.email.toLowerCase()===emailLower && st!=='closed' && st!=='resolved';
-    });
-    if(openTicket){
-      toast('You already have an open ticket ('+openTicket.id+'). Please wait until it is resolved before sending a new one.','w');
-      return;
-    }
-  }catch(e){}
-
   // Final AI priority check (in case user submitted without typing events firing)
   updateAIPriority();
 
@@ -421,8 +408,56 @@ async function submitTicket(){
   }
 
   const btn=document.getElementById('sub-btn');
+  const SUBMIT_LABEL='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Submit Ticket & Send Confirmation Email';
+
+  // Block a new ticket from this email if a previous ticket is still open
+  // First check locally (fast), then verify with SharePoint (cross-device — works on all devices)
+  try{
+    const existing=JSON.parse(localStorage.getItem('cps_tickets')||'[]');
+    const localOpen=existing.find(t=>{
+      const st=(t.status||'').toLowerCase();
+      return t.email && t.email.toLowerCase()===emailLower && st!=='closed' && st!=='resolved';
+    });
+    if(localOpen){
+      toast('You already have an open ticket ('+localOpen.id+'). Please wait until it is resolved before sending a new one.','w');
+      return;
+    }
+  }catch(e){}
+
+  // Server-side SharePoint check — yeh check har device par kaam karta hai
+  if(CFG.paGetUrl){
+    btn.disabled=true;
+    btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur=".8s" repeatCount="indefinite"/></circle></svg> Checking...';
+    try{
+      const spRes=await fetch(CFG.paGetUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});
+      if(spRes.ok){
+        const spData=await spRes.json();
+        const spItems=spData.value||spData;
+        if(Array.isArray(spItems)){
+          const spOpen=spItems.find(r=>{
+            const spEmail=(r.SubmitterEmail||r.email||'').toLowerCase();
+            const spStatus=String(r.Status||r.status||'').trim().toLowerCase();
+            return spEmail===emailLower && spStatus!=='resolved' && spStatus!=='closed';
+          });
+          if(spOpen){
+            const spId=spOpen.TicketID||spOpen.id||'existing ticket';
+            btn.disabled=false;
+            btn.innerHTML=SUBMIT_LABEL;
+            toast('You already have an open ticket ('+spId+'). Please wait until it is resolved before sending a new one.','w');
+            return;
+          }
+        }
+      }
+    }catch(spErr){
+      console.warn('SharePoint duplicate check failed:',spErr);
+    }
+    btn.disabled=false;
+    btn.innerHTML=SUBMIT_LABEL;
+  }
+
   btn.disabled=true;
   btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur=".8s" repeatCount="indefinite"/></circle></svg> Submitting...';
+
 
   const slaMins=getSLA(dept);
   const createdAt=Date.now();

@@ -1004,8 +1004,10 @@ async function confirmResolve(id){
     const payload={
       id:t.id,
       status:'Resolved',
+      id:t.id,
+      status:'Resolved',
       resolvedAt:fmt(resolvedAt),
-      resolvedAtTS:String(resolvedAt),
+      resolvedAtTS:resolvedAt,
       timeTaken:elapsed,
       slaMet:within?'YES':'NO',
       slaMinutes:t.slaMins,
@@ -1015,8 +1017,7 @@ async function confirmResolve(id){
       dept:t.dept,
       priority:t.priority,
       createdAt:fmt(t.createdAt),
-      priorityLabel:t.priority==='Critical'?'🔴 CRITICAL':t.priority==='High'?'🟡 HIGH':t.priority==='Medium'?'🔵 MEDIUM':'🟢 LOW',
-      slaStatusLabel:within?'✅ Resolved within SLA':'⚠️ SLA exceeded',
+      slaStatusLabel:within?'Resolved within SLA':'SLA exceeded',
       timeline:JSON.stringify(t.timeline)
     };
     const res=await fetch(CFG.paResolveUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});

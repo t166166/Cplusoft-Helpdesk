@@ -686,6 +686,13 @@ function clearLocalTickets(){try{localStorage.removeItem('cps_tickets')}catch(e)
 function parseTimeline(str){
   try{return JSON.parse(str||'[]')}catch(e){return[]}
 }
+// Parse SharePoint timestamps — handles numbers, strings, and comma-formatted numbers
+function parseTS(val){
+  if(!val) return null;
+  // Remove commas (SharePoint number formatting: 1,781,509,667,555 → 1781509667555)
+  const n = Number(String(val).replace(/,/g,''));
+  return isNaN(n)||n===0 ? null : n;
+}
 
 // ── SYNC FROM POWER AUTOMATE (SharePoint) ─────────────────
 // Helper: extract status robustly from any SharePoint field name variation
@@ -723,8 +730,8 @@ async function syncFromSheets(){
       description:r.Description||r.description||'',
       status:extractStatus(r),
       slaMins:Number(r.SLAMinutes||r.slaMins)||45,
-      createdAt:Number(r.CreatedAtTS||r.createdAt)||0,
-      resolvedAt:r.ResolvedAtTS?Number(r.ResolvedAtTS):(r.ResolvedAt?Number(r.ResolvedAt):null),
+      createdAt:parseTS(r.CreatedAtTS||r.createdAt),
+      resolvedAt:parseTS(r.ResolvedAtTS||r.ResolvedAt||null),
       timeline:parseTimeline(r.Timeline)
     })).filter(t=>t.id&&t.createdAt);
 
@@ -965,10 +972,18 @@ async function confirmResolve(id){
   const tickets=getTickets();
   const t=tickets.find(x=>x.id===id);if(!t) return;
 
+  // Guard: already resolved, don't duplicate
+  if((t.status||'').toLowerCase()==='resolved'){
+    closeModal('res-modal');
+    toast('Ticket already resolved','w');return;
+  }
+
   const resolvedAt=Date.now();
   const elapsed=Math.round((resolvedAt-t.createdAt)/60000);
   const within=elapsed<=t.slaMins;
   if(!t.timeline) t.timeline=[];
+  // Keep only non-resolve entries, then add one clean resolve entry
+  t.timeline=t.timeline.filter(e=>!e.text.startsWith('Resolved in'));
   t.timeline.push({time:resolvedAt,text:`Resolved in ${elapsed} min by Admin. Email sent to ${t.email}`});
 
   closeModal('res-modal');
@@ -990,7 +1005,7 @@ async function confirmResolve(id){
       id:t.id,
       status:'Resolved',
       resolvedAt:fmt(resolvedAt),
-      resolvedAtTS:resolvedAt,
+      resolvedAtTS:String(resolvedAt),
       timeTaken:elapsed,
       slaMet:within?'YES':'NO',
       slaMinutes:t.slaMins,

@@ -95,8 +95,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .filter-bar{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1rem 1.2rem;margin-bottom:1.2rem;box-shadow:var(--shadow);display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap}
 .filter-group{display:flex;flex-direction:column;gap:5px;min-width:160px}
 .filter-group label{font-size:10.5px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:5px}
-.fselect{appearance:none;-webkit-appearance:none;background:var(--bg3) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237aab8a' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center;border:1.5px solid var(--border2);color:var(--text);font-family:var(--font);font-size:13px;padding:8px 32px 8px 11px;border-radius:var(--r);outline:none;cursor:pointer;transition:border .2s;width:100%}
-.fselect:focus{border-color:var(--accent);background-color:var(--bg2)}
+.fselect{appearance:none;-webkit-appearance:none;background-color:var(--bg3);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237aab8a' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;border:1.5px solid var(--border2);color:var(--text);font-family:var(--font);font-size:13px;padding:8px 32px 8px 11px;border-radius:var(--r);outline:none;cursor:pointer;transition:border .2s,background-color .2s;width:100%}
+.fselect:focus{border-color:var(--accent)}
 .fselect option{background:var(--bg2)}
 .filter-bar-right{margin-left:auto;display:flex;align-items:flex-end;gap:8px}
 input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:pointer}
@@ -355,7 +355,7 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
         <!-- Date Filter Dropdown -->
         <div class="filter-group">
           <label>📅 Date Filter</label>
-          <select class="fselect" id="date-select" onchange="onDateSelect(this.value)">
+          <select class="fselect" id="date-select">
             <option value="all">All Dates</option>
             <option value="today">Today</option>
             <option value="yesterday">Yesterday</option>
@@ -369,7 +369,7 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
         <!-- Department Filter Dropdown -->
         <div class="filter-group">
           <label>🏢 Department</label>
-          <select class="fselect" id="dept-select" onchange="onDeptSelect(this.value)">
+          <select class="fselect" id="dept-select">
             <option value="all">All Departments</option>
             <option value="BD">Business Development (BD)</option>
             <option value="CS">Customer Support (CS)</option>
@@ -732,6 +732,11 @@ let curDept='all';
 async function init(){
   loadCfgUI();
   fillSchemas();
+
+  // Wire up filter selects via addEventListener (more reliable than inline onchange)
+  document.getElementById('date-select').addEventListener('change', function(){ onDateSelect(this.value); });
+  document.getElementById('dept-select').addEventListener('change', function(){ onDeptSelect(this.value); });
+
   document.getElementById('tlist').innerHTML='<div class="empty-state"><div class="ei">🔄</div><h3>Loading tickets...</h3><p>Syncing from SharePoint</p></div>';
   await syncFromSheets();
   renderTickets();
@@ -740,15 +745,27 @@ async function init(){
 
 // ── DATE DROPDOWN HANDLER ─────────────────────────────────
 function onDateSelect(val){
-  curDate=val;curDateRange=null;
+  curDate=val;
+  curDateRange=null;
   const row=document.getElementById('date-range-row');
-  if(val==='custom'){row.classList.add('show')}
-  else{row.classList.remove('show');document.getElementById('range-result').textContent=''}
+  const sel=document.getElementById('date-select');
+  if(val==='custom'){
+    row.classList.add('show');
+  } else {
+    row.classList.remove('show');
+    document.getElementById('range-result').textContent='';
+  }
+  // Visual active highlight on select
+  sel.style.borderColor = val!=='all' ? 'var(--accent)' : 'var(--border2)';
+  sel.style.background = val!=='all' ? 'var(--accent-light)' : 'var(--bg3)';
   renderTickets();
 }
 
 function onDeptSelect(val){
   curDept=val;
+  const sel=document.getElementById('dept-select');
+  sel.style.borderColor = val!=='all' ? 'var(--accent)' : 'var(--border2)';
+  sel.style.background = val!=='all' ? 'var(--accent-light)' : 'var(--bg3)';
   renderTickets();
 }
 
@@ -1101,7 +1118,10 @@ function clearDateRange(){
   curDateRange=null;curDate='all';
   document.getElementById('date-range-row').classList.remove('show');
   document.getElementById('range-result').textContent='';
-  document.getElementById('date-select').value='all';
+  const sel=document.getElementById('date-select');
+  sel.value='all';
+  sel.style.borderColor='var(--border2)';
+  sel.style.background='var(--bg3)';
   renderTickets();
 }
 

@@ -688,6 +688,16 @@ function parseTimeline(str){
 }
 
 // ── SYNC FROM POWER AUTOMATE (SharePoint) ─────────────────
+// Helper: extract status robustly from any SharePoint field name variation
+function extractStatus(r){
+  // Try every possible field name SharePoint/Power Automate might use
+  const raw = r.Status ?? r.status ?? r.STATUS ?? r['Status'] ?? r['status'] ?? '';
+  const s = String(raw).trim().toLowerCase();
+  const result = s === 'resolved' ? 'Resolved' : 'Open';
+  console.log('[HelpDesk] extractStatus raw='+JSON.stringify(raw)+' normalized='+s+' result='+result);
+  return result;
+}
+
 async function syncFromSheets(){
   if(!CFG.paGetUrl) return;
   try{
@@ -698,6 +708,10 @@ async function syncFromSheets(){
     const items=raw.value||raw;
     if(!Array.isArray(items)||items.length===0) return;
 
+    // LOG all field keys from first item so we can verify field names
+    console.log('[HelpDesk] SharePoint fields available:', Object.keys(items[0]));
+    console.log('[HelpDesk] First item full:', JSON.stringify(items[0], null, 2));
+
     const mapped=items.map(r=>({
       id:r.TicketID||r.id||'',
       name:r.SubmitterName||r.name||'',
@@ -707,18 +721,33 @@ async function syncFromSheets(){
       priority:r.Priority||r.priority||'',
       subject:r.Subject||r.subject||'',
       description:r.Description||r.description||'',
-      status:r.Status||r.status||'Open',
+      status:extractStatus(r),
       slaMins:Number(r.SLAMinutes||r.slaMins)||45,
       createdAt:Number(r.CreatedAtTS||r.createdAt)||0,
-      resolvedAt:r.ResolvedAtTS?Number(r.ResolvedAtTS):null,
+      resolvedAt:r.ResolvedAtTS?Number(r.ResolvedAtTS):(r.ResolvedAt?Number(r.ResolvedAt):null),
       timeline:parseTimeline(r.Timeline)
     })).filter(t=>t.id&&t.createdAt);
 
-    // SharePoint is master — save SharePoint data directly, no local merging.
-    // This ensures any device resolving a ticket is immediately reflected everywhere.
+    console.log('[HelpDesk] After mapping, statuses:', mapped.map(t=>t.id+':'+t.status));
+
+    // pendingResolved: protect tickets resolved this session until SharePoint confirms
+    mapped.forEach(t=>{
+      if(pendingResolved[t.id]){
+        if(t.status==='Resolved'){
+          // SharePoint has caught up — remove from pending
+          delete pendingResolved[t.id];
+          console.log('[HelpDesk] SharePoint confirmed Resolved for', t.id);
+        } else {
+          // SharePoint not updated yet — keep Resolved locally
+          t.status='Resolved';
+          t.resolvedAt=pendingResolved[t.id];
+          console.log('[HelpDesk] Protecting pending Resolved for', t.id);
+        }
+      }
+    });
     mapped.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
     saveTickets(mapped);
-  }catch(e){console.warn('SharePoint sync failed:',e)}
+  }catch(e){console.warn('[HelpDesk] SharePoint sync failed:',e)}
 }
 
 // ── STATE ─────────────────────────────────────────────────
@@ -726,6 +755,9 @@ let curFilter='all';
 let curDate='all';
 let curDateRange=null;
 let curDept='all';
+// Tracks tickets resolved in this session until SharePoint confirms
+// Key = ticket id, Value = resolvedAt timestamp
+const pendingResolved = {};
 
 // ── INIT ─────────────────────────────────────────────────
 async function init(){
@@ -781,17 +813,17 @@ function renderTickets(){
   if(curDept&&curDept!=='all') filtered=filtered.filter(t=>t.dept===curDept);
   // Status filter
   if(curFilter==='open') filtered=filtered.filter(t=>t.status==='Open');
-  else if(curFilter==='resolved') filtered=filtered.filter(t=>t.status==='Resolved');
-  else if(curFilter==='overdue') filtered=filtered.filter(t=>t.status==='Open'&&(now-t.createdAt)>t.slaMins*60000);
+  else if(curFilter==='resolved') filtered=filtered.filter(t=>(t.status||'').toLowerCase()==='resolved');
+  else if(curFilter==='overdue') filtered=filtered.filter(t=>(t.status||'').toLowerCase()==='open'&&(now-t.createdAt)>t.slaMins*60000);
   document.getElementById('ticket-count').textContent=filtered.length+' ticket'+(filtered.length!==1?'s':'');
   const el=document.getElementById('tlist');
   if(!filtered.length){el.innerHTML=`<div class="empty-state"><div class="ei">📭</div><h3>No tickets found</h3><p>No tickets match the selected filters.</p></div>`;updateStats(tickets);return}
   el.innerHTML=filtered.map(t=>{
     const elapsed=now-t.createdAt;
     const slaMs=t.slaMins*60000;
-    const isOver=t.status==='Open'&&elapsed>slaMs;
+    const isOver=(t.status||'').toLowerCase()==='open'&&elapsed>slaMs;
     let tcls='tok',ttxt='';
-    if(t.status==='Resolved'){
+    if((t.status||'').toLowerCase()==='resolved'){
       const m=Math.round((t.resolvedAt-t.createdAt)/60000);
       ttxt='Done in '+m+'m';tcls=(t.resolvedAt-t.createdAt)<=slaMs?'tok':'tover';
     } else if(isOver){
@@ -800,7 +832,7 @@ function renderTickets(){
       const rem=Math.ceil((slaMs-elapsed)/60000);ttxt=rem+'m left';tcls=(elapsed/slaMs)>0.75?'twarn':'tok';
     }
     const pb={Critical:'bc',High:'bh',Medium:'bm',Low:'bl'}[t.priority]||'bm';
-    const sb=isOver?'bov':t.status==='Resolved'?'br':'bo';
+    const sb=isOver?'bov':(t.status||'').toLowerCase()==='resolved'?'br':'bo';
     const slabel=isOver?'⚠ Overdue':t.status;
     const rowCls=(t.priority==='Critical'?'critical-row':t.priority==='High'?'high-row':'')+(isAfterHours(t.createdAt)?' after-hours':'');
     const ahTag=isAfterHours(t.createdAt)?'<span class="ah-tag">After Hours</span>':'';
@@ -813,7 +845,7 @@ function renderTickets(){
       <div><span class="badge ${pb}">${t.priority}</span></div>
       <div><span class="badge ${sb}">${slabel}</span></div>
       <div class="timer ${tcls}">${ttxt}</div>
-      <div>${t.status!=='Resolved'
+      <div>${(t.status||'').toLowerCase()!=='resolved'
         ?`<button class="rbtn" onclick="event.stopPropagation();openResolve('${t.id}')">✓ Resolve</button>`
         :'<span class="rdone">✓ Done</span>'}</div>
     </div>`;
@@ -826,11 +858,11 @@ function updateStats(tickets){
   const now=Date.now();
   const today=new Date().toDateString();
   const todayTickets=tickets.filter(t=>getTicketDay(t.createdAt)===today);
-  const open=tickets.filter(t=>t.status==='Open');
-  const over=tickets.filter(t=>t.status==='Open'&&(now-t.createdAt)>t.slaMins*60000);
+  const open=tickets.filter(t=>(t.status||'').toLowerCase()==='open');
+  const over=tickets.filter(t=>(t.status||'').toLowerCase()==='open'&&(now-t.createdAt)>t.slaMins*60000);
   document.getElementById('s-today').textContent=todayTickets.length;
   document.getElementById('s-open').textContent=open.length;
-  document.getElementById('s-res').textContent=tickets.filter(t=>t.status==='Resolved').length;
+  document.getElementById('s-res').textContent=tickets.filter(t=>(t.status||'').toLowerCase()==='resolved').length;
   document.getElementById('s-over').textContent=over.length;
   const badge=document.getElementById('open-badge');
   if(open.length>0){badge.style.display='';badge.textContent=open.length}
@@ -858,7 +890,7 @@ function openPanel(id){
       <div><div class="dp-lbl">Department</div><div class="dp-val">${t.dept}</div></div>
       <div><div class="dp-lbl">Category</div><div class="dp-val">${t.category}</div></div>
       <div><div class="dp-lbl">Priority</div><div class="dp-val"><span class="badge ${{Critical:'bc',High:'bh',Medium:'bm',Low:'bl'}[t.priority]}">${t.priority}</span></div></div>
-      <div><div class="dp-lbl">Status</div><div class="dp-val"><span class="badge ${t.status==='Resolved'?'br':'bo'}">${t.status}</span></div></div>
+      <div><div class="dp-lbl">Status</div><div class="dp-val"><span class="badge ${(t.status||'').toLowerCase()==='resolved'?'br':'bo'}">${t.status}</span></div></div>
       <div><div class="dp-lbl">SLA Target</div><div class="dp-val">${t.slaMins} minutes</div></div>
       <div><div class="dp-lbl">Submitted</div><div class="dp-val" style="font-size:12px">${fmt(t.createdAt)}</div></div>
       ${isAfterHours(t.createdAt)?`<div style="grid-column:1/-1"><div class="dp-lbl">Note</div><div class="dp-val" style="color:var(--amber)">⏰ After-hours ticket — counted in next business day</div></div>`:''}
@@ -869,7 +901,7 @@ function openPanel(id){
       <div class="dp-lbl" style="margin-bottom:8px">Timeline</div>
       ${(t.timeline||[]).map(e=>`<div class="tli"><div class="tlt">${new Date(e.time).toLocaleTimeString('en-PK',{timeZone:'Asia/Karachi'})}</div><div class="tltx">${esc(e.text)}</div></div>`).join('')}
     </div>`;
-  document.getElementById('resolve-cta').innerHTML=t.status!=='Resolved'?`
+  document.getElementById('resolve-cta').innerHTML=(t.status||'').toLowerCase()!=='resolved'?`
     <div class="resolve-box">
       <h4>Mark as Resolved</h4>
       <p>A resolution email will be sent to <strong>${esc(t.email)}</strong></p>
@@ -945,6 +977,8 @@ async function confirmResolve(id){
     toast('Power Automate Resolve URL not set — cannot resolve','w');return;
   }
 
+  // Add to pending map so 30s auto-sync won't overwrite with stale SharePoint data
+  pendingResolved[t.id] = resolvedAt;
   // Show resolving state immediately in local cache
   t.status='Resolved';t.resolvedAt=resolvedAt;
   saveTickets(tickets);

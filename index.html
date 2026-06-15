@@ -7,11 +7,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f0f2f5;--bg2:#ffffff;--bg3:#f8f9fb;--bg4:#eef0f3;
-  --sidebar:#1a2035;
-  --border:#e2e5ea;--border2:#d0d5dd;
-  --text:#1a1f2e;--text2:#5a6478;--text3:#9aa3b5;
-  --accent:#3b5bdb;--accent2:#4c6ef5;--accent-light:#eef2ff;
+  --bg:#f2f8f4;--bg2:#ffffff;--bg3:#f0f7f3;--bg4:#e4f2ea;
+  --sidebar:#0a1a12;
+  --border:#c8e6d0;--border2:#a8d4b8;
+  --text:#0a1a12;--text2:#3d6b50;--text3:#7aab8a;
+  --accent:#3dd68c;--accent2:#22c55e;--accent-light:#e8faf0;
   --green:#2f9e44;--green-bg:#ebfbee;--green-border:#b2f2bb;
   --red:#e03131;--red-bg:#fff5f5;--red-border:#ffc9c9;
   --amber:#e67700;--amber-bg:#fff9db;--amber-border:#ffec99;
@@ -20,13 +20,14 @@
   --r:8px;--r2:12px;
   --shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
   --shadow2:0 4px 16px rgba(0,0,0,0.1);
+  --logo-grad:linear-gradient(135deg,#c8f538 0%,#3dd68c 50%,#14b8a6 100%);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
 
 nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
 .nav-brand{display:flex;align-items:center;gap:10px}
-.nav-logo{width:34px;height:34px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
+.nav-logo{width:34px;height:34px;background:transparent;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
 .nav-title{font-size:.95rem;font-weight:700;color:#fff;letter-spacing:-.01em}
 .nav-sub{font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px}
 .nav-right{display:flex;align-items:center;gap:10px}
@@ -38,12 +39,12 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 .wrap{max-width:780px;margin:0 auto;padding:2rem 1.5rem}
 
 .page-head{text-align:center;margin-bottom:2rem}
-.page-head .icon-wrap{width:56px;height:56px;background:var(--accent-light);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:24px;border:1.5px solid rgba(59,91,219,0.15)}
+.page-head .icon-wrap{width:56px;height:56px;background:var(--logo-grad);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:24px;border:none;box-shadow:0 4px 16px rgba(61,214,140,0.3)}
 .page-head h1{font-size:1.6rem;font-weight:700;color:var(--text);letter-spacing:-.02em;margin-bottom:.4rem}
 .page-head p{color:var(--text2);font-size:13.5px;line-height:1.6}
 
 .form-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);box-shadow:var(--shadow2);overflow:hidden}
-.form-card-header{background:var(--sidebar);padding:1rem 1.5rem;display:flex;align-items:center;gap:10px}
+.form-card-header{background:linear-gradient(135deg,#0a1a12 0%,#152b1e 100%);padding:1rem 1.5rem;display:flex;align-items:center;gap:10px}
 .form-card-header h2{font-size:.9rem;font-weight:600;color:rgba(255,255,255,0.85)}
 .form-card-header span{font-size:11px;color:rgba(255,255,255,0.35);margin-left:auto;font-family:var(--mono)}
 .form-body{padding:1.5rem}
@@ -64,12 +65,11 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 .ai-priority-badge.ph2{background:var(--amber-bg);color:var(--amber);border-color:var(--amber-border)}
 .ai-priority-badge.pm{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-border)}
 .ai-priority-badge.pl{background:var(--green-bg);color:var(--green);border-color:var(--green-border)}
-.ai-priority-note{font-size:11.5px;color:var(--text3);line-height:1.55}
 
 .form-divider{height:1px;background:var(--border);margin:.3rem 0}
 
-.sub-btn{width:100%;padding:13px;background:var(--accent);border:none;color:#fff;font-family:var(--font);font-size:14px;font-weight:700;border-radius:var(--r);cursor:pointer;margin-top:1.2rem;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.01em}
-.sub-btn:hover:not(:disabled){background:var(--accent2);transform:translateY(-1px);box-shadow:0 4px 12px rgba(59,91,219,0.3)}
+.sub-btn{width:100%;padding:13px;background:var(--logo-grad);border:none;color:#0a1a12;font-family:var(--font);font-size:14px;font-weight:700;border-radius:var(--r);cursor:pointer;margin-top:1.2rem;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:.01em}
+.sub-btn:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px);box-shadow:0 4px 12px rgba(61,214,140,0.4)}
 .sub-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
 
 .sla-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1rem 1.2rem;margin-top:1rem;box-shadow:var(--shadow)}
@@ -79,17 +79,17 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 .sla-dept{font-size:11px;font-weight:700;color:var(--text);margin-bottom:2px}
 .sla-time{font-size:10px;color:var(--text2);font-family:var(--mono)}
 .sla-bar{height:3px;border-radius:2px;margin-top:5px}
-.bar-cs{background:#1971c2}.bar-bd{background:#e67700}.bar-dev{background:#7048e8}.bar-other{background:#2f9e44}
+.bar-cs{background:#14b8a6}.bar-bd{background:#3dd68c}.bar-dev{background:#a3e635}.bar-other{background:#22c55e}
 
 .success-card{background:var(--bg2);border:1px solid var(--green-border);border-radius:var(--r2);box-shadow:var(--shadow2);overflow:hidden;display:none}
-.success-card-header{background:var(--green);padding:1.5rem;text-align:center}
-.success-card-header .tick{width:56px;height:56px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .8rem;font-size:24px}
-.success-card-header h2{font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:.3rem}
-.success-card-header p{font-size:12.5px;color:rgba(255,255,255,0.8)}
+.success-card-header{background:var(--logo-grad);padding:1.5rem;text-align:center}
+.success-card-header .tick{width:56px;height:56px;background:rgba(0,0,0,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .8rem;font-size:24px}
+.success-card-header h2{font-size:1.2rem;font-weight:700;color:#0a1a12;margin-bottom:.3rem}
+.success-card-header p{font-size:12.5px;color:rgba(10,26,18,0.75)}
 .success-body{padding:1.5rem}
 .ticket-id-box{background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--r);padding:.9rem 1.2rem;text-align:center;margin-bottom:1.2rem}
 .ticket-id-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
-.ticket-id-val{font-size:1.4rem;font-weight:700;font-family:var(--mono);color:var(--accent);letter-spacing:.05em}
+.ticket-id-val{font-size:1.4rem;font-weight:700;font-family:var(--mono);background:var(--logo-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:.05em}
 .success-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.2rem}
 .si-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:.8rem;text-align:center}
 .si-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
@@ -121,9 +121,9 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 
 <nav>
   <div class="nav-brand">
-    <div class="nav-logo">CP</div>
+    <div class="nav-logo"><svg width="26" height="26" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M25 3L46 15V37L25 49L4 37V15L25 3Z" fill="url(#lgc)"/><rect x="22" y="13" width="6" height="24" rx="3" fill="white"/><rect x="13" y="22" width="24" height="6" rx="3" fill="white"/><defs><linearGradient id="lgc" x1="4" y1="3" x2="46" y2="49" gradientUnits="userSpaceOnUse"><stop stop-color="#c8f538"/><stop offset="0.5" stop-color="#3dd68c"/><stop offset="1" stop-color="#14b8a6"/></linearGradient></defs></svg></div>
     <div>
-      <div class="nav-title">CPluSoft Support</div>
+      <div class="nav-title">Cplusoft Support</div>
       <div class="nav-sub">IT Help Desk</div>
     </div>
   </div>
@@ -190,10 +190,9 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
           <input id="fs" placeholder="Brief description of the issue" oninput="updateAIPriority()">
         </div>
         <div class="fi full">
-          <label>Priority Level <span style="color:var(--text3);font-weight:500;text-transform:none;letter-spacing:0">— AI Auto-Detected 🤖</span></label>
+          <label>Priority Level <span style="color:var(--text3);font-weight:500;text-transform:none;letter-spacing:0">— Auto-Detected</span></label>
           <div class="ai-priority-box" id="ai-priority-box">
             <span class="ai-priority-badge pm" id="ai-priority-badge">🔵 Medium — Standard Queue</span>
-            <span class="ai-priority-note">Priority subject aur description ko analyze kar ke system khud automatically set karta hai — manual selection ki zarurat nahi.</span>
           </div>
         </div>
         <div class="fi full">
@@ -346,7 +345,7 @@ function updateAIPriority(){
   const badge=document.getElementById('ai-priority-badge');
   const[label,cls]=AI_PRIORITY_MAP[selPriority];
   badge.className='ai-priority-badge '+cls;
-  badge.textContent='🤖 '+label;
+  badge.textContent=label;
 }
 
 // ── SUBMIT TICKET ─────────────────────────────────────────

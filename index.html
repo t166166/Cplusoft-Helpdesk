@@ -152,11 +152,12 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
       <div class="form-grid">
         <div class="fi">
           <label>Full Name <span class="req">*</span></label>
-          <input id="fn" placeholder="Muhammad Ali">
+          <input id="fn" placeholder="Muhammad Ali" maxlength="60" oninput="this.value=this.value.replace(/[^A-Za-z\s]/g,'')">
         </div>
         <div class="fi">
           <label>Email Address <span class="req">*</span></label>
-          <input id="fe" type="email" placeholder="ali@cplusoft.com">
+          <input id="fe" type="email" placeholder="Enter your official email" oninput="validateEmailField()">
+          <span id="fe-err" style="display:none;font-size:11px;color:var(--red)">Only @cplusoft.co, cplusoft@outlook.com, or *_cplusoft@outlook.com addresses are allowed</span>
         </div>
         <div class="fi">
           <label>Department <span class="req">*</span></label>
@@ -198,6 +199,7 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
         <div class="fi full">
           <label>Detailed Description <span class="req">*</span></label>
           <textarea id="fdes" placeholder="Describe the issue in detail — what happened, any error messages, steps to reproduce..." oninput="updateAIPriority()"></textarea>
+          <span style="font-size:10px;color:var(--text3)">Minimum 15 characters</span>
         </div>
       </div>
       <button class="sub-btn" id="sub-btn" onclick="submitTicket()">
@@ -348,6 +350,25 @@ function updateAIPriority(){
   badge.textContent=label;
 }
 
+// ── LIVE EMAIL DOMAIN VALIDATION ───────────────────────────
+function isOfficialEmail(val){
+  val=val.toLowerCase();
+  return val==='cplusoft@outlook.com' || val.endsWith('@cplusoft.co') || val.endsWith('_cplusoft@outlook.com');
+}
+function validateEmailField(){
+  const inp=document.getElementById('fe');
+  const err=document.getElementById('fe-err');
+  const val=inp.value.trim().toLowerCase();
+  const valid = isOfficialEmail(val);
+  if(val.includes('@') && !valid){
+    inp.style.borderColor='var(--red)';
+    err.style.display='block';
+  } else {
+    inp.style.borderColor='';
+    err.style.display='none';
+  }
+}
+
 // ── SUBMIT TICKET ─────────────────────────────────────────
 async function submitTicket(){
   const name=document.getElementById('fn').value.trim();
@@ -361,6 +382,35 @@ async function submitTicket(){
     toast('Please fill all required fields','w');return;
   }
   if(!email.includes('@')){toast('Invalid email address','w');return;}
+
+  // Name must contain only letters and spaces (no numbers/special characters)
+  if(!/^[A-Za-z\s]+$/.test(name)){
+    toast('Name should contain only letters (no numbers or special characters)','w');return;
+  }
+
+  // Email must be the official Cplusoft address, a @cplusoft.co domain address, or end with _cplusoft@outlook.com
+  const emailLower=email.toLowerCase();
+  if(!isOfficialEmail(emailLower)){
+    toast('Only official email addresses (@cplusoft.co, cplusoft@outlook.com, or ending with _cplusoft@outlook.com) are allowed','w');return;
+  }
+
+  // Description should be reasonably detailed (15-20+ characters)
+  if(desc.length<15){
+    toast('Description must be at least 15 characters','w');return;
+  }
+
+  // Block a new ticket from this email if a previous ticket is still open (not Closed/Resolved)
+  try{
+    const existing=JSON.parse(localStorage.getItem('cps_tickets')||'[]');
+    const openTicket=existing.find(t=>{
+      const st=(t.status||'').toLowerCase();
+      return t.email && t.email.toLowerCase()===emailLower && st!=='closed' && st!=='resolved';
+    });
+    if(openTicket){
+      toast('You already have an open ticket ('+openTicket.id+'). Please wait until it is resolved before sending a new one.','w');
+      return;
+    }
+  }catch(e){}
 
   // Final AI priority check (in case user submitted without typing events firing)
   updateAIPriority();
@@ -441,6 +491,8 @@ function newTicket(){
   ['fn','fe','fs','fdes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fd').value='';
   document.getElementById('fc').value='';
+  document.getElementById('fe').style.borderColor='';
+  document.getElementById('fe-err').style.display='none';
   updateAIPriority();
 }
 

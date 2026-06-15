@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cplusoft- IT Help Desk — Admin</title>
+<title>Cplusoft HelpDesk — Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f0f2f5;--bg2:#ffffff;--bg3:#f8f9fb;--bg4:#eef0f3;
-  --sidebar:#1a2035;--sidebar2:#242d45;--sidebar3:#2e3a52;
-  --border:#e2e5ea;--border2:#d0d5dd;
-  --text:#1a1f2e;--text2:#5a6478;--text3:#9aa3b5;
-  --accent:#3b5bdb;--accent2:#4c6ef5;--accent-light:#eef2ff;
+  --bg:#f2f8f4;--bg2:#ffffff;--bg3:#f0f7f3;--bg4:#e4f2ea;
+  --sidebar:#0a1a12;--sidebar2:#0f2118;--sidebar3:#152b1e;
+  --border:#c8e6d0;--border2:#a8d4b8;
+  --text:#0a1a12;--text2:#3d6b50;--text3:#7aab8a;
+  --accent:#3dd68c;--accent2:#22c55e;--accent-light:#e8faf0;
+  --accent-teal:#14b8a6;--accent-lime:#a3e635;
   --green:#2f9e44;--green-bg:#ebfbee;--green-border:#b2f2bb;
   --red:#e03131;--red-bg:#fff5f5;--red-border:#ffc9c9;
   --amber:#e67700;--amber-bg:#fff9db;--amber-border:#ffec99;
@@ -19,6 +20,7 @@
   --font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
   --r:8px;--r2:12px;--shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.04);
   --shadow2:0 4px 12px rgba(0,0,0,0.1);
+  --logo-grad:linear-gradient(135deg,#c8f538 0%,#3dd68c 50%,#14b8a6 100%);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;display:flex}
@@ -27,22 +29,22 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .login-overlay{position:fixed;inset:0;background:var(--sidebar);display:flex;align-items:center;justify-content:center;z-index:999}
 .login-card{background:var(--bg2);border-radius:16px;padding:2.5rem;width:380px;box-shadow:var(--shadow2)}
 .login-logo{display:flex;align-items:center;gap:10px;margin-bottom:2rem}
-.login-logo .logo-box{width:40px;height:40px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px}
+.login-logo .logo-box{width:40px;height:40px;background:transparent;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px}
 .login-logo span{font-size:1.1rem;font-weight:700;color:var(--text)}
 .login-card h2{font-size:1.3rem;font-weight:700;margin-bottom:.3rem}
 .login-card p{color:var(--text2);font-size:13px;margin-bottom:1.5rem}
 .login-card label{font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:5px}
 .login-card input{width:100%;padding:10px 13px;border:1.5px solid var(--border2);border-radius:var(--r);font-family:var(--font);font-size:14px;color:var(--text);outline:none;transition:border .2s;margin-bottom:1rem;background:var(--bg3)}
 .login-card input:focus{border-color:var(--accent)}
-.login-btn{width:100%;padding:11px;background:var(--accent);border:none;color:#fff;font-family:var(--font);font-size:14px;font-weight:600;border-radius:var(--r);cursor:pointer;transition:background .2s}
-.login-btn:hover{background:var(--accent2)}
+.login-btn{width:100%;padding:11px;background:var(--logo-grad);border:none;color:#0a1a12;font-family:var(--font);font-size:14px;font-weight:700;border-radius:var(--r);cursor:pointer;transition:all .2s}
+.login-btn:hover{filter:brightness(1.07)}
 .login-err{color:var(--red);font-size:12px;margin-top:.5rem;display:none;text-align:center}
 
 /* SIDEBAR */
 .sidebar{width:240px;background:var(--sidebar);min-height:100vh;display:flex;flex-direction:column;flex-shrink:0;position:fixed;left:0;top:0;bottom:0;z-index:50}
 .sidebar-logo{padding:1.5rem 1.2rem 1rem;border-bottom:1px solid rgba(255,255,255,0.06)}
 .logo-mark{display:flex;align-items:center;gap:10px}
-.logo-box2{width:36px;height:36px;background:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;flex-shrink:0}
+.logo-box2{width:36px;height:36px;background:transparent;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;flex-shrink:0}
 .logo-text{font-size:.95rem;font-weight:700;color:#fff;letter-spacing:-.01em}
 .logo-sub{font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px}
 .sidebar-nav{padding:1rem 0;flex:1}
@@ -50,12 +52,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .nav-section-label{font-size:10px;font-weight:600;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:.09em;padding:.5rem .5rem .3rem}
 .nav-item{display:flex;align-items:center;gap:10px;padding:.6rem .8rem;border-radius:var(--r);cursor:pointer;transition:all .2s;color:rgba(255,255,255,0.55);font-size:13.5px;font-weight:500;margin-bottom:2px}
 .nav-item:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.9)}
-.nav-item.active{background:var(--accent);color:#fff}
+.nav-item.active{background:linear-gradient(135deg,rgba(163,230,53,0.25),rgba(20,184,166,0.25));color:#fff;border-left:3px solid #3dd68c}
 .nav-item .ni{font-size:15px;flex-shrink:0}
 .nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;min-width:18px;text-align:center}
 .sidebar-bottom{padding:1rem;border-top:1px solid rgba(255,255,255,0.06)}
 .user-info{display:flex;align-items:center;gap:9px;padding:.6rem .5rem;border-radius:var(--r)}
-.user-avatar{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0}
+.user-avatar{width:32px;height:32px;background:var(--logo-grad);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#0a1a12;font-weight:700;font-size:13px;flex-shrink:0}
 .user-name{font-size:12.5px;font-weight:600;color:rgba(255,255,255,0.85)}
 .user-role{font-size:10px;color:rgba(255,255,255,0.35)}
 .logout-link{display:flex;align-items:center;gap:8px;padding:.5rem .5rem;color:rgba(255,255,255,0.35);font-size:12px;cursor:pointer;border-radius:var(--r);transition:all .2s;margin-top:4px}
@@ -96,7 +98,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
 .date-nav-title{font-size:13px;font-weight:600;color:var(--text)}
 .date-tabs{display:flex;gap:6px;flex-wrap:wrap}
 .dtab{padding:5px 14px;border-radius:20px;border:1.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-size:12px;font-family:var(--font);font-weight:500;transition:all .2s;display:flex;align-items:center;gap:5px}
-.dtab.active{border-color:var(--accent);color:var(--accent);background:var(--accent-light);font-weight:600}
+.dtab.active{border-color:var(--accent);color:#0a1a12;background:var(--logo-grad);font-weight:600}
 .dtab:hover:not(.active){border-color:var(--border2);background:var(--bg3);color:var(--text)}
 .dtab .dc{background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;min-width:16px;text-align:center}
 .dtab.active .dc{background:var(--accent);color:#fff}
@@ -105,7 +107,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
 .filter-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
 .filter-left{display:flex;gap:6px}
 .fb{padding:5px 13px;border-radius:6px;border:1.5px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;font-size:12px;font-family:var(--font);font-weight:500;transition:all .2s}
-.fb.active{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.fb.active{border-color:var(--accent);color:#0a1a12;background:var(--logo-grad)}
 .filter-right{font-size:12px;color:var(--text3);font-family:var(--mono)}
 
 /* TICKET TABLE */
@@ -134,8 +136,8 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:
 .timer{font-family:var(--mono);font-size:11px;font-weight:500;white-space:nowrap}
 .tok{color:var(--green)}.twarn{color:var(--amber)}.tover{color:var(--red)}
 
-.rbtn{padding:6px 12px;background:var(--accent);border:none;color:#fff;border-radius:6px;cursor:pointer;font-size:11.5px;font-weight:600;font-family:var(--font);transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:4px}
-.rbtn:hover{background:var(--accent2);transform:translateY(-1px)}
+.rbtn{padding:6px 12px;background:var(--logo-grad);border:none;color:#0a1a12;border-radius:6px;cursor:pointer;font-size:11.5px;font-weight:700;font-family:var(--font);transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:4px}
+.rbtn:hover{filter:brightness(1.07);transform:translateY(-1px)}
 .rdone{font-size:11px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:3px}
 
 .empty-state{text-align:center;padding:3rem;color:var(--text3)}
@@ -237,8 +239,8 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
 <div class="login-overlay" id="login-overlay">
   <div class="login-card">
     <div class="login-logo">
-      <div class="logo-box">CP</div>
-      <span>CPluSoft HelpDesk</span>
+      <div class="logo-box"><svg width="26" height="26" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M25 3L46 15V37L25 49L4 37V15L25 3Z" fill="url(#lga)"/><rect x="22" y="13" width="6" height="24" rx="3" fill="white"/><rect x="13" y="22" width="24" height="6" rx="3" fill="white"/><defs><linearGradient id="lga" x1="4" y1="3" x2="46" y2="49" gradientUnits="userSpaceOnUse"><stop stop-color="#c8f538"/><stop offset="0.5" stop-color="#3dd68c"/><stop offset="1" stop-color="#14b8a6"/></linearGradient></defs></svg></div>
+      <span>Cplusoft HelpDesk</span>
     </div>
     <h2>Admin Login</h2>
     <p>Enter your credentials to access the admin panel</p>
@@ -253,9 +255,9 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
 <div class="sidebar" id="sidebar">
   <div class="sidebar-logo">
     <div class="logo-mark">
-      <div class="logo-box2">CP</div>
+      <div class="logo-box2"><svg width="22" height="22" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M25 3L46 15V37L25 49L4 37V15L25 3Z" fill="url(#lgb)"/><rect x="22" y="13" width="6" height="24" rx="3" fill="white"/><rect x="13" y="22" width="24" height="6" rx="3" fill="white"/><defs><linearGradient id="lgb" x1="4" y1="3" x2="46" y2="49" gradientUnits="userSpaceOnUse"><stop stop-color="#c8f538"/><stop offset="0.5" stop-color="#3dd68c"/><stop offset="1" stop-color="#14b8a6"/></linearGradient></defs></svg></div>
       <div>
-        <div class="logo-text">CPluSoft</div>
+        <div class="logo-text">Cplusoft</div>
         <div class="logo-sub">HelpDesk Admin</div>
       </div>
     </div>
@@ -312,7 +314,7 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
           <div class="stat-info">
             <div class="stat-label">Total Today</div>
             <div class="stat-value sv-blue" id="s-today">0</div>
-            <div class="stat-sub" id="s-today-sub">business day tickets</div>
+            <div class="stat-sub" id="s-today-sub">tickets today</div>
           </div>
           <div class="stat-icon si-blue">📋</div>
         </div>
@@ -328,7 +330,7 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
           <div class="stat-info">
             <div class="stat-label">Resolved</div>
             <div class="stat-value sv-green" id="s-res">0</div>
-            <div class="stat-sub" id="s-res-sub">all time</div>
+            <div class="stat-sub" id="s-res-sub">resolved tickets</div>
           </div>
           <div class="stat-icon si-green">✅</div>
         </div>
@@ -346,7 +348,6 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
       <div class="date-nav">
         <div class="date-nav-top">
           <div class="date-nav-title">📅 Filter by Date</div>
-          <span style="font-size:11px;color:var(--text3)">⏰ 8PM ke baad ki tickets agle din mein count hoti hain</span>
         </div>
         <div class="date-tabs" id="date-tabs"></div>
         <div class="date-range-row" id="date-range-row" style="display:none;margin-top:.8rem;align-items:center;gap:10px;flex-wrap:wrap">
@@ -398,7 +399,7 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
             Yeh URL Power Automate ka <strong>HTTP Trigger</strong> hai. Jab koi ticket submit kare, system is URL ko call karta hai. Power Automate automatically:<br>
             ① SharePoint list mein entry save karta hai<br>
             ② User ko <strong>m.basit_cplusoft@outlook.com</strong> se auto-email bhejta hai<br><br>
-            🤖 <strong>Priority field</strong> ab user manually select nahi karta — ticket form (index.html) khud subject/description ko analyze kar ke <code>priority</code> value AI se set kar deta hai aur isi field mein bhej deta hai. Power Automate side par kuch change nahi karna — <code>Priority</code> column waise hi map hoga.
+            <strong>Priority field</strong> ab user manually select nahi karta — ticket form (index.html) khud subject/description ko analyze kar ke <code>priority</code> value set kar deta hai aur isi field mein bhej deta hai. Power Automate side par kuch change nahi karna — <code>Priority</code> column waise hi map hoga.
           </div>
           <div class="cfg">
             <label>HTTP Trigger URL — Create Ticket</label>
@@ -691,7 +692,7 @@ async function syncFromSheets(){
 
 // ── STATE ─────────────────────────────────────────────────
 let curFilter='all';
-let curDate='';
+let curDate='all';
 let curDateRange=null;
 
 // ── INIT ─────────────────────────────────────────────────
@@ -708,18 +709,10 @@ async function init(){
 
 // ── DATE TABS ─────────────────────────────────────────────
 function buildDateTabs(){
-  const tickets=getTickets();
-  const days={};
-  tickets.forEach(t=>{
-    const day=getTicketDay(t.createdAt);
-    if(!days[day]) days[day]=0;
-    if(t.status==='Open') days[day]++;
-  });
-  const sorted=Object.keys(days).sort((a,b)=>new Date(b)-new Date(a));
   const today=new Date().toDateString();
-  if(!days[today]) days[today]=0;
-  if(!sorted.includes(today)) sorted.unshift(today);
-  if(!curDate) curDate=today;
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  const yesterdayStr=yesterday.toDateString();
+  if(!curDate) curDate='all';
   const container=document.getElementById('date-tabs');
   container.innerHTML='';
   const tabs=[
@@ -727,7 +720,9 @@ function buildDateTabs(){
     {label:'This Week',val:'week'},
     {label:'This Month',val:'month'},
     {label:'Last Month',val:'lastmonth'},
-    {label:'📅 Custom Range',val:'custom'}
+    {label:'📅 Custom Range',val:'custom'},
+    {label:'Today',val:today},
+    {label:'Yesterday',val:yesterdayStr}
   ];
   tabs.forEach(({label,val})=>{
     const btn=document.createElement('button');
@@ -739,14 +734,6 @@ function buildDateTabs(){
       row.style.display=val==='custom'?'flex':'none';
       buildDateTabs();renderTickets();
     };
-    container.appendChild(btn);
-  });
-  sorted.slice(0,7).forEach(day=>{
-    const btn=document.createElement('button');
-    btn.className='dtab'+(curDate===day?' active':'');
-    const openCount=days[day]||0;
-    btn.innerHTML=getBusinessDayLabel(day)+(openCount>0?` <span class="dc">${openCount}</span>`:'');
-    btn.onclick=()=>{curDate=day;buildDateTabs();renderTickets()};
     container.appendChild(btn);
   });
 }
@@ -1050,7 +1037,7 @@ function fillSchemas(){
 </table>
 <p>Our team will resolve your issue within the SLA window.<br>
 You will receive a closing email once resolved.</p>
-<p>— Cplusoft-IT Help Desk<br>m.basit_cplusoft@outlook.com</p>`;
+<p>— Cplusoft HelpDesk<br>m.basit_cplusoft@outlook.com</p>`;
 
   document.getElementById('email-resolve-tpl').textContent=
 `<p>Dear @{triggerBody()?['name']},</p>
@@ -1066,7 +1053,7 @@ You will receive a closing email once resolved.</p>
   <tr><td><b>SLA Status</b></td><td>@{triggerBody()?['slaStatusLabel']}</td></tr>
 </table>
 <p>If you have further issues, please submit a new ticket.<br>
-— Cplusoft- IT Help Desk<br>m.basit_cplusoft@outlook.com</p>`;
+— Cplusoft HelpDesk<br>m.basit_cplusoft@outlook.com</p>`;
 }
 
 function copyText(elId,msg){

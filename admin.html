@@ -95,8 +95,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .filter-bar{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1rem 1.2rem;margin-bottom:1.2rem;box-shadow:var(--shadow);display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap}
 .filter-group{display:flex;flex-direction:column;gap:5px;min-width:160px}
 .filter-group label{font-size:10.5px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;display:flex;align-items:center;gap:5px}
-.fselect{appearance:none;-webkit-appearance:none;background-color:var(--bg3);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237aab8a' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;border:1.5px solid var(--border2);color:var(--text);font-family:var(--font);font-size:13px;padding:8px 32px 8px 11px;border-radius:var(--r);outline:none;cursor:pointer;transition:border .2s,background-color .2s;width:100%}
-.fselect:focus{border-color:var(--accent)}
+.fselect{appearance:none;-webkit-appearance:none;background:var(--bg3) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237aab8a' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 10px center;border:1.5px solid var(--border2);color:var(--text);font-family:var(--font);font-size:13px;padding:8px 32px 8px 11px;border-radius:var(--r);outline:none;cursor:pointer;transition:border .2s;width:100%}
+.fselect:focus{border-color:var(--accent);background-color:var(--bg2)}
 .fselect option{background:var(--bg2)}
 .filter-bar-right{margin-left:auto;display:flex;align-items:flex-end;gap:8px}
 input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.5);cursor:pointer}
@@ -355,7 +355,7 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
         <!-- Date Filter Dropdown -->
         <div class="filter-group">
           <label>📅 Date Filter</label>
-          <select class="fselect" id="date-select">
+          <select class="fselect" id="date-select" onchange="onDateSelect(this.value)">
             <option value="all">All Dates</option>
             <option value="today">Today</option>
             <option value="yesterday">Yesterday</option>
@@ -369,7 +369,7 @@ code{background:var(--bg3);padding:1px 6px;border-radius:4px;font-family:var(--m
         <!-- Department Filter Dropdown -->
         <div class="filter-group">
           <label>🏢 Department</label>
-          <select class="fselect" id="dept-select">
+          <select class="fselect" id="dept-select" onchange="onDeptSelect(this.value)">
             <option value="all">All Departments</option>
             <option value="BD">Business Development (BD)</option>
             <option value="CS">Customer Support (CS)</option>
@@ -677,9 +677,10 @@ function getBusinessDayLabel(dateStr){
   return d.toLocaleDateString('en-PK',{weekday:'short',month:'short',day:'numeric'});
 }
 
-// ── DATA ──────────────────────────────────────────────────
+// ── DATA — SharePoint is source of truth, localStorage is cache only ──
 function getTickets(){try{return JSON.parse(localStorage.getItem('cps_tickets')||'[]')}catch(e){return[]}}
 function saveTickets(t){try{localStorage.setItem('cps_tickets',JSON.stringify(t))}catch(e){}}
+function clearLocalTickets(){try{localStorage.removeItem('cps_tickets')}catch(e){}}
 
 // ── HELPERS ───────────────────────────────────────────────
 function parseTimeline(str){
@@ -713,12 +714,10 @@ async function syncFromSheets(){
       timeline:parseTimeline(r.Timeline)
     })).filter(t=>t.id&&t.createdAt);
 
-    const local=getTickets();
-    const remoteIds=new Set(mapped.map(t=>t.id));
-    const localOnly=local.filter(t=>!remoteIds.has(t.id));
-    const merged=[...mapped,...localOnly];
-    merged.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-    saveTickets(merged);
+    // SharePoint is master — save SharePoint data directly, no local merging.
+    // This ensures any device resolving a ticket is immediately reflected everywhere.
+    mapped.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    saveTickets(mapped);
   }catch(e){console.warn('SharePoint sync failed:',e)}
 }
 
@@ -732,11 +731,6 @@ let curDept='all';
 async function init(){
   loadCfgUI();
   fillSchemas();
-
-  // Wire up filter selects via addEventListener (more reliable than inline onchange)
-  document.getElementById('date-select').addEventListener('change', function(){ onDateSelect(this.value); });
-  document.getElementById('dept-select').addEventListener('change', function(){ onDeptSelect(this.value); });
-
   document.getElementById('tlist').innerHTML='<div class="empty-state"><div class="ei">🔄</div><h3>Loading tickets...</h3><p>Syncing from SharePoint</p></div>';
   await syncFromSheets();
   renderTickets();
@@ -745,27 +739,15 @@ async function init(){
 
 // ── DATE DROPDOWN HANDLER ─────────────────────────────────
 function onDateSelect(val){
-  curDate=val;
-  curDateRange=null;
+  curDate=val;curDateRange=null;
   const row=document.getElementById('date-range-row');
-  const sel=document.getElementById('date-select');
-  if(val==='custom'){
-    row.classList.add('show');
-  } else {
-    row.classList.remove('show');
-    document.getElementById('range-result').textContent='';
-  }
-  // Visual active highlight on select
-  sel.style.borderColor = val!=='all' ? 'var(--accent)' : 'var(--border2)';
-  sel.style.background = val!=='all' ? 'var(--accent-light)' : 'var(--bg3)';
+  if(val==='custom'){row.classList.add('show')}
+  else{row.classList.remove('show');document.getElementById('range-result').textContent=''}
   renderTickets();
 }
 
 function onDeptSelect(val){
   curDept=val;
-  const sel=document.getElementById('dept-select');
-  sel.style.borderColor = val!=='all' ? 'var(--accent)' : 'var(--border2)';
-  sel.style.background = val!=='all' ? 'var(--accent-light)' : 'var(--bg3)';
   renderTickets();
 }
 
@@ -950,53 +932,59 @@ function openResolve(id){
 async function confirmResolve(id){
   const tickets=getTickets();
   const t=tickets.find(x=>x.id===id);if(!t) return;
-  t.status='Resolved';
-  t.resolvedAt=Date.now();
-  const elapsed=Math.round((t.resolvedAt-t.createdAt)/60000);
+
+  const resolvedAt=Date.now();
+  const elapsed=Math.round((resolvedAt-t.createdAt)/60000);
   const within=elapsed<=t.slaMins;
   if(!t.timeline) t.timeline=[];
-  t.timeline.push({time:Date.now(),text:`Resolved in ${elapsed} min by Admin. Email sent to ${t.email}`});
-  saveTickets(tickets);
+  t.timeline.push({time:resolvedAt,text:`Resolved in ${elapsed} min by Admin. Email sent to ${t.email}`});
+
   closeModal('res-modal');
 
-  // Send to Power Automate — updates SharePoint + sends Outlook resolution email
-  if(CFG.paResolveUrl){
-    try{
-      const payload={
-        id:t.id,
-        status:'Resolved',
-        resolvedAt:fmt(t.resolvedAt),
-        resolvedAtTS:t.resolvedAt,
-        timeTaken:elapsed,
-        slaMet:within?'YES':'NO',
-        slaMinutes:t.slaMins,
-        // For email
-        name:t.name,
-        email:t.email,
-        subject:t.subject,
-        dept:t.dept,
-        priority:t.priority,
-        createdAt:fmt(t.createdAt),
-        priorityLabel:t.priority==='Critical'?'🔴 CRITICAL':t.priority==='High'?'🟡 HIGH':t.priority==='Medium'?'🔵 MEDIUM':'🟢 LOW',
-        slaStatusLabel:within?'✅ Resolved within SLA':'⚠️ SLA exceeded',
-        timeline:JSON.stringify(t.timeline)
-      };
-      const res=await fetch(CFG.paResolveUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-      if(res.ok||res.status===202){
-        toast('Resolved! Resolution email sent to '+t.email,'s');
-      } else {
-        toast('Resolved locally (SharePoint may be delayed)','w');
-      }
-    }catch(err){
-      toast('Resolved locally — check Power Automate','w');
-      console.warn('PA resolve error:',err);
-    }
-  } else {
-    toast('Ticket marked resolved (Power Automate URL not set)','w');
+  if(!CFG.paResolveUrl){
+    toast('Power Automate Resolve URL not set — cannot resolve','w');return;
   }
 
-  buildDateTabs();
-  renderTickets();
+  // Show resolving state immediately in local cache
+  t.status='Resolved';t.resolvedAt=resolvedAt;
+  saveTickets(tickets);
+  buildDateTabs();renderTickets();
+
+  // Send to Power Automate — updates SharePoint + sends Outlook resolution email
+  try{
+    const payload={
+      id:t.id,
+      status:'Resolved',
+      resolvedAt:fmt(resolvedAt),
+      resolvedAtTS:resolvedAt,
+      timeTaken:elapsed,
+      slaMet:within?'YES':'NO',
+      slaMinutes:t.slaMins,
+      name:t.name,
+      email:t.email,
+      subject:t.subject,
+      dept:t.dept,
+      priority:t.priority,
+      createdAt:fmt(t.createdAt),
+      priorityLabel:t.priority==='Critical'?'🔴 CRITICAL':t.priority==='High'?'🟡 HIGH':t.priority==='Medium'?'🔵 MEDIUM':'🟢 LOW',
+      slaStatusLabel:within?'✅ Resolved within SLA':'⚠️ SLA exceeded',
+      timeline:JSON.stringify(t.timeline)
+    };
+    const res=await fetch(CFG.paResolveUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(res.ok||res.status===202){
+      toast('Resolved! Email sent to '+t.email+'. Syncing SharePoint...','s');
+      // Wait 5s for SharePoint to update, then re-sync so all devices see correct state
+      setTimeout(async()=>{
+        await syncFromSheets();
+        buildDateTabs();renderTickets();
+      },5000);
+    } else {
+      toast('Power Automate error — ticket kept Resolved locally','w');
+    }
+  }catch(err){
+    toast('Network error — ticket kept Resolved locally','w');
+    console.warn('PA resolve error:',err);
+  }
 }
 
 function closeModal(id){document.getElementById(id).classList.remove('show')}
@@ -1118,10 +1106,7 @@ function clearDateRange(){
   curDateRange=null;curDate='all';
   document.getElementById('date-range-row').classList.remove('show');
   document.getElementById('range-result').textContent='';
-  const sel=document.getElementById('date-select');
-  sel.value='all';
-  sel.style.borderColor='var(--border2)';
-  sel.style.background='var(--bg3)';
+  document.getElementById('date-select').value='all';
   renderTickets();
 }
 
@@ -1200,10 +1185,11 @@ setInterval(()=>{
   document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-PK',{timeZone:'Asia/Karachi',hour12:false});
 },1000);
 
-// Auto-refresh every 30 seconds
+// Auto-refresh every 30 seconds — SharePoint is master, overwrite local cache
 setInterval(async()=>{
   if(document.getElementById('page-dashboard').classList.contains('active')){
-    await syncFromSheets();buildDateTabs();renderTickets();
+    await syncFromSheets();  // replaces local cache with SharePoint truth
+    buildDateTabs();renderTickets();
   }
 },30000);
 

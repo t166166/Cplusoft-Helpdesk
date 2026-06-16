@@ -117,10 +117,10 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 }
 
 /* ── MATH CAPTCHA ─────────────────────────────────────────── */
-.captcha-wrap{background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--r);padding:9px 12px;display:flex;align-items:center;gap:10px;flex-wrap:nowrap}
+.captcha-wrap{background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--r);padding:9px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%}
 .captcha-question{font-family:var(--mono);font-size:16px;font-weight:800;color:var(--text);background:var(--bg2);border:1.5px solid var(--accent);padding:6px 14px;border-radius:var(--r);letter-spacing:.05em;user-select:none;flex-shrink:0;min-width:80px;text-align:center}
 .captcha-eq{font-size:16px;font-weight:700;color:var(--text2);flex-shrink:0}
-.captcha-input{font-family:var(--mono);font-size:15px;font-weight:700;padding:7px 10px;border:1.5px solid var(--border2);border-radius:var(--r);background:var(--bg2);color:var(--text);outline:none;width:72px;text-align:center;transition:border .2s;flex-shrink:0}
+.captcha-input{font-family:var(--mono);font-size:15px;font-weight:700;padding:7px 10px;border:1.5px solid var(--border2);border-radius:var(--r);background:var(--bg2);color:var(--text);outline:none;width:72px;min-width:60px;text-align:center;transition:border .2s;flex-shrink:0;flex-grow:1;max-width:120px}
 .captcha-input:focus{border-color:var(--accent)}
 .captcha-input.ok{border-color:var(--green);background:var(--green-bg)}
 .captcha-input.err{border-color:var(--red);background:var(--red-bg)}
@@ -418,7 +418,7 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
   </div>
   <div class="mytkts-user-bar">
     <span class="mytkts-user-email" id="mytkts-email-label">—</span>
-    <button class="mytkts-logout" onclick="logoutMyTickets()">Sign Out</button>
+    <div style="display:flex;gap:6px"><button class="mytkts-logout" onclick="refreshMyTickets()" title="Refresh">🔄 Refresh</button><button class="mytkts-logout" onclick="logoutMyTickets()">Sign Out</button></div>
   </div>
   <div class="mytkts-body" id="mytkts-body">
     <div class="mytkt-empty"><div class="ei">📭</div><p>No tickets found.</p></div>
@@ -936,7 +936,7 @@ async function showMyTicketsPanel(email){
             dept:r.Department||r.dept||'—',
             category:r.Category||r.category||'—',
             priority:r.Priority||r.priority||'Medium',
-            status:String(r.Status||r.status||'Open').trim(),
+            status:(()=>{const raw=String(r.Status??r.status??'').trim().toLowerCase();return raw==='resolved'?'Resolved':'Open';})(),
             createdAt:Number(String(r.CreatedAtTS||r.createdAt||0).replace(/,/g,'')),
             resolvedAt:Number(String(r.ResolvedAtTS||r.ResolvedAt||0).replace(/,/g,''))||null
           })).filter(t=>t.id).sort((a,b)=>b.createdAt-a.createdAt);
@@ -962,8 +962,7 @@ function renderMyTickets(tickets){
     return;
   }
   body.innerHTML=tickets.map(t=>{
-    const st=(t.status||'').toLowerCase();
-    const isRes=st==='resolved';
+    const isRes=(t.status||'').trim().toLowerCase()==='resolved';
     const elapsed=t.resolvedAt&&isRes?Math.round((t.resolvedAt-t.createdAt)/60000):null;
     const dateStr=t.createdAt?new Date(t.createdAt).toLocaleString('en-PK',{timeZone:'Asia/Karachi',hour12:true,day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
     return `<div class="mytkt-card">
@@ -1008,6 +1007,14 @@ function startSessionTimeout(){
     closeMyTickets();
     toast('Session expired. Please verify again.','w');
   },remaining);
+}
+
+async function refreshMyTickets(){
+  const btn=document.getElementById("mytkts-refresh-btn");
+  if(btn){btn.disabled=true;btn.textContent="⏳ Refreshing...";}
+  await showMyTicketsPanel(_verifiedEmail);
+  if(btn){btn.disabled=false;btn.textContent="🔄 Refresh";}
+  toast("Tickets refreshed","s");
 }
 
 function logoutMyTickets(){

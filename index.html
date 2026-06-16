@@ -915,43 +915,59 @@ async function showMyTicketsPanel(email){
   mOv.style.display='block';
   mOv.classList.add('show');
   mPan.classList.add('open');
-  document.getElementById('mytkts-body').innerHTML='<div class="mytkt-empty"><div class="ei">🔄</div><p>Loading your tickets...</p></div>';
+  document.getElementById('mytkts-body').innerHTML='<div class="mytkt-empty"><div class="ei">\ud83d\udd04</div><p>Loading your tickets...</p></div>';
 
-  let tickets=[];
+  // Start with localStorage tickets for this email (all historical)
+  const localRaw=JSON.parse(localStorage.getItem('cps_tickets')||'[]');
+  const localTickets=localRaw.filter(t=>(t.email||'').toLowerCase()===email.toLowerCase());
 
-  // Try SharePoint first
+  // Build a map: id -> ticket (localStorage as base)
+  const ticketMap={};
+  localTickets.forEach(t=>{ ticketMap[t.id]=t; });
+
+  // Fetch from SharePoint — merge/override with latest status
   if(CFG.paGetUrl){
     try{
       const res=await fetch(CFG.paGetUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});
       if(res.ok){
         const data=await res.json();
         const items=data.value||data;
-        if(Array.isArray(items)){
-          tickets=items.filter(r=>{
-            const em=(r.SubmitterEmail||r.email||'').toLowerCase();
-            return em===email.toLowerCase();
-          }).map(r=>({
-            id:r.TicketID||r.id||'',
-            subject:r.Subject||r.subject||'—',
-            dept:r.Department||r.dept||'—',
-            category:r.Category||r.category||'—',
-            priority:r.Priority||r.priority||'Medium',
-            status:(()=>{const raw=String(r.Status??r.status??'').trim().toLowerCase();return raw==='resolved'?'Resolved':'Open';})(),
-            createdAt:Number(String(r.CreatedAtTS||r.createdAt||0).replace(/,/g,'')),
-            resolvedAt:Number(String(r.ResolvedAtTS||r.ResolvedAt||0).replace(/,/g,''))||null
-          })).filter(t=>t.id).sort((a,b)=>b.createdAt-a.createdAt);
+        if(Array.isArray(items)&&items.length>0){
+          console.log('[MyTickets] SP fields:', Object.keys(items[0]));
+          // Filter to this email from SharePoint
+          const spTickets=items.filter(r=>(r.SubmitterEmail||r.email||'').toLowerCase()===email.toLowerCase());
+          console.log('[MyTickets] SP returned',items.length,'total,',spTickets.length,'for this email');
+          spTickets.forEach(r=>{
+            const statusRaw=r.Status??r.status??r.STATUS??'';
+            const statusNorm=String(statusRaw).trim().toLowerCase();
+            const statusFinal=statusNorm==='resolved'?'Resolved':'Open';
+            const id=r.TicketID||r.id||'';
+            if(!id) return;
+            console.log('[MyTickets]',id,'SP status raw=',JSON.stringify(statusRaw),'=> final=',statusFinal);
+            // Override/add from SharePoint (SharePoint is source of truth for status)
+            ticketMap[id]={
+              ...(ticketMap[id]||{}),
+              id,
+              subject:r.Subject||r.subject||ticketMap[id]?.subject||'\u2014',
+              dept:r.Department||r.dept||ticketMap[id]?.dept||'\u2014',
+              category:r.Category||r.category||ticketMap[id]?.category||'\u2014',
+              priority:r.Priority||r.priority||ticketMap[id]?.priority||'Medium',
+              status:statusFinal,
+              createdAt:Number(String(r.CreatedAtTS||r.createdAt||0).replace(/,/g,''))||ticketMap[id]?.createdAt||0,
+              resolvedAt:Number(String(r.ResolvedAtTS||r.ResolvedAt||0).replace(/,/g,''))||ticketMap[id]?.resolvedAt||null
+            };
+          });
         }
       }
-    }catch(e){console.warn('SP fetch error:',e)}
+    }catch(e){console.warn('[MyTickets] SP fetch error:',e)}
   }
 
-  // Fallback: local storage
-  if(!tickets.length){
-    const local=JSON.parse(localStorage.getItem('cps_tickets')||'[]');
-    tickets=local.filter(t=>(t.email||'').toLowerCase()===email.toLowerCase())
-      .sort((a,b)=>b.createdAt-a.createdAt);
-  }
+  // Final list: all tickets from map, sorted newest first
+  const tickets=Object.values(ticketMap)
+    .filter(t=>t.id&&t.createdAt)
+    .sort((a,b)=>b.createdAt-a.createdAt);
 
+  console.log('[MyTickets] Final ticket count:',tickets.length,'statuses:',tickets.map(t=>t.id+':'+t.status));
   renderMyTickets(tickets);
 }
 

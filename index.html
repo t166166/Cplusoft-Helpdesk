@@ -802,13 +802,7 @@ async function sendOTP(){
           email:email,
           otp:_otpCode,
           subject:'[Cplusoft HelpDesk] Your OTP: '+_otpCode,
-          body:'Your OTP to view tickets is: '+_otpCode+'
-
-This OTP expires in 5 minutes.
-
-If you did not request this, please ignore.
-
-— Cplusoft HelpDesk'
+          body:'Your OTP to view tickets is: '+_otpCode+'\n\nThis OTP expires in 5 minutes.\n\nIf you did not request this, please ignore.\n\n— Cplusoft HelpDesk'
         })
       });
     }

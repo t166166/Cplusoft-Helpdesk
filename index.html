@@ -802,7 +802,7 @@ async function sendOTP(){
           email:email,
           otp:_otpCode,
           subject:'[Cplusoft HelpDesk] Your OTP: '+_otpCode,
-          body:'Your OTP to view tickets is: '+_otpCode+'\n\nThis OTP expires in 5 minutes.\n\nIf you did not request this, please ignore.\n\n— Cplusoft HelpDesk'
+          body:'Your OTP to view tickets is: '+_otpCode+'\n\nThis OTP expires in 5 minutes.\n\nIf you did not request this, please ignore.\n\n- Cplusoft HelpDesk'
         })
       });
     }
@@ -953,7 +953,7 @@ async function showMyTicketsPanel(email){
 function renderMyTickets(tickets){
   const body=document.getElementById('mytkts-body');
   if(!tickets.length){
-    body.innerHTML='<div class="mytkt-empty"><div class="ei">📭</div><h3 style="color:var(--text2);font-size:.9rem;margin-bottom:4px">No tickets found</h3><p>You haven't submitted any tickets yet.</p></div>';
+    body.innerHTML='<div class="mytkt-empty"><div class="ei">📭</div><h3 style="color:var(--text2);font-size:.9rem;margin-bottom:4px">No tickets found</h3><p>You have not submitted any tickets yet.</p></div>';
     return;
   }
   body.innerHTML=tickets.map(t=>{

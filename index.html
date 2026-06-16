@@ -460,6 +460,8 @@ function refreshCaptcha(){_genCaptcha();}
 // Admin panel ke Setup page se override/configure ho sakta hai (localStorage 'cps_cfg')
 let CFG={};
 try{CFG=JSON.parse(localStorage.getItem('cps_cfg')||'{}')}catch(e){}
+// Hardcoded fallback URLs — work on all devices even without Setup
+if(!CFG.paGetUrl) CFG.paGetUrl='https://defaultde683246e4814c8e85bd79f9eed871.3e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/c2fec912746b40be831dbbc836ea3105/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=bToZJQX0O8kyhh3zyyClV3DVfr9vs4AY8JkNspztrtc';
 // Default Create-Ticket Flow URL — yeh hamesha set rehta hai taake ticket
 // SharePoint + email ke liye Power Automate ko zaroor mile, chahe admin
 // panel se config kabhi save na hua ho ya is page ka localStorage alag ho.

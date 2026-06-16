@@ -969,6 +969,19 @@ async function showMyTicketsPanel(email){
     }catch(e){console.warn('[MyTickets] SP fetch error:',e)}
   }
 
+  // Sync updated statuses back to localStorage (so duplicate check uses fresh data)
+  try{
+    const allLocal=JSON.parse(localStorage.getItem('cps_tickets')||'[]');
+    let changed=false;
+    allLocal.forEach((t,i)=>{
+      if(ticketMap[t.id] && ticketMap[t.id].status !== t.status){
+        allLocal[i].status=ticketMap[t.id].status;
+        changed=true;
+      }
+    });
+    if(changed) localStorage.setItem('cps_tickets',JSON.stringify(allLocal));
+  }catch(e){}
+
   // Final list: all tickets from map, sorted newest first
   const tickets=Object.values(ticketMap)
     .filter(t=>t.id)

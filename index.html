@@ -787,37 +787,15 @@ async function sendOTP(){
   _otpEmail=email;
   _otpExpiry=Date.now()+5*60*1000; // 5 minutes
 
-  const sendBtn=document.getElementById('otp-send-btn');
-  sendBtn.disabled=true;
-  sendBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur=".8s" repeatCount="indefinite"/></circle></svg> Sending...';
-
-  // Send OTP via Power Automate (same Create URL — sends email only)
-  try{
-    if(CFG.paCreateUrl){
-      await fetch(CFG.paCreateUrl,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          _otpOnly:true,
-          email:email,
-          otp:_otpCode,
-          subject:'[Cplusoft HelpDesk] Your OTP: '+_otpCode,
-          body:'Your OTP to view tickets is: '+_otpCode+'\n\nThis OTP expires in 5 minutes.\n\nIf you did not request this, please ignore.\n\n- Cplusoft HelpDesk'
-        })
-      });
-    }
-  }catch(e){console.warn('OTP send error:',e)}
-
-  sendBtn.disabled=false;
-  sendBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send OTP to Email';
-
-  // Switch to step 2
+  // Switch to step 2 IMMEDIATELY — don't wait for fetch
+  document.getElementById('otp-step1').style.display='none';
   document.getElementById('otp-step1').classList.remove('active');
+  document.getElementById('otp-step2').style.display='block';
   document.getElementById('otp-step2').classList.add('active');
   document.getElementById('otp-sent-to').textContent=email;
   document.getElementById('otp-code-err').style.display='none';
 
-  // Clear digit inputs
+  // Clear digit inputs and focus first
   document.querySelectorAll('.otp-digit').forEach(d=>{d.value='';d.style.borderColor='';});
   setTimeout(()=>document.querySelectorAll('.otp-digit')[0].focus(),100);
 
@@ -826,6 +804,21 @@ async function sendOTP(){
   startResendCooldown();
 
   toast('OTP sent to '+email,'s');
+
+  // Send OTP via Power Automate in background (non-blocking)
+  if(CFG.paCreateUrl){
+    fetch(CFG.paCreateUrl,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        _otpOnly:true,
+        email:email,
+        otp:_otpCode,
+        subject:'[Cplusoft HelpDesk] Your OTP: '+_otpCode,
+        body:'Your OTP to view tickets is: '+_otpCode+'\n\nThis OTP expires in 5 minutes.\n\nIf you did not request this, please ignore.\n\n- Cplusoft HelpDesk'
+      })
+    }).catch(e=>console.warn('OTP email send error:',e));
+  }
 }
 
 function startOtpCountdown(){

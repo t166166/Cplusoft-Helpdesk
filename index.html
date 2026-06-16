@@ -928,9 +928,11 @@ async function showMyTicketsPanel(email){
   // Fetch from SharePoint — merge/override with latest status
   if(CFG.paGetUrl){
     try{
-      const res=await fetch(CFG.paGetUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});
+      const res=await fetch(CFG.paGetUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email})});
+      console.log('[MyTickets] fetch status:',res.status,'ok:',res.ok);
       if(res.ok){
         const data=await res.json();
+        console.log('[MyTickets] raw response type:',typeof data,'isArray:',Array.isArray(data),'keys:',data&&typeof data==='object'?Object.keys(data):[]);
         const items=data.value||data;
         if(Array.isArray(items)&&items.length>0){
           console.log('[MyTickets] SP fields:', Object.keys(items[0]));

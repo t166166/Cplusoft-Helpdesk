@@ -115,6 +115,84 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
   nav{padding:.8rem 1rem}
   .wrap{padding:1.2rem 1rem}
 }
+
+/* ── MATH CAPTCHA ─────────────────────────────────────────── */
+.captcha-wrap{background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.captcha-question{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--text);background:var(--bg2);border:1.5px solid var(--border);padding:8px 16px;border-radius:var(--r);letter-spacing:.08em;user-select:none;flex-shrink:0}
+.captcha-eq{font-size:14px;font-weight:600;color:var(--text2)}
+.captcha-input{font-family:var(--mono);font-size:15px;font-weight:700;padding:8px 12px;border:1.5px solid var(--border2);border-radius:var(--r);background:var(--bg2);color:var(--text);outline:none;width:80px;text-align:center;transition:border .2s}
+.captcha-input:focus{border-color:var(--accent)}
+.captcha-input.ok{border-color:var(--green);background:var(--green-bg)}
+.captcha-input.err{border-color:var(--red);background:var(--red-bg)}
+.captcha-refresh{background:none;border:1.5px solid var(--border2);border-radius:var(--r);padding:7px 10px;cursor:pointer;color:var(--text2);font-size:13px;transition:all .2s;flex-shrink:0}
+.captcha-refresh:hover{border-color:var(--accent);color:var(--accent)}
+.captcha-hint{font-size:10.5px;color:var(--text3);margin-top:4px}
+
+/* ── MY TICKETS BUTTON ───────────────────────────────────── */
+.my-tkts-btn{background:rgba(61,214,140,0.12);border:1px solid rgba(61,214,140,0.35);color:#c8f538;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s;display:flex;align-items:center;gap:6px}
+.my-tkts-btn:hover{background:rgba(61,214,140,0.22);border-color:#3dd68c;color:#fff}
+
+/* ── OTP MODAL ───────────────────────────────────────────── */
+.otp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
+.otp-overlay.show{display:flex}
+.otp-modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r2);width:100%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,.2);animation:mup .25s ease;overflow:hidden}
+@keyframes mup{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+.otp-head{background:linear-gradient(135deg,#0a1a12,#152b1e);padding:1.2rem 1.4rem;display:flex;align-items:center;justify-content:space-between}
+.otp-head h3{font-size:.95rem;font-weight:700;color:#fff}
+.otp-close{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
+.otp-close:hover{color:#fff;background:rgba(240,79,79,.25)}
+.otp-body{padding:1.5rem}
+.otp-step{display:none}.otp-step.active{display:block}
+.otp-label{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.otp-input{width:100%;background:var(--bg3);border:1.5px solid var(--border2);color:var(--text);font-family:var(--font);font-size:14px;padding:11px 14px;border-radius:var(--r);outline:none;transition:border .2s}
+.otp-input:focus{border-color:var(--accent);background:var(--bg2)}
+.otp-input.err{border-color:var(--red);background:var(--red-bg)}
+.otp-hint{font-size:11.5px;color:var(--text3);margin-top:5px;line-height:1.5}
+.otp-err{font-size:12px;color:var(--red);margin-top:6px;display:none;font-weight:500}
+.otp-code-wrap{display:flex;gap:10px;margin:1rem 0}
+.otp-digit{flex:1;text-align:center;font-family:var(--mono);font-size:1.4rem;font-weight:700;padding:12px 4px;border:1.5px solid var(--border2);border-radius:var(--r);background:var(--bg3);color:var(--text);outline:none;transition:border .2s}
+.otp-digit:focus{border-color:var(--accent);background:var(--bg2)}
+.otp-timer{font-size:11.5px;color:var(--text3);margin-top:4px;display:flex;align-items:center;gap:5px}
+.otp-timer span{font-family:var(--mono);font-weight:600;color:var(--amber)}
+.otp-resend{background:none;border:none;color:var(--blue);font-size:12px;font-family:var(--font);cursor:pointer;padding:0;font-weight:600;text-decoration:underline}
+.otp-resend:disabled{color:var(--text3);text-decoration:none;cursor:not-allowed}
+.otp-btn{width:100%;padding:11px;background:var(--logo-grad);border:none;color:#0a1a12;font-family:var(--font);font-size:13.5px;font-weight:700;border-radius:var(--r);cursor:pointer;margin-top:1rem;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px}
+.otp-btn:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-1px)}
+.otp-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.otp-btn-ghost{width:100%;padding:10px;background:transparent;border:1.5px solid var(--border2);color:var(--text2);font-family:var(--font);font-size:13px;font-weight:600;border-radius:var(--r);cursor:pointer;margin-top:.6rem;transition:all .2s}
+.otp-btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── MY TICKETS PANEL ────────────────────────────────────── */
+.mytkts-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;display:none;backdrop-filter:blur(3px)}
+.mytkts-overlay.show{display:block}
+.mytkts-panel{position:fixed;right:0;top:0;bottom:0;width:480px;max-width:100vw;background:var(--bg2);border-left:1px solid var(--border);z-index:401;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease;box-shadow:-6px 0 30px rgba(0,0,0,.12)}
+.mytkts-panel.open{transform:translateX(0)}
+.mytkts-phead{background:linear-gradient(135deg,#0a1a12,#152b1e);padding:1.2rem 1.4rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.mytkts-phead h3{font-size:.95rem;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.mytkts-phead-sub{font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
+.mytkts-close{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.mytkts-close:hover{color:#fff}
+.mytkts-body{flex:1;overflow-y:auto;padding:1.2rem}
+.mytkt-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:1rem 1.1rem;margin-bottom:.8rem;transition:box-shadow .2s}
+.mytkt-card:hover{box-shadow:var(--shadow2)}
+.mytkt-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:.5rem}
+.mytkt-id{font-family:var(--mono);font-size:11px;color:var(--text3);font-weight:500}
+.mytkt-status{padding:3px 9px;border-radius:5px;font-size:10.5px;font-weight:700}
+.mytkt-status.open{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+.mytkt-status.resolved{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.mytkt-subj{font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:.3rem}
+.mytkt-meta{font-size:11px;color:var(--text2);display:flex;gap:8px;flex-wrap:wrap}
+.mytkt-pri{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700}
+.mytkt-pri.Critical{background:var(--red-bg);color:var(--red)}
+.mytkt-pri.High{background:var(--amber-bg);color:var(--amber)}
+.mytkt-pri.Medium{background:var(--blue-bg);color:var(--blue)}
+.mytkt-pri.Low{background:var(--green-bg);color:var(--green)}
+.mytkt-empty{text-align:center;padding:3rem 1rem;color:var(--text3)}
+.mytkt-empty .ei{font-size:2.5rem;margin-bottom:.7rem;opacity:.4}
+.mytkts-user-bar{background:var(--accent-light);border-bottom:1px solid var(--green-border);padding:.8rem 1.4rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.mytkts-user-email{font-size:12.5px;font-weight:600;color:var(--green);font-family:var(--mono)}
+.mytkts-logout{background:none;border:1px solid var(--green-border);color:var(--green);font-size:11px;font-family:var(--font);padding:4px 10px;border-radius:var(--r);cursor:pointer;font-weight:600}
+.mytkts-logout:hover{background:var(--green);color:#fff}
 </style>
 </head>
 <body>
@@ -130,6 +208,7 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
   <div class="nav-right">
     <div class="live-pill"><div class="ldot"></div>Live</div>
     <span id="clock"></span>
+    <button class="my-tkts-btn" onclick="openMyTickets()">🎫 My Tickets</button>
   </div>
 </nav>
 
@@ -202,6 +281,16 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
           <span style="font-size:10px;color:var(--text3)">Minimum 15 characters</span>
         </div>
       </div>
+        <div class="fi full" id="captcha-field">
+          <label>Security Check <span class="req">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">— Prove you're human</span></label>
+          <div class="captcha-wrap">
+            <div class="captcha-question" id="captcha-q">?</div>
+            <span class="captcha-eq">=</span>
+            <input class="captcha-input" id="captcha-ans" type="number" placeholder="?" oninput="validateCaptchaField()" autocomplete="off">
+            <button type="button" class="captcha-refresh" onclick="refreshCaptcha()" title="New question">🔄</button>
+          </div>
+          <span class="captcha-hint">Solve the simple math to confirm you are not a bot.</span>
+        </div>
       <button class="sub-btn" id="sub-btn" onclick="submitTicket()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         Submit Ticket & Send Confirmation Email
@@ -273,9 +362,104 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 
 </div>
 
+
+<!-- OTP MODAL -->
+<div class="otp-overlay" id="otp-overlay">
+  <div class="otp-modal">
+    <div class="otp-head">
+      <h3>🔐 Verify Your Identity</h3>
+      <button class="otp-close" onclick="closeOtpModal()">✕</button>
+    </div>
+    <div class="otp-body">
+      <!-- Step 1: Enter Email -->
+      <div class="otp-step active" id="otp-step1">
+        <div class="otp-label">Your Official Email</div>
+        <input class="otp-input" id="otp-email-inp" type="email" placeholder="yourname@cplusoft.co" oninput="this.classList.remove('err')">
+        <div class="otp-hint">Enter your Cplusoft email. A 6-digit OTP will be sent to it.</div>
+        <div class="otp-err" id="otp-email-err">Please enter a valid official email.</div>
+        <button class="otp-btn" id="otp-send-btn" onclick="sendOTP()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Send OTP to Email
+        </button>
+      </div>
+      <!-- Step 2: Enter OTP -->
+      <div class="otp-step" id="otp-step2">
+        <div class="otp-label">Enter 6-Digit OTP</div>
+        <div style="font-size:12.5px;color:var(--text2);margin-bottom:.8rem">OTP sent to <strong id="otp-sent-to"></strong></div>
+        <div class="otp-code-wrap" id="otp-digits-wrap">
+          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" oninput="otpDigitInput(this,0)" onkeydown="otpDigitKey(event,this,0)">
+          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" oninput="otpDigitInput(this,1)" onkeydown="otpDigitKey(event,this,1)">
+          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" oninput="otpDigitInput(this,2)" onkeydown="otpDigitKey(event,this,2)">
+          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" oninput="otpDigitInput(this,3)" onkeydown="otpDigitKey(event,this,3)">
+          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" oninput="otpDigitInput(this,4)" onkeydown="otpDigitKey(event,this,4)">
+          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" oninput="otpDigitInput(this,5)" onkeydown="otpDigitKey(event,this,5)">
+        </div>
+        <div class="otp-timer">⏱ OTP expires in <span id="otp-countdown">05:00</span></div>
+        <div class="otp-err" id="otp-code-err">Incorrect OTP. Please try again.</div>
+        <button class="otp-btn" id="otp-verify-btn" onclick="verifyOTP()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Verify & View My Tickets
+        </button>
+        <button class="otp-btn-ghost" onclick="backToStep1()">← Change Email</button>
+        <div style="margin-top:.8rem;text-align:center">
+          <button class="otp-resend" id="otp-resend-btn" onclick="resendOTP()" disabled>Resend OTP</button>
+          <span id="otp-resend-timer" style="font-size:11px;color:var(--text3)"> (available in <span id="otp-resend-cd">30</span>s)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MY TICKETS PANEL -->
+<div class="mytkts-overlay" id="mytkts-overlay" onclick="closeMyTickets()"></div>
+<div class="mytkts-panel" id="mytkts-panel">
+  <div class="mytkts-phead">
+    <div>
+      <h3>🎫 My Tickets</h3>
+      <div class="mytkts-phead-sub">Your submitted support tickets</div>
+    </div>
+    <button class="mytkts-close" onclick="closeMyTickets()">✕</button>
+  </div>
+  <div class="mytkts-user-bar">
+    <span class="mytkts-user-email" id="mytkts-email-label">—</span>
+    <button class="mytkts-logout" onclick="logoutMyTickets()">Sign Out</button>
+  </div>
+  <div class="mytkts-body" id="mytkts-body">
+    <div class="mytkt-empty"><div class="ei">📭</div><p>No tickets found.</p></div>
+  </div>
+</div>
+
 <div id="tc"></div>
 
 <script>
+
+// ── MATH CAPTCHA ──────────────────────────────────────────────
+let _ca=0,_cb=0,_cop='+';
+function _genCaptcha(){
+  const ops=['+','-','×'];
+  _cop=ops[Math.floor(Math.random()*ops.length)];
+  if(_cop==='+'){_ca=Math.floor(Math.random()*15)+1;_cb=Math.floor(Math.random()*15)+1;}
+  else if(_cop==='-'){_ca=Math.floor(Math.random()*15)+5;_cb=Math.floor(Math.random()*_ca)+1;}
+  else{_ca=Math.floor(Math.random()*9)+2;_cb=Math.floor(Math.random()*9)+2;}
+  document.getElementById('captcha-q').textContent=_ca+' '+_cop+' '+_cb;
+  const inp=document.getElementById('captcha-ans');
+  inp.value='';inp.className='captcha-input';
+}
+function _captchaAnswer(){
+  if(_cop==='+') return _ca+_cb;
+  if(_cop==='-') return _ca-_cb;
+  return _ca*_cb;
+}
+function validateCaptchaField(){
+  const inp=document.getElementById('captcha-ans');
+  const val=parseInt(inp.value,10);
+  if(isNaN(val)){inp.className='captcha-input';return false;}
+  const ok=val===_captchaAnswer();
+  inp.className='captcha-input '+(ok?'ok':'err');
+  return ok;
+}
+function refreshCaptcha(){_genCaptcha();}
+
 // ── CONFIG (Power Automate HTTP Trigger URLs) ─────────────
 // Admin panel ke Setup page se override/configure ho sakta hai (localStorage 'cps_cfg')
 let CFG={};
@@ -398,6 +582,13 @@ async function submitTicket(){
   if(desc.length<15){
     toast('Description must be at least 15 characters','w');return;
   }
+  // Captcha check
+  if(!validateCaptchaField()){
+    const inp=document.getElementById('captcha-ans');
+    inp.className='captcha-input err';
+    toast('Security check failed — please solve the math question correctly','w');
+    return;
+  }
 
   // Final AI priority check (in case user submitted without typing events firing)
   updateAIPriority();
@@ -507,6 +698,9 @@ async function submitTicket(){
     localStorage.setItem('cps_tickets',JSON.stringify(local));
   }catch(e){}
 
+  // Refresh captcha for next use
+  _genCaptcha();
+
   // Show success screen
   document.getElementById('form-section').style.display='none';
   document.getElementById('success-section').style.display='block';
@@ -538,6 +732,269 @@ setInterval(()=>{
   document.getElementById('form-clock2').textContent=d+' '+t;
 },1000);
 
+// ── MY TICKETS — OTP SYSTEM ───────────────────────────────────
+let _otpCode='';
+let _otpEmail='';
+let _otpExpiry=0;
+let _otpCountdownTimer=null;
+let _otpResendTimer=null;
+let _verifiedEmail=''; // stays set after verification
+
+function openMyTickets(){
+  if(_verifiedEmail){
+    // Already verified this session — open panel directly
+    showMyTicketsPanel(_verifiedEmail);
+  } else {
+    document.getElementById('otp-overlay').classList.add('show');
+    document.getElementById('otp-step1').classList.add('active');
+    document.getElementById('otp-step2').classList.remove('active');
+    document.getElementById('otp-email-inp').value='';
+    document.getElementById('otp-email-err').style.display='none';
+  }
+}
+
+function closeOtpModal(){
+  document.getElementById('otp-overlay').classList.remove('show');
+  clearInterval(_otpCountdownTimer);
+  clearInterval(_otpResendTimer);
+}
+
+function backToStep1(){
+  document.getElementById('otp-step2').classList.remove('active');
+  document.getElementById('otp-step1').classList.add('active');
+  clearInterval(_otpCountdownTimer);
+  clearInterval(_otpResendTimer);
+}
+
+async function sendOTP(){
+  const emailInp=document.getElementById('otp-email-inp');
+  const email=emailInp.value.trim().toLowerCase();
+  const errEl=document.getElementById('otp-email-err');
+
+  if(!isOfficialEmail(email)){
+    emailInp.classList.add('err');
+    errEl.style.display='block';
+    errEl.textContent='Only official Cplusoft emails are allowed.';
+    return;
+  }
+  errEl.style.display='none';
+
+  // Generate 6-digit OTP
+  _otpCode=String(Math.floor(100000+Math.random()*900000));
+  _otpEmail=email;
+  _otpExpiry=Date.now()+5*60*1000; // 5 minutes
+
+  const sendBtn=document.getElementById('otp-send-btn');
+  sendBtn.disabled=true;
+  sendBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur=".8s" repeatCount="indefinite"/></circle></svg> Sending...';
+
+  // Send OTP via Power Automate (same Create URL — sends email only)
+  try{
+    if(CFG.paCreateUrl){
+      await fetch(CFG.paCreateUrl,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          _otpOnly:true,
+          email:email,
+          otp:_otpCode,
+          subject:'[Cplusoft HelpDesk] Your OTP: '+_otpCode,
+          body:'Your OTP to view tickets is: '+_otpCode+'
+
+This OTP expires in 5 minutes.
+
+If you did not request this, please ignore.
+
+— Cplusoft HelpDesk'
+        })
+      });
+    }
+  }catch(e){console.warn('OTP send error:',e)}
+
+  sendBtn.disabled=false;
+  sendBtn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send OTP to Email';
+
+  // Switch to step 2
+  document.getElementById('otp-step1').classList.remove('active');
+  document.getElementById('otp-step2').classList.add('active');
+  document.getElementById('otp-sent-to').textContent=email;
+  document.getElementById('otp-code-err').style.display='none';
+
+  // Clear digit inputs
+  document.querySelectorAll('.otp-digit').forEach(d=>{d.value='';d.style.borderColor='';});
+  setTimeout(()=>document.querySelectorAll('.otp-digit')[0].focus(),100);
+
+  // Start countdown
+  startOtpCountdown();
+  startResendCooldown();
+
+  toast('OTP sent to '+email,'s');
+}
+
+function startOtpCountdown(){
+  clearInterval(_otpCountdownTimer);
+  _otpCountdownTimer=setInterval(()=>{
+    const rem=Math.max(0,_otpExpiry-Date.now());
+    const m=Math.floor(rem/60000);
+    const s=Math.floor((rem%60000)/1000);
+    document.getElementById('otp-countdown').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    if(rem<=0){clearInterval(_otpCountdownTimer);document.getElementById('otp-countdown').textContent='Expired';}
+  },1000);
+}
+
+function startResendCooldown(){
+  const btn=document.getElementById('otp-resend-btn');
+  const timerEl=document.getElementById('otp-resend-cd');
+  const timerWrap=document.getElementById('otp-resend-timer');
+  btn.disabled=true;timerWrap.style.display='';
+  let sec=30;
+  timerEl.textContent=sec;
+  clearInterval(_otpResendTimer);
+  _otpResendTimer=setInterval(()=>{
+    sec--;timerEl.textContent=sec;
+    if(sec<=0){clearInterval(_otpResendTimer);btn.disabled=false;timerWrap.style.display='none';}
+  },1000);
+}
+
+function resendOTP(){
+  sendOTP();
+}
+
+function otpDigitInput(inp,idx){
+  inp.value=inp.value.replace(/[^0-9]/g,'').slice(-1);
+  if(inp.value&&idx<5){
+    document.querySelectorAll('.otp-digit')[idx+1].focus();
+  }
+  // Auto-verify when all 6 filled
+  const digits=document.querySelectorAll('.otp-digit');
+  const full=[...digits].every(d=>d.value.length===1);
+  if(full) verifyOTP();
+}
+
+function otpDigitKey(e,inp,idx){
+  if(e.key==='Backspace'&&!inp.value&&idx>0){
+    document.querySelectorAll('.otp-digit')[idx-1].focus();
+  }
+}
+
+function verifyOTP(){
+  const digits=document.querySelectorAll('.otp-digit');
+  const entered=[...digits].map(d=>d.value).join('');
+  const errEl=document.getElementById('otp-code-err');
+
+  if(entered.length<6){
+    errEl.textContent='Please enter all 6 digits.';
+    errEl.style.display='block';return;
+  }
+  if(Date.now()>_otpExpiry){
+    errEl.textContent='OTP has expired. Please request a new one.';
+    errEl.style.display='block';return;
+  }
+  if(entered!==_otpCode){
+    errEl.textContent='Incorrect OTP. Please try again.';
+    errEl.style.display='block';
+    digits.forEach(d=>d.style.borderColor='var(--red)');
+    return;
+  }
+
+  // OTP correct!
+  errEl.style.display='none';
+  _verifiedEmail=_otpEmail;
+  clearInterval(_otpCountdownTimer);
+  clearInterval(_otpResendTimer);
+  closeOtpModal();
+  showMyTicketsPanel(_verifiedEmail);
+}
+
+async function showMyTicketsPanel(email){
+  document.getElementById('mytkts-email-label').textContent=email;
+  document.getElementById('mytkts-overlay').classList.add('show');
+  document.getElementById('mytkts-panel').classList.add('open');
+  document.getElementById('mytkts-body').innerHTML='<div class="mytkt-empty"><div class="ei">🔄</div><p>Loading your tickets...</p></div>';
+
+  let tickets=[];
+
+  // Try SharePoint first
+  if(CFG.paGetUrl){
+    try{
+      const res=await fetch(CFG.paGetUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});
+      if(res.ok){
+        const data=await res.json();
+        const items=data.value||data;
+        if(Array.isArray(items)){
+          tickets=items.filter(r=>{
+            const em=(r.SubmitterEmail||r.email||'').toLowerCase();
+            return em===email.toLowerCase();
+          }).map(r=>({
+            id:r.TicketID||r.id||'',
+            subject:r.Subject||r.subject||'—',
+            dept:r.Department||r.dept||'—',
+            category:r.Category||r.category||'—',
+            priority:r.Priority||r.priority||'Medium',
+            status:String(r.Status||r.status||'Open').trim(),
+            createdAt:Number(String(r.CreatedAtTS||r.createdAt||0).replace(/,/g,'')),
+            resolvedAt:Number(String(r.ResolvedAtTS||r.ResolvedAt||0).replace(/,/g,''))||null
+          })).filter(t=>t.id).sort((a,b)=>b.createdAt-a.createdAt);
+        }
+      }
+    }catch(e){console.warn('SP fetch error:',e)}
+  }
+
+  // Fallback: local storage
+  if(!tickets.length){
+    const local=JSON.parse(localStorage.getItem('cps_tickets')||'[]');
+    tickets=local.filter(t=>(t.email||'').toLowerCase()===email.toLowerCase())
+      .sort((a,b)=>b.createdAt-a.createdAt);
+  }
+
+  renderMyTickets(tickets);
+}
+
+function renderMyTickets(tickets){
+  const body=document.getElementById('mytkts-body');
+  if(!tickets.length){
+    body.innerHTML='<div class="mytkt-empty"><div class="ei">📭</div><h3 style="color:var(--text2);font-size:.9rem;margin-bottom:4px">No tickets found</h3><p>You haven't submitted any tickets yet.</p></div>';
+    return;
+  }
+  body.innerHTML=tickets.map(t=>{
+    const st=(t.status||'').toLowerCase();
+    const isRes=st==='resolved';
+    const elapsed=t.resolvedAt&&isRes?Math.round((t.resolvedAt-t.createdAt)/60000):null;
+    const dateStr=t.createdAt?new Date(t.createdAt).toLocaleString('en-PK',{timeZone:'Asia/Karachi',hour12:true,day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
+    return `<div class="mytkt-card">
+      <div class="mytkt-top">
+        <div>
+          <div class="mytkt-id">${t.id}</div>
+          <div class="mytkt-subj">${esc2(t.subject)}</div>
+        </div>
+        <span class="mytkt-status ${isRes?'resolved':'open'}">${isRes?'✅ Resolved':'🟡 Open'}</span>
+      </div>
+      <div class="mytkt-meta">
+        <span class="mytkt-pri ${t.priority}">${t.priority}</span>
+        <span>${t.dept}</span>
+        <span>·</span>
+        <span>${t.category}</span>
+        ${elapsed!==null?'<span>·</span><span style="color:var(--green);font-weight:600">Done in '+elapsed+'m</span>':''}
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px">Submitted: ${dateStr}</div>
+    </div>`;
+  }).join('');
+}
+
+function esc2(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function closeMyTickets(){
+  document.getElementById('mytkts-overlay').classList.remove('show');
+  document.getElementById('mytkts-panel').classList.remove('open');
+}
+
+function logoutMyTickets(){
+  _verifiedEmail='';
+  closeMyTickets();
+  toast('Signed out from My Tickets','s');
+}
+
+_genCaptcha();
 updateAIPriority();
 </script>
 </body>

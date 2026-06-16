@@ -117,16 +117,15 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 }
 
 /* ── MATH CAPTCHA ─────────────────────────────────────────── */
-.captcha-wrap{background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.captcha-question{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--text);background:var(--bg2);border:1.5px solid var(--border);padding:8px 16px;border-radius:var(--r);letter-spacing:.08em;user-select:none;flex-shrink:0}
-.captcha-eq{font-size:14px;font-weight:600;color:var(--text2)}
-.captcha-input{font-family:var(--mono);font-size:15px;font-weight:700;padding:8px 12px;border:1.5px solid var(--border2);border-radius:var(--r);background:var(--bg2);color:var(--text);outline:none;width:80px;text-align:center;transition:border .2s}
+.captcha-wrap{background:var(--bg3);border:1.5px solid var(--border2);border-radius:var(--r);padding:9px 12px;display:flex;align-items:center;gap:10px;flex-wrap:nowrap}
+.captcha-question{font-family:var(--mono);font-size:16px;font-weight:800;color:var(--text);background:var(--bg2);border:1.5px solid var(--accent);padding:6px 14px;border-radius:var(--r);letter-spacing:.05em;user-select:none;flex-shrink:0;min-width:80px;text-align:center}
+.captcha-eq{font-size:16px;font-weight:700;color:var(--text2);flex-shrink:0}
+.captcha-input{font-family:var(--mono);font-size:15px;font-weight:700;padding:7px 10px;border:1.5px solid var(--border2);border-radius:var(--r);background:var(--bg2);color:var(--text);outline:none;width:72px;text-align:center;transition:border .2s;flex-shrink:0}
 .captcha-input:focus{border-color:var(--accent)}
 .captcha-input.ok{border-color:var(--green);background:var(--green-bg)}
 .captcha-input.err{border-color:var(--red);background:var(--red-bg)}
-.captcha-refresh{background:none;border:1.5px solid var(--border2);border-radius:var(--r);padding:7px 10px;cursor:pointer;color:var(--text2);font-size:13px;transition:all .2s;flex-shrink:0}
+.captcha-refresh{background:var(--bg2);border:1.5px solid var(--border2);border-radius:var(--r);padding:6px 10px;cursor:pointer;color:var(--text2);font-size:12px;font-weight:600;font-family:var(--font);transition:all .2s;flex-shrink:0;white-space:nowrap}
 .captcha-refresh:hover{border-color:var(--accent);color:var(--accent)}
-.captcha-hint{font-size:10.5px;color:var(--text3);margin-top:4px}
 
 /* ── MY TICKETS BUTTON ───────────────────────────────────── */
 .my-tkts-btn{background:rgba(61,214,140,0.12);border:1px solid rgba(61,214,140,0.35);color:#c8f538;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .2s;display:flex;align-items:center;gap:6px}
@@ -208,7 +207,7 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
   <div class="nav-right">
     <div class="live-pill"><div class="ldot"></div>Live</div>
     <span id="clock"></span>
-    <button class="my-tkts-btn" onclick="openMyTickets()">🎫 My Tickets</button>
+    <button class="my-tkts-btn" id="my-tkts-btn" onclick="openMyTickets()">🎫 My Tickets</button>
   </div>
 </nav>
 
@@ -281,15 +280,15 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
           <span style="font-size:10px;color:var(--text3)">Minimum 15 characters</span>
         </div>
       </div>
-        <div class="fi full" id="captcha-field">
-          <label>Security Check <span class="req">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">— Prove you're human</span></label>
+        <div class="fi full" id="captcha-field" style="margin-top:.2rem">
+          <label style="margin-bottom:5px">Security Check <span class="req">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text3)">— Prove you're human</span></label>
           <div class="captcha-wrap">
-            <div class="captcha-question" id="captcha-q">?</div>
-            <span class="captcha-eq">=</span>
-            <input class="captcha-input" id="captcha-ans" type="number" placeholder="?" oninput="validateCaptchaField()" autocomplete="off">
-            <button type="button" class="captcha-refresh" onclick="refreshCaptcha()" title="New question">🔄</button>
+            <span style="font-size:12px;color:var(--text2);font-weight:500">Solve:</span>
+            <div class="captcha-question" id="captcha-q">loading...</div>
+            <span class="captcha-eq" style="font-size:16px;font-weight:700">=</span>
+            <input class="captcha-input" id="captcha-ans" type="number" placeholder="?" oninput="validateCaptchaField()" autocomplete="off" min="0" max="999">
+            <button type="button" class="captcha-refresh" onclick="refreshCaptcha()" title="New question" style="font-size:12px;padding:6px 9px">↻ New</button>
           </div>
-          <span class="captcha-hint">Solve the simple math to confirm you are not a bot.</span>
         </div>
       <button class="sub-btn" id="sub-btn" onclick="submitTicket()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -699,8 +698,6 @@ async function submitTicket(){
   }catch(e){}
 
   // Refresh captcha for next use
-  _genCaptcha();
-
   // Show success screen
   document.getElementById('form-section').style.display='none';
   document.getElementById('success-section').style.display='block';
@@ -742,19 +739,25 @@ let _verifiedEmail=''; // stays set after verification
 
 function openMyTickets(){
   if(_verifiedEmail){
-    // Already verified this session — open panel directly
     showMyTicketsPanel(_verifiedEmail);
-  } else {
-    document.getElementById('otp-overlay').classList.add('show');
-    document.getElementById('otp-step1').classList.add('active');
-    document.getElementById('otp-step2').classList.remove('active');
-    document.getElementById('otp-email-inp').value='';
-    document.getElementById('otp-email-err').style.display='none';
+    return;
   }
+  const overlay=document.getElementById('otp-overlay');
+  if(!overlay){console.error('OTP overlay not found');return;}
+  overlay.style.display='flex';
+  overlay.classList.add('show');
+  document.getElementById('otp-step1').style.display='block';
+  document.getElementById('otp-step1').classList.add('active');
+  document.getElementById('otp-step2').style.display='none';
+  document.getElementById('otp-step2').classList.remove('active');
+  document.getElementById('otp-email-inp').value='';
+  document.getElementById('otp-email-err').style.display='none';
 }
 
 function closeOtpModal(){
-  document.getElementById('otp-overlay').classList.remove('show');
+  const overlay=document.getElementById('otp-overlay');
+  overlay.classList.remove('show');
+  overlay.style.display='none';
   clearInterval(_otpCountdownTimer);
   clearInterval(_otpResendTimer);
 }
@@ -908,8 +911,11 @@ function verifyOTP(){
 
 async function showMyTicketsPanel(email){
   document.getElementById('mytkts-email-label').textContent=email;
-  document.getElementById('mytkts-overlay').classList.add('show');
-  document.getElementById('mytkts-panel').classList.add('open');
+  const mOv=document.getElementById('mytkts-overlay');
+  const mPan=document.getElementById('mytkts-panel');
+  mOv.style.display='block';
+  mOv.classList.add('show');
+  mPan.classList.add('open');
   document.getElementById('mytkts-body').innerHTML='<div class="mytkt-empty"><div class="ei">🔄</div><p>Loading your tickets...</p></div>';
 
   let tickets=[];
@@ -984,8 +990,11 @@ function renderMyTickets(tickets){
 function esc2(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
 function closeMyTickets(){
-  document.getElementById('mytkts-overlay').classList.remove('show');
-  document.getElementById('mytkts-panel').classList.remove('open');
+  const ov=document.getElementById('mytkts-overlay');
+  const pan=document.getElementById('mytkts-panel');
+  ov.classList.remove('show');
+  ov.style.display='none';
+  pan.classList.remove('open');
 }
 
 function logoutMyTickets(){
@@ -994,8 +1003,10 @@ function logoutMyTickets(){
   toast('Signed out from My Tickets','s');
 }
 
-_genCaptcha();
-updateAIPriority();
+window.addEventListener('load', function(){
+  _genCaptcha();
+  updateAIPriority();
+});
 </script>
 </body>
 </html>

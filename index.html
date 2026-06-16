@@ -947,6 +947,9 @@ async function showMyTicketsPanel(email){
             if(!id) return;
             console.log('[MyTickets]',id,'SP status raw=',JSON.stringify(statusRaw),'=> final=',statusFinal);
             // Override/add from SharePoint (SharePoint is source of truth for status)
+            const createdAt=Number(String(r.CreatedAtTS||r.createdAt||'0').replace(/,/g,''))||ticketMap[id]?.createdAt||Date.now();
+            const resolvedAt=Number(String(r.ResolvedAtTS||r.ResolvedAt||'0').replace(/,/g,''))||ticketMap[id]?.resolvedAt||null;
+            console.log('[MyTickets] mapping',id,'createdAt=',createdAt,'status=',statusFinal);
             ticketMap[id]={
               ...(ticketMap[id]||{}),
               id,
@@ -955,8 +958,8 @@ async function showMyTicketsPanel(email){
               category:r.Category||r.category||ticketMap[id]?.category||'\u2014',
               priority:r.Priority||r.priority||ticketMap[id]?.priority||'Medium',
               status:statusFinal,
-              createdAt:Number(String(r.CreatedAtTS||r.createdAt||0).replace(/,/g,''))||ticketMap[id]?.createdAt||0,
-              resolvedAt:Number(String(r.ResolvedAtTS||r.ResolvedAt||0).replace(/,/g,''))||ticketMap[id]?.resolvedAt||null
+              createdAt,
+              resolvedAt
             };
           });
         }
@@ -966,8 +969,8 @@ async function showMyTicketsPanel(email){
 
   // Final list: all tickets from map, sorted newest first
   const tickets=Object.values(ticketMap)
-    .filter(t=>t.id&&t.createdAt)
-    .sort((a,b)=>b.createdAt-a.createdAt);
+    .filter(t=>t.id)
+    .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
 
   console.log('[MyTickets] Final ticket count:',tickets.length,'statuses:',tickets.map(t=>t.id+':'+t.status));
   renderMyTickets(tickets);

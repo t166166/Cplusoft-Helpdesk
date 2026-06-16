@@ -149,8 +149,10 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 .otp-hint{font-size:11.5px;color:var(--text3);margin-top:5px;line-height:1.5}
 .otp-err{font-size:12px;color:var(--red);margin-top:6px;display:none;font-weight:500}
 .otp-code-wrap{display:flex;gap:10px;margin:1rem 0}
-.otp-digit{flex:1;text-align:center;font-family:var(--mono);font-size:1.4rem;font-weight:700;padding:12px 4px;border:1.5px solid var(--border2);border-radius:var(--r);background:var(--bg3);color:var(--text);outline:none;transition:border .2s}
-.otp-digit:focus{border-color:var(--accent);background:var(--bg2)}
+.otp-single-input{width:100%;text-align:center;font-family:var(--mono);font-size:1.6rem;font-weight:700;padding:14px;border:1.5px solid var(--border2);border-radius:var(--r);background:var(--bg3);color:var(--text);outline:none;transition:border .2s;letter-spacing:.3em}
+.otp-single-input:focus{border-color:var(--accent);background:var(--bg2)}
+.otp-single-input.ok{border-color:var(--green);background:var(--green-bg)}
+.otp-single-input.err{border-color:var(--red);background:var(--red-bg)}
 .otp-timer{font-size:11.5px;color:var(--text3);margin-top:4px;display:flex;align-items:center;gap:5px}
 .otp-timer span{font-family:var(--mono);font-weight:600;color:var(--amber)}
 .otp-resend{background:none;border:none;color:var(--blue);font-size:12px;font-family:var(--font);cursor:pointer;padding:0;font-weight:600;text-decoration:underline}
@@ -386,12 +388,7 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
         <div class="otp-label">Enter 6-Digit OTP</div>
         <div style="font-size:12.5px;color:var(--text2);margin-bottom:.8rem">OTP sent to <strong id="otp-sent-to"></strong></div>
         <div class="otp-code-wrap" id="otp-digits-wrap">
-          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" oninput="otpDigitInput(this,0)" onkeydown="otpDigitKey(event,this,0)">
-          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" oninput="otpDigitInput(this,1)" onkeydown="otpDigitKey(event,this,1)">
-          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" oninput="otpDigitInput(this,2)" onkeydown="otpDigitKey(event,this,2)">
-          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" oninput="otpDigitInput(this,3)" onkeydown="otpDigitKey(event,this,3)">
-          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" oninput="otpDigitInput(this,4)" onkeydown="otpDigitKey(event,this,4)">
-          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" oninput="otpDigitInput(this,5)" onkeydown="otpDigitKey(event,this,5)">
+          <input class="otp-single-input" id="otp-single" maxlength="6" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="Enter 6-digit OTP" oninput="otpSingleInput(this)" autocomplete="one-time-code">
         </div>
         <div class="otp-timer">⏱ OTP expires in <span id="otp-countdown">05:00</span></div>
         <div class="otp-err" id="otp-code-err">Incorrect OTP. Please try again.</div>
@@ -738,25 +735,43 @@ let _otpResendTimer=null;
 let _verifiedEmail=''; // stays set after verification
 
 function openMyTickets(){
+  // Check in-memory first
   if(_verifiedEmail){
     showMyTicketsPanel(_verifiedEmail);
     return;
   }
+  // Check sessionStorage for existing valid session
+  try{
+    const saved=JSON.parse(sessionStorage.getItem('cps_session')||'null');
+    if(saved&&saved.email&&saved.expiry>Date.now()){
+      _verifiedEmail=saved.email;
+      startSessionTimeout();
+      showMyTicketsPanel(_verifiedEmail);
+      return;
+    } else {
+      sessionStorage.removeItem('cps_session');
+    }
+  }catch(e){}
+
+  // Show OTP modal — reset it fully first to fix re-click bug
   const overlay=document.getElementById('otp-overlay');
   if(!overlay){console.error('OTP overlay not found');return;}
+  // Reset display before adding class to fix re-open bug
+  overlay.style.display='';
   overlay.classList.add('show');
+  // Reset both steps
   document.getElementById('otp-step1').classList.add('active');
-  document.getElementById('otp-step1').style.display='';
   document.getElementById('otp-step2').classList.remove('active');
-  document.getElementById('otp-step2').style.display='';
   document.getElementById('otp-email-inp').value='';
   document.getElementById('otp-email-err').style.display='none';
+  document.getElementById('otp-code-err').style.display='none';
+  const si=document.getElementById('otp-single');
+  if(si){si.value='';si.className='otp-single-input';}
 }
 
 function closeOtpModal(){
   const overlay=document.getElementById('otp-overlay');
   overlay.classList.remove('show');
-  overlay.style.display='none';
   clearInterval(_otpCountdownTimer);
   clearInterval(_otpResendTimer);
 }
@@ -794,9 +809,10 @@ async function sendOTP(){
   document.getElementById('otp-sent-to').textContent=email;
   document.getElementById('otp-code-err').style.display='none';
 
-  // Clear digit inputs and focus first
-  document.querySelectorAll('.otp-digit').forEach(d=>{d.value='';d.style.borderColor='';});
-  setTimeout(()=>document.querySelectorAll('.otp-digit')[0].focus(),100);
+  // Clear single OTP input and focus
+  const si=document.getElementById('otp-single');
+  if(si){si.value='';si.className='otp-single-input';}
+  setTimeout(()=>{if(si) si.focus();},100);
 
   // Start countdown
   startOtpCountdown();
@@ -849,50 +865,47 @@ function resendOTP(){
   sendOTP();
 }
 
-function otpDigitInput(inp,idx){
-  inp.value=inp.value.replace(/[^0-9]/g,'').slice(-1);
-  if(inp.value&&idx<5){
-    document.querySelectorAll('.otp-digit')[idx+1].focus();
-  }
-  // Auto-verify when all 6 filled
-  const digits=document.querySelectorAll('.otp-digit');
-  const full=[...digits].every(d=>d.value.length===1);
-  if(full) verifyOTP();
-}
-
-function otpDigitKey(e,inp,idx){
-  if(e.key==='Backspace'&&!inp.value&&idx>0){
-    document.querySelectorAll('.otp-digit')[idx-1].focus();
-  }
+function otpSingleInput(inp){
+  inp.value=inp.value.replace(/[^0-9]/g,'').slice(0,6);
+  inp.classList.remove('err','ok');
+  if(inp.value.length===6) verifyOTP();
 }
 
 function verifyOTP(){
-  const digits=document.querySelectorAll('.otp-digit');
-  const entered=[...digits].map(d=>d.value).join('');
+  const singleInp=document.getElementById('otp-single');
+  const entered=singleInp?singleInp.value.trim():'';
   const errEl=document.getElementById('otp-code-err');
 
   if(entered.length<6){
     errEl.textContent='Please enter all 6 digits.';
-    errEl.style.display='block';return;
+    errEl.style.display='block';
+    if(singleInp) singleInp.classList.add('err');
+    return;
   }
   if(Date.now()>_otpExpiry){
     errEl.textContent='OTP has expired. Please request a new one.';
-    errEl.style.display='block';return;
+    errEl.style.display='block';
+    if(singleInp) singleInp.classList.add('err');
+    return;
   }
   if(entered!==_otpCode){
     errEl.textContent='Incorrect OTP. Please try again.';
     errEl.style.display='block';
-    digits.forEach(d=>d.style.borderColor='var(--red)');
+    if(singleInp) singleInp.classList.add('err');
     return;
   }
 
   // OTP correct!
   errEl.style.display='none';
+  if(singleInp) singleInp.classList.add('ok');
   _verifiedEmail=_otpEmail;
+  // Save to sessionStorage with 10-min expiry
+  const sessionData={email:_verifiedEmail,expiry:Date.now()+10*60*1000};
+  sessionStorage.setItem('cps_session',JSON.stringify(sessionData));
   clearInterval(_otpCountdownTimer);
   clearInterval(_otpResendTimer);
-  closeOtpModal();
-  showMyTicketsPanel(_verifiedEmail);
+  startSessionTimeout();
+  setTimeout(()=>{closeOtpModal();showMyTicketsPanel(_verifiedEmail);},300);
 }
 
 async function showMyTicketsPanel(email){
@@ -983,8 +996,24 @@ function closeMyTickets(){
   pan.classList.remove('open');
 }
 
+let _sessionTimer=null;
+
+function startSessionTimeout(){
+  clearTimeout(_sessionTimer);
+  const saved=JSON.parse(sessionStorage.getItem('cps_session')||'null');
+  const remaining=saved?Math.max(0,saved.expiry-Date.now()):10*60*1000;
+  _sessionTimer=setTimeout(()=>{
+    _verifiedEmail='';
+    sessionStorage.removeItem('cps_session');
+    closeMyTickets();
+    toast('Session expired. Please verify again.','w');
+  },remaining);
+}
+
 function logoutMyTickets(){
   _verifiedEmail='';
+  sessionStorage.removeItem('cps_session');
+  clearTimeout(_sessionTimer);
   closeMyTickets();
   toast('Signed out from My Tickets','s');
 }
@@ -992,6 +1021,16 @@ function logoutMyTickets(){
 window.addEventListener('load', function(){
   _genCaptcha();
   updateAIPriority();
+  // Restore session if still valid
+  try{
+    const saved=JSON.parse(sessionStorage.getItem('cps_session')||'null');
+    if(saved&&saved.email&&saved.expiry>Date.now()){
+      _verifiedEmail=saved.email;
+      startSessionTimeout();
+    } else {
+      sessionStorage.removeItem('cps_session');
+    }
+  }catch(e){}
 });
 </script>
 </body>

@@ -132,16 +132,16 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 .my-tkts-btn:hover{background:rgba(61,214,140,0.22);border-color:#3dd68c;color:#fff}
 
 /* ── OTP MODAL ───────────────────────────────────────────── */
-.otp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
+.otp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px);overflow-y:auto}
 .otp-overlay.show{display:flex}
-.otp-modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r2);width:100%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,.2);animation:mup .25s ease;overflow:hidden}
+.otp-modal{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r2);width:420px;max-width:calc(100vw - 2rem);box-shadow:0 8px 40px rgba(0,0,0,.2);animation:mup .25s ease;overflow:hidden;margin:auto}
 @keyframes mup{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
 .otp-head{background:linear-gradient(135deg,#0a1a12,#152b1e);padding:1.2rem 1.4rem;display:flex;align-items:center;justify-content:space-between}
 .otp-head h3{font-size:.95rem;font-weight:700;color:#fff}
 .otp-close{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
 .otp-close:hover{color:#fff;background:rgba(240,79,79,.25)}
 .otp-body{padding:1.5rem}
-.otp-step{display:none}.otp-step.active{display:block}
+.otp-step{display:none!important}.otp-step.active{display:block!important}
 .otp-label{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
 .otp-input{width:100%;background:var(--bg3);border:1.5px solid var(--border2);color:var(--text);font-family:var(--font);font-size:14px;padding:11px 14px;border-radius:var(--r);outline:none;transition:border .2s}
 .otp-input:focus{border-color:var(--accent);background:var(--bg2)}
@@ -744,12 +744,11 @@ function openMyTickets(){
   }
   const overlay=document.getElementById('otp-overlay');
   if(!overlay){console.error('OTP overlay not found');return;}
-  overlay.style.display='flex';
   overlay.classList.add('show');
-  document.getElementById('otp-step1').style.display='block';
   document.getElementById('otp-step1').classList.add('active');
-  document.getElementById('otp-step2').style.display='none';
+  document.getElementById('otp-step1').style.display='';
   document.getElementById('otp-step2').classList.remove('active');
+  document.getElementById('otp-step2').style.display='';
   document.getElementById('otp-email-inp').value='';
   document.getElementById('otp-email-err').style.display='none';
 }
@@ -764,7 +763,9 @@ function closeOtpModal(){
 
 function backToStep1(){
   document.getElementById('otp-step2').classList.remove('active');
+  document.getElementById('otp-step2').style.display='';
   document.getElementById('otp-step1').classList.add('active');
+  document.getElementById('otp-step1').style.display='';
   clearInterval(_otpCountdownTimer);
   clearInterval(_otpResendTimer);
 }
@@ -788,9 +789,7 @@ async function sendOTP(){
   _otpExpiry=Date.now()+5*60*1000; // 5 minutes
 
   // Switch to step 2 IMMEDIATELY — don't wait for fetch
-  document.getElementById('otp-step1').style.display='none';
   document.getElementById('otp-step1').classList.remove('active');
-  document.getElementById('otp-step2').style.display='block';
   document.getElementById('otp-step2').classList.add('active');
   document.getElementById('otp-sent-to').textContent=email;
   document.getElementById('otp-code-err').style.display='none';

@@ -29,7 +29,7 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
 .nav-brand{display:flex;align-items:center;gap:10px}
 .nav-logo{width:34px;height:34px;background:transparent;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
 .nav-title{font-family:'Poppins',var(--font);font-size:1rem;font-weight:700;letter-spacing:.02em;text-transform:uppercase;background:var(--logo-grad);background-size:100% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;-webkit-text-stroke:.2px transparent;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
-.nav-sub{font-size:10px;color:rgba(255,255,255,0.18);margin-top:1px}
+.nav-sub{font-size:10px;color:rgba(255,255,255,1);margin-top:1px}
 .nav-right{display:flex;align-items:center;gap:10px}
 .live-pill{background:rgba(47,158,68,0.15);border:1px solid rgba(47,158,68,0.3);color:#69db7c;padding:4px 11px;border-radius:20px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:5px}
 .ldot{width:5px;height:5px;background:#69db7c;border-radius:50%;animation:pulse 1.5s infinite}
@@ -350,7 +350,7 @@ nav{background:var(--sidebar);padding:.9rem 2rem;display:flex;align-items:center
         <div class="sla-bar bar-bd"></div>
       </div>
       <div class="sla-item">
-        <div class="sla-dept">Dev</div>
+        <div class="sla-dept">Dev/Product</div>
         <div class="sla-time">30 min</div>
         <div class="sla-bar bar-dev"></div>
       </div>
@@ -471,7 +471,7 @@ if(!CFG.paCreateUrl) CFG.paCreateUrl='https://defaultde683246e4814c8e85bd79f9eed
 let selPriority='Medium';
 
 // SLA in minutes per department
-const SLA={BD:15,CS:10,Dev:30,HR:45,Finance:45,Marketing:45,Operations:45};
+const SLA={BD:15,CS:10,Dev:30,Product:30,HR:45,Finance:45,Marketing:45,Operations:45};
 function getSLA(d){return SLA[d]||45}
 
 function genId(d){

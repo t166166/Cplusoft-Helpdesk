@@ -54,7 +54,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .logo-mark{display:flex;align-items:center;gap:10px}
 .logo-box2{width:36px;height:36px;background:transparent;border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;flex-shrink:0}
 .logo-text{font-family:'Poppins',var(--font);font-size:1rem;font-weight:700;letter-spacing:.02em;text-transform:uppercase;background:var(--logo-grad);background-size:100% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;-webkit-text-stroke:.2px transparent;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
-.logo-sub{font-size:10px;color:rgba(255,255,255,0.55);margin-top:1px}
+.logo-sub{font-size:10px;color:rgba(255,255,255,1);margin-top:1px}
 .sidebar-nav{padding:1rem 0;flex:1}
 .nav-section{padding:0 .8rem;margin-bottom:.3rem}
 .nav-section-label{font-size:10px;font-weight:600;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:.09em;padding:.5rem .5rem .3rem}
@@ -744,7 +744,7 @@ async function syncFromSheets(){
       subject:r.Subject||r.subject||'',
       description:r.Description||r.description||'',
       status:extractStatus(r),
-      slaMins:Number(r.SLAMinutes||r.slaMins)||45,
+      slaMins:Number(r.SLAMinutes||r.slaMins)||({'Dev':30,'Product':30,'BD':15,'CS':10}[r.Department||r.dept]||45),
       createdAt:parseTS(r.CreatedAtTS||r.createdAt),
       resolvedAt:parseTS(r.ResolvedAtTS||r.ResolvedAt||null),
       timeline:parseTimeline(r.Timeline)
